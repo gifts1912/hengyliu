@@ -348,7 +348,7 @@ namespace Ranking.TopSite.intentPatternSlotLayer
             result = string.Join(" ", slotPattern.ToArray());
             return result;
         }
-        public static void ReadPatternSlotFrequencyQuery(string infile, string queryIntentManualLabelledFile, Dictionary<string, Dictionary<string, Dictionary<string, int>>> intentSlotQueryFreq, string intentFlag)
+        public static void ReadPatternSlotFrequencyQuery(string infile, string queryIntentManualLabelledFile, Dictionary<string, Dictionary<string, Dictionary<string, int>>> intentSlotQueryFreq, params string[] intentFlag)
         {
             /*
              * Read pbxml file result, and slot query list of specsified "intent+patternSlot".
@@ -380,7 +380,7 @@ namespace Ranking.TopSite.intentPatternSlotLayer
                 string[] slotKeyArr = arr[slotKeyCol].Split(new string[] { "|||" }, StringSplitOptions.RemoveEmptyEntries);
                 string[] slotValueArr = arr[slotValueCol].Split(new string[] { "|||" }, StringSplitOptions.RemoveEmptyEntries);
                // slotStr = NormalizationPatternSlot(slotStr, slotKeyArr, slotValueArr);
-                slotStr = Utility.Utility.NormalizationPatternSlot(slotStr, slotKeyArr, slotValueArr, intentFlag, slotIdealSlot);
+                slotStr = Utility.Utility.NormalizationPatternSlot(slotStr, slotKeyArr, slotValueArr, intent, slotIdealSlot);
                 //  slotStr = slotStr.Replace("on", "");
                 /*  string oldStr = slotStr;
                   if (slotStr.EndsWith(" on"))
@@ -616,7 +616,7 @@ namespace Ranking.TopSite.intentPatternSlotLayer
 
             ReadQueryScore(scoreFile);
 
-            string PatternQueryFile = @"D:\Project\Election\TokenAndRules\electionV1.2.tsv";
+            string PatternQueryFile = @"D:\Project\Election\TokenAndRules\electionV1.2FilterViewAndCandidateListIntent";
             int queryCol = 0, patCol = 1, intentCol = 3;
 
             string slotValueIdealValueFile = @"D:\Project\Election\TokenAndRules\candidatePartyPoliticalViewMappingDic.tsv";
@@ -626,7 +626,8 @@ namespace Ranking.TopSite.intentPatternSlotLayer
             string patternSlotQueryFile = @"D:\Project\Election\TokenAndRules\pbxmlParse.tsv";
            // ReadPatternSlotQuery(patternSlotQueryFile, PatternQueryFile); //PatternQueryFile: Get the manual labeled intent of each query.
             Dictionary<string, Dictionary<string, Dictionary<string, int>>> intentSlotQueryFreq = new Dictionary<string, Dictionary<string, Dictionary<string, int>>>();
-            ReadPatternSlotFrequencyQuery(patternSlotQueryFile, PatternQueryFile, intentSlotQueryFreq, "CandidateList");
+            //ReadPatternSlotFrequencyQuery(patternSlotQueryFile, PatternQueryFile, intentSlotQueryFreq, "CandidateList");
+            ReadPatternSlotFrequencyQuery(patternSlotQueryFile, PatternQueryFile, intentSlotQueryFreq, "Candidate", "CandidateGeneral", "ElectionSchedule",  "CandidateNavigational", "ElectionGeneral", "CandidateCampain", "CandidateBio");
             
             string infile = @"D:\Project\Election\TokenAndRules\" + flag + @"ScrapFeaturesTSV.tsv";
             ReadQueryTopUrl(infile, 10); // query, scrap url come from aether experiment : aether://experiments/1f82e2ad-7955-4085-8d60-1bd4c213e578

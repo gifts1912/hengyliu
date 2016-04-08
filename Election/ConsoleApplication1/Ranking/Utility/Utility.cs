@@ -7,7 +7,7 @@ using System.IO;
 using System.Text.RegularExpressions;
 
 namespace Ranking.Utility
-{
+{ //"Candidate", "CandidateGeneral", "ElectionSchedule",  "CandidateNavigational", "ElectionGeneral", "CandidateCampain", "CandidateBio"
     class Utility
     {
         public static HashSet<string> DefaultNeedDetailSlot = new HashSet<string>(new string[] { "[election.candidate.highconf]", "[election.candidate]", "[election.bpiissue]", "[election.party]", "[election.timelineword]", "[location.state]"}); //"[election.candidate.highconf]", "[election.candidate]", "[election.bpiissue]", "[election.party]", "[location.state]" });
@@ -16,7 +16,16 @@ namespace Ranking.Utility
         public static Dictionary<string, HashSet<string>> intentNeedStaySlot= new Dictionary<string, HashSet<string>> {{"CandidateList", new HashSet<string> (new string[] {"[election.party]", "[location.state]", "[election.national]",
         "[location.state]", "[election.candidate.highconf]", "[election.newsword]", "[election.candidate]",
         "[election.primary]", "[election.voting]", "[election.campaign]", "[election.next]", 
-        "[election.winlose]", "[election.Gender.Female]", "[election.howmany]", "[election.when]", "[election.timelineword]", "[election.Speech]", "[election.timelineword]" })}};
+        "[election.winlose]", "[election.Gender.Female]", "[election.howmany]", "[election.when]", "[election.timelineword]", "[election.Speech]", "[election.timelineword]" })},
+        {"CandidateView", new HashSet<string>(new string[] {"[election.candidate.highconf]", "[election.candidate]", "[election.bpiissue]", "[election.party]", "[election.timelineword]", "[location.state]"})},
+        {"Candidate", new HashSet<string> (new string[] {"[election.candidatehistory]", "[election.candidate.highconf]", "[election.infoword]","[election.candidate]", "[election.party]", "[election.candidate]"})},
+        {"CandidateGeneral", new HashSet<string> (new string[] {"[election.candidate.highconf]", "[location.state]", ""})},
+        {"ElectionSchedule", new HashSet<string> (new string[] {""})},
+        {"CandidateNavigational", new HashSet<string> (new string[] {"[election.twitter]", })},
+        {"ElectionGeneral", new HashSet<string> (new string[] {"[location.state]", ""})},
+        {"CandidateCampain", new HashSet<string> (new string[] {"[election.candidate.highconf]"})},
+        {"CandidateBio", new HashSet<string> (new string[] {"[election.candidatehistory]", "[election.candidatehistory]"})}
+        };
         
         public static Dictionary<string, HashSet<string>> slotMapSlotsDic = new Dictionary<string, HashSet<string>> { { "E", new HashSet<string>(new string[] { "StayWords", "election.party", "location.state", "election.national", "election.winlose", "election.candidate.highconf" }) }, { "I", new HashSet<string>() { "election.candidateword", "election.newsword", "election.voting" } }, { "C", new HashSet<string>() { "election.campaign", "election.race", "election.primary", "election.presidential" } } };  // { { "election.party", "election.party=E0" }, { "election.primary", "election.primary=E1" }, { "location.state", "location.state=C0" }, { "election.national", "" } };
 

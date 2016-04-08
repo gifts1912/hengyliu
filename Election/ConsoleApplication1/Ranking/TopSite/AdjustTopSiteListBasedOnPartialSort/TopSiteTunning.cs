@@ -114,7 +114,7 @@ namespace Ranking.TopSite.AdjustTopSiteListBasedOnPartialSort.TopSiteTunning
             sw.Close();
         }
 
-        public static void LoadLossQuery(string sbsFile, HashSet<string> lossQuery, int scoreThread = -2)
+        public static void LoadLossQuery(string sbsFile, HashSet<string> lossQuery, int scoreThread)
         {
             StreamReader sr = new StreamReader(sbsFile);
             string line, query;
@@ -136,9 +136,15 @@ namespace Ranking.TopSite.AdjustTopSiteListBasedOnPartialSort.TopSiteTunning
                 {
                     continue;
                 }
+                /*
                 if (score > scoreThread)
                     continue;
                 lossQuery.Add(query);
+                 */
+                if(Math.Abs(score) >= scoreThread)
+                {
+                    lossQuery.Add(query); // win query also considered!
+                }
             }
             sr.Close();
 
@@ -536,14 +542,15 @@ namespace Ranking.TopSite.AdjustTopSiteListBasedOnPartialSort.TopSiteTunning
         {
             if (args.Length == 0)
             {
-                args = new String[7];
+                args = new String[8];
                 args[0] = @"D:\demo\PartialSortUrl.tsv";
-                args[1] = @"D:\demo\TopSiteTuningBasedOnV1.4BAVSG.tsv";
+                args[1] = @"D:\demo\TopSiteTuningBasedOnV1.6BAVSG.tsv";
                 args[2] = "0.8";
-                args[3] = @"D:\demo\v1.4BAVSG.tsv";
+                args[3] = @"D:\demo\v1.5BAVSG.tsv";
                 args[4] = @"D:\demo\querySlotPatternV1.3.tsv";
                 args[5] = @"D:\demo\queryPartial.tsv";
                 args[6] = @"D:\demo\TopSite.tsv";
+                args[7] = "1";
             }
             string infile = args[0];
             string outfile = args[1];
@@ -552,8 +559,9 @@ namespace Ranking.TopSite.AdjustTopSiteListBasedOnPartialSort.TopSiteTunning
             string partialSortfile = args[5];
             string topSitefile = args[6];
             double confThread = double.Parse(args[2]);
+            int scoreThread = int.Parse(args[7]);
             HashSet<string> lossQuery = new HashSet<string>();
-            LoadLossQuery(sbsfile, lossQuery, -2);
+            LoadLossQuery(sbsfile, lossQuery, scoreThread);
 
             // Dictionary<string, List<string>> slotPatternQueries = new Dictionary<string, List<string>>();
             Dictionary<string, string> querySlotPattern = new Dictionary<string, string>();
@@ -562,6 +570,7 @@ namespace Ranking.TopSite.AdjustTopSiteListBasedOnPartialSort.TopSiteTunning
             //  PrintQuerySlotPattern(querySlotPattern);
             Dictionary<string, List<KeyValuePair<string, string>>> queryPatial = new Dictionary<string, List<KeyValuePair<string, string>>>();
             LoadQueryPartialSort(partialSortfile, confThread, queryPatial, false);
+
 
             Dictionary<string, List<KeyValuePair<string, string>>> slotPatternPartialSort = new Dictionary<string, List<KeyValuePair<string, string>>>();
             MergePartialSortOfSamePattern(queryPatial, querySlotPattern, slotPatternPartialSort);
