@@ -114,7 +114,7 @@ namespace Ranking.TopSite.AdjustTopSiteListBasedOnPartialSort.TopSiteTunning
             sw.Close();
         }
 
-        public static void LoadLossQuery(string sbsFile, HashSet<string> lossQuery, int scoreThread)
+        public static void LoadEffectiveQuery(string sbsFile, Dictionary<string,int> effectiveQueryScore, HashSet<string> effectiveQuery, int scoreThread)
         {
             StreamReader sr = new StreamReader(sbsFile);
             string line, query;
@@ -143,14 +143,15 @@ namespace Ranking.TopSite.AdjustTopSiteListBasedOnPartialSort.TopSiteTunning
                  */
                 if(Math.Abs(score) >= scoreThread)
                 {
-                    lossQuery.Add(query); // win query also considered!
+                    effectiveQueryScore[query] = score;
+                    effectiveQuery.Add(query);
                 }
             }
             sr.Close();
 
         }
 
-        public static void LoadQuerySlotPattern(string slotFile, Dictionary<string, string> querySlotPattern, HashSet<string> lossQuery)
+        public static void LoadQuerySlotPattern(string slotFile, Dictionary<string, string> querySlotPattern, HashSet<string> effectiveQuery)
         {
             StreamReader sr = new StreamReader(slotFile);
             string line, query, slotPattern;
@@ -161,7 +162,7 @@ namespace Ranking.TopSite.AdjustTopSiteListBasedOnPartialSort.TopSiteTunning
                 if (arr.Length <= queryCol || arr.Length <= slotPatternCol)
                     continue;
                 query = arr[queryCol];
-                if (!lossQuery.Contains(query))
+                if (!effectiveQuery.Contains(query))
                     continue;
                 slotPattern = arr[slotPatternCol];
                 querySlotPattern[query] = slotPattern;
@@ -264,29 +265,74 @@ namespace Ranking.TopSite.AdjustTopSiteListBasedOnPartialSort.TopSiteTunning
                 }
             }
         }
-        public static void MergePartialSortOfSamePattern(Dictionary<string, List<KeyValuePair<string, string>>> queryPatial, Dictionary<string, string> querySlotPattern, Dictionary<string, List<KeyValuePair<string, string>>> patternPartial)
+        
+        public static int partialScoreCmp(KeyValuePair<KeyValuePair<string, string>, int> pairA, KeyValuePair<KeyValuePair<string, string>, int> pairB)
         {
+            return pairA.Value.CompareTo(pairB.Value);
+        }
+
+        public static void Display(List<KeyValuePair<KeyValuePair<string,string>, int>> partialScoreList)
+        {
+            foreach(KeyValuePair<KeyValuePair<string,string>, int> pair in partialScoreList)
+            {
+                Console.WriteLine("{0}\t{1}\t{2}", pair.Key.Key, pair.Key.Value, pair.Value);
+            }
+            Console.ReadKey();
+        }
+        public static void MergePartialSortOfSamePattern(Dictionary<string, List<KeyValuePair<string, string>>> queryPatial, Dictionary<string, string> querySlotPattern, Dictionary<string, int> effectiveQueryScore, Dictionary<string, List<KeyValuePair<string, string>>> patternPartial)
+        {
+            /*
+             * (1): Get the pattern partial score through add the score of relative query.
+             * (2): Sort the partial url based on score ascending. (In order to strong win/loss query have final influence on the top site list)
+             */
+            Dictionary<string, Dictionary<KeyValuePair<string, string>, int>> patternPartialScore = new Dictionary<string, Dictionary<KeyValuePair<string, string>, int>>();
             foreach (KeyValuePair<string, string> queryPatternEle in querySlotPattern)
             {
                 string query = queryPatternEle.Key;
                 string slotPattern = queryPatternEle.Value;
+                int score = 0;
+                if(effectiveQueryScore.ContainsKey(query))
+                {
+                    score = Math.Abs(effectiveQueryScore[query]);
+                }
+                
                 if (!queryPatial.ContainsKey(query))
                     continue;
                 List<KeyValuePair<string, string>> partialList = queryPatial[query];
-                if (!patternPartial.ContainsKey(slotPattern))
+
+                if(!patternPartialScore.ContainsKey(slotPattern))
                 {
-                    if (!HaveCycle(partialList))
-                    {
-                        patternPartial[slotPattern] = partialList;
-                    }
+                    patternPartialScore[slotPattern] = new Dictionary<KeyValuePair<string, string>, int>();
                 }
-                else
+                
+                foreach(KeyValuePair<string,string> partialPair in partialList)
                 {
-                    AddSiteListToPartial(patternPartial[slotPattern], partialList);
+                    if(!patternPartialScore[slotPattern].ContainsKey(partialPair))
+                    {
+                        patternPartialScore[slotPattern][partialPair] = 0;
+                    }
+                    patternPartialScore[slotPattern][partialPair] += score;
                 }
             }
-        }
 
+            List<string> patternList = patternPartialScore.Keys.ToList();
+            foreach(string pattern in patternList)
+            {
+                Dictionary<KeyValuePair<string, string>, int> partialScore = patternPartialScore[pattern];
+                List<KeyValuePair<KeyValuePair<string, string>, int>> partialScoreList = partialScore.ToList();
+                partialScoreList.Sort(partialScoreCmp); //Dictionary<string, List<KeyValuePair<string, string>>> patternPartial
+                if(!patternPartial.ContainsKey(pattern))
+                {
+                    patternPartial[pattern] = new List<KeyValuePair<string, string>>();
+                }
+                foreach(KeyValuePair<KeyValuePair<string, string>, int> pairIn in partialScoreList)
+                {
+                    patternPartial[pattern].Add(pairIn.Key);
+                }
+              
+            }
+                
+        }
         public static void PrintQueryPartialSort(Dictionary<string, List<KeyValuePair<string, string>>> slotPatternPartialSort)
         {
             StreamWriter sw = new StreamWriter(@"D:\demo\watch.tsv");
@@ -544,9 +590,9 @@ namespace Ranking.TopSite.AdjustTopSiteListBasedOnPartialSort.TopSiteTunning
             {
                 args = new String[8];
                 args[0] = @"D:\demo\PartialSortUrl.tsv";
-                args[1] = @"D:\demo\TopSiteTuningBasedOnV1.6BAVSG.tsv";
+                args[1] = @"D:\demo\TopSiteTuningBasedOnV1.8BAVSG.tsv";
                 args[2] = "0.8";
-                args[3] = @"D:\demo\v1.5BAVSG.tsv";
+                args[3] = @"D:\demo\v1.8BAVSG.tsv";
                 args[4] = @"D:\demo\querySlotPatternV1.3.tsv";
                 args[5] = @"D:\demo\queryPartial.tsv";
                 args[6] = @"D:\demo\TopSite.tsv";
@@ -560,22 +606,22 @@ namespace Ranking.TopSite.AdjustTopSiteListBasedOnPartialSort.TopSiteTunning
             string topSitefile = args[6];
             double confThread = double.Parse(args[2]);
             int scoreThread = int.Parse(args[7]);
-            HashSet<string> lossQuery = new HashSet<string>();
-            LoadLossQuery(sbsfile, lossQuery, scoreThread);
-
+         
+            Dictionary<string, int> effectiveQueryScore = new Dictionary<string,int>();
+            HashSet<string> effectiveQuery = new HashSet<string>();
+            LoadEffectiveQuery(sbsfile, effectiveQueryScore, effectiveQuery, scoreThread);
             // Dictionary<string, List<string>> slotPatternQueries = new Dictionary<string, List<string>>();
             Dictionary<string, string> querySlotPattern = new Dictionary<string, string>();
-            LoadQuerySlotPattern(slotfile, querySlotPattern, lossQuery);
+            LoadQuerySlotPattern(slotfile, querySlotPattern, effectiveQuery);
 
             //  PrintQuerySlotPattern(querySlotPattern);
-            Dictionary<string, List<KeyValuePair<string, string>>> queryPatial = new Dictionary<string, List<KeyValuePair<string, string>>>();
-            LoadQueryPartialSort(partialSortfile, confThread, queryPatial, false);
+            Dictionary<string, List<KeyValuePair<string, string>>> queryPartial = new Dictionary<string, List<KeyValuePair<string, string>>>();
+            LoadQueryPartialSort(partialSortfile, confThread, queryPartial, false);
 
 
             Dictionary<string, List<KeyValuePair<string, string>>> slotPatternPartialSort = new Dictionary<string, List<KeyValuePair<string, string>>>();
-            MergePartialSortOfSamePattern(queryPatial, querySlotPattern, slotPatternPartialSort);
-
-            //PrintQueryPartialSort(slotPatternPartialSort);
+            MergePartialSortOfSamePattern(queryPartial, querySlotPattern, effectiveQueryScore, slotPatternPartialSort);
+             //PrintQueryPartialSort(slotPatternPartialSort);
                 
             Dictionary<string, Dictionary<string, List<KeyValuePair<string, int>>>> intentPatternUrlList = new Dictionary<string, Dictionary<string, List<KeyValuePair<string, int>>>>();
             LoadPatternTopUrlList(topSitefile, intentPatternUrlList);
