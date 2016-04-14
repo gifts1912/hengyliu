@@ -24,7 +24,7 @@ namespace Ranking
                              
                 args[0] = "TopoLogisticSort";
                 args[0] = "AdjustBaseTopoLogisticSort";
-                args[0] = "AdjustBaseTopSiteTunning";
+                
                
                 args[0] = "SlotTriggerPbmxlFile";
                 args[0] = "intentpatternslotlayer";
@@ -38,6 +38,9 @@ namespace Ranking
                 args[0] = "TurnAddFeatureModule";
                 args[0] = "AppendTopSiteLabelFeature_ByQueryPatternV2";
                 args[0] = "Calculater";
+                args[0] = "ParseXml";
+
+                args[0] = "AdjustBaseTopSiteTunning";
             }
             string[] cmdArgs = args.Skip(1).ToArray();
             if (args[0].Equals("queryslotformat", StringComparison.OrdinalIgnoreCase))
@@ -108,6 +111,10 @@ namespace Ranking
             else if(args[0].Equals("Calculater", StringComparison.OrdinalIgnoreCase))
             {
                 Ranking.TestGram.Calculater.Calculater.Run(cmdArgs);
+            }
+            else if(args[0].Equals("ParseXml", StringComparison.OrdinalIgnoreCase))
+            {
+                Ranking.QU.ParseXml.ParseXml.Run(cmdArgs);
             }
         }
     }

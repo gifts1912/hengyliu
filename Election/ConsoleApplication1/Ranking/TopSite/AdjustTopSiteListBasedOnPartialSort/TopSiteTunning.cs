@@ -150,21 +150,22 @@ namespace Ranking.TopSite.AdjustTopSiteListBasedOnPartialSort.TopSiteTunning
 
         }
 
-        public static void LoadQuerySlotPattern(string slotFile, Dictionary<string, string> querySlotPattern, HashSet<string> lossQuery)
+        public static void LoadQueryIntentSlotPattern(string intentSlotFile, Dictionary<string, Tuple<string, string>> queryIntentSlotPattern, HashSet<string> lossQuery)
         {
-            StreamReader sr = new StreamReader(slotFile);
-            string line, query, slotPattern;
-            int queryCol = 0, slotPatternCol = 1;
+            StreamReader sr = new StreamReader(intentSlotFile);
+            string line, query, slotPattern, intent;
+            int queryCol = 0, intentCol = 1, slotPatternCol = 2;
             while ((line = sr.ReadLine()) != null)
             {
                 string[] arr = line.Split('\t');
-                if (arr.Length <= queryCol || arr.Length <= slotPatternCol)
+                if (arr.Length != 3)
                     continue;
                 query = arr[queryCol];
                 if (!lossQuery.Contains(query))
                     continue;
                 slotPattern = arr[slotPatternCol];
-                querySlotPattern[query] = slotPattern;
+                intent = arr[intentCol];
+                queryIntentSlotPattern[query] = new Tuple<string, string>(intent, slotPattern);
             }
 
             sr.Close();
@@ -264,25 +265,32 @@ namespace Ranking.TopSite.AdjustTopSiteListBasedOnPartialSort.TopSiteTunning
                 }
             }
         }
-        public static void MergePartialSortOfSamePattern(Dictionary<string, List<KeyValuePair<string, string>>> queryPatial, Dictionary<string, string> querySlotPattern, Dictionary<string, List<KeyValuePair<string, string>>> patternPartial)
+        public static void MergePartialSortOfSameIntentPattern(Dictionary<string, List<KeyValuePair<string, string>>> queryPatial,  Dictionary<string, Tuple<string, string>> queryIntentSlotPattern, Dictionary<string, Dictionary<string, List<KeyValuePair<string, string>>>> intentSlotPatternPartial)
         {
-            foreach (KeyValuePair<string, string> queryPatternEle in querySlotPattern)
+            foreach (KeyValuePair<string, Tuple<string, string>> queryPatternEle in queryIntentSlotPattern)
             {
                 string query = queryPatternEle.Key;
-                string slotPattern = queryPatternEle.Value;
+                string intent = queryPatternEle.Value.Item1;
+                string slotPattern = queryPatternEle.Value.Item2;
                 if (!queryPatial.ContainsKey(query))
                     continue;
                 List<KeyValuePair<string, string>> partialList = queryPatial[query];
-                if (!patternPartial.ContainsKey(slotPattern))
+
+                if (!intentSlotPatternPartial.ContainsKey(intent))
+                {
+                    intentSlotPatternPartial[intent] = new Dictionary<string, List<KeyValuePair<string, string>>>();
+                }
+                
+                if (!intentSlotPatternPartial[intent].ContainsKey(slotPattern))
                 {
                     if (!HaveCycle(partialList))
                     {
-                        patternPartial[slotPattern] = partialList;
+                        intentSlotPatternPartial[intent][slotPattern] = partialList;
                     }
                 }
                 else
                 {
-                    AddSiteListToPartial(patternPartial[slotPattern], partialList);
+                    AddSiteListToPartial(intentSlotPatternPartial[intent][slotPattern], partialList);
                 }
             }
         }
@@ -469,19 +477,21 @@ namespace Ranking.TopSite.AdjustTopSiteListBasedOnPartialSort.TopSiteTunning
         }
 
      
-        public static void AdjustTopSiteThrougChangeList(Dictionary<string, Dictionary<string, List<KeyValuePair<string, int>>>> intentPatternUrlList, Dictionary<string, List<KeyValuePair<string, string>>> slotPatternPartialSort)
+        public static void AdjustTopSiteThrougChangeList(Dictionary<string, Dictionary<string, List<KeyValuePair<string, int>>>> intentPatternUrlList, Dictionary<string, Dictionary<string, List<KeyValuePair<string, string>>>> intentSlotPatternPartialSort)
         {
             List<string> intentList = intentPatternUrlList.Keys.ToList();
             foreach(string intent in intentList)
             {
+                if (!intentSlotPatternPartialSort.ContainsKey(intent))
+                    continue;
                 Dictionary<string, List<KeyValuePair<string, int>>> patternUrlList = intentPatternUrlList[intent];
                 List<string> patternList = patternUrlList.Keys.ToList();
                 foreach(string pattern in patternList)
                 {
-                    if (!slotPatternPartialSort.ContainsKey(pattern))
+                    if (!intentSlotPatternPartialSort[intent].ContainsKey(pattern))
                         continue;
                     List<KeyValuePair<string, int>> urlList = patternUrlList[pattern];
-                    List<KeyValuePair<string, string>> partialList = slotPatternPartialSort[pattern];
+                    List<KeyValuePair<string, string>> partialList = intentSlotPatternPartialSort[intent][pattern];
                     foreach(KeyValuePair<string, string> partialPair in partialList)
                     {
                         string preUrl = partialPair.Key;
@@ -542,45 +552,50 @@ namespace Ranking.TopSite.AdjustTopSiteListBasedOnPartialSort.TopSiteTunning
         {
             if (args.Length == 0)
             {
-                args = new String[8];
-                args[0] = @"D:\demo\PartialSortUrl.tsv";
-                args[1] = @"D:\demo\TopSiteTuningBasedOnV1.6BAVSG.tsv";
-                args[2] = "0.8";
-                args[3] = @"D:\demo\v1.5BAVSG.tsv";
-                args[4] = @"D:\demo\querySlotPatternV1.3.tsv";
-                args[5] = @"D:\demo\queryPartial.tsv";
-                args[6] = @"D:\demo\TopSite.tsv";
-                args[7] = "1";
+                args = new String[7];
+                args[0] = @"D:\demo\v1.5BAVSG.tsv";
+                args[1] = "1";
+                args[2] = @"D:\demo\queryIntentSlotPattern.tsv";
+                args[3] = @"D:\demo\urlPartialPairDataTest.tsv";
+                args[4] = "0.8";
+                args[5] = @"D:\demo\TopSite.tsv";
+                args[6] = @"D:\demo\NewTopSite.tsv";
+                
+                
             }
-            string infile = args[0];
-            string outfile = args[1];
-            string sbsfile = args[3];
-            string slotfile = args[4];
-            string partialSortfile = args[5];
-            string topSitefile = args[6];
-            double confThread = double.Parse(args[2]);
-            int scoreThread = int.Parse(args[7]);
+            string sbsfile = args[0];
+            int scoreThread = int.Parse(args[1]);
+            string intentSlotfile = args[2];
+            string partialSortfile = args[3];
+            double confThread = double.Parse(args[4]);
+            string topSitefile = args[5];
+            string outfile = args[6];
+            
+           
             HashSet<string> lossQuery = new HashSet<string>();
             LoadLossQuery(sbsfile, lossQuery, scoreThread);
 
             // Dictionary<string, List<string>> slotPatternQueries = new Dictionary<string, List<string>>();
-            Dictionary<string, string> querySlotPattern = new Dictionary<string, string>();
-            LoadQuerySlotPattern(slotfile, querySlotPattern, lossQuery);
+            Dictionary<string, Tuple<string,string>> queryIntentSlotPattern = new Dictionary<string, Tuple<string, string>>();
+            LoadQueryIntentSlotPattern(intentSlotfile, queryIntentSlotPattern, lossQuery);
 
             //  PrintQuerySlotPattern(querySlotPattern);
             Dictionary<string, List<KeyValuePair<string, string>>> queryPatial = new Dictionary<string, List<KeyValuePair<string, string>>>();
             LoadQueryPartialSort(partialSortfile, confThread, queryPatial, false);
 
 
-            Dictionary<string, List<KeyValuePair<string, string>>> slotPatternPartialSort = new Dictionary<string, List<KeyValuePair<string, string>>>();
-            MergePartialSortOfSamePattern(queryPatial, querySlotPattern, slotPatternPartialSort);
+          //  Dictionary<string, List<KeyValuePair<string, string>>> slotPatternPartialSort = new Dictionary<string, List<KeyValuePair<string, string>>>();
+            Dictionary<string, Dictionary<string, List<KeyValuePair<string, string>>>> intentSlotPatternPartialSet = new Dictionary<string, Dictionary<string, List<KeyValuePair<string, string>>>>();
+         //   MergePartialSortOfSamePattern(queryPatial, querySlotPattern, slotPatternPartialSort);
+
+            MergePartialSortOfSameIntentPattern(queryPatial, queryIntentSlotPattern, intentSlotPatternPartialSet);
 
             //PrintQueryPartialSort(slotPatternPartialSort);
                 
             Dictionary<string, Dictionary<string, List<KeyValuePair<string, int>>>> intentPatternUrlList = new Dictionary<string, Dictionary<string, List<KeyValuePair<string, int>>>>();
             LoadPatternTopUrlList(topSitefile, intentPatternUrlList);
 
-            AdjustTopSiteThrougChangeList(intentPatternUrlList, slotPatternPartialSort);
+            AdjustTopSiteThrougChangeList(intentPatternUrlList, intentSlotPatternPartialSet);
 
             // PrintQueryPartialSort(slotPatternPartialSort);
             StoreAdjustedTopSite(intentPatternUrlList, outfile);          
