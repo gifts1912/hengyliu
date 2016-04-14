@@ -616,7 +616,7 @@ namespace Ranking.TopSite.intentPatternSlotLayer
 
             ReadQueryScore(scoreFile);
 
-            string PatternQueryFile = @"D:\Project\Election\TokenAndRules\electionV1.2FilterViewAndCandidateListIntent";
+            string PatternQueryFile = @"D:\Project\Election\TokenAndRules\electionV1.2FilterViewAndCandidateListIntent.tsv";
             int queryCol = 0, patCol = 1, intentCol = 3;
 
             string slotValueIdealValueFile = @"D:\Project\Election\TokenAndRules\candidatePartyPoliticalViewMappingDic.tsv";

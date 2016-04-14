@@ -13,37 +13,31 @@ namespace Ranking
             if (args.Length < 1)
             {
                 args = new string[1];
-               // args[0] = "querySlotFormat";
-                // args[0] = "intendpatternlayer";
-                 
-              //  args[0] = "AppendTopSiteLabelFeature_ByQueryPatternV2";
                 args[0] = "simslotmining";                  
-                args[0] = "querySlotFormat";                        
-
-                args[0] = "QueryPatternChangeModule";
-                args[0] = "AppendTopSiteLabelFeature_ByQueryPatternV2";
+                args[0] = "querySlotFormat";                                      
                 args[0] = "LargerScoreProcess";
-                
-                
+             
                 args[0] = "IntentSlotAnalysis";
                 args[0] = "querySlotFormat";
-                
-                
-                
-                
-                args[0] = "Utility";                                   
-               
-                          
-               
-                      
-                args[0] = "SlotTriggerPbmxlFile";
-                args[0] = "IntentSlotQueryFormat";
-                args[0] = "intentpatternslotlayer";
-                args[0] = "MergeGoogAndBingTopDomainUrls";
+             
+                args[0] = "Utility";                                             
+                             
                 args[0] = "TopoLogisticSort";
                 args[0] = "AdjustBaseTopoLogisticSort";
                 args[0] = "AdjustBaseTopSiteTunning";
+               
+                args[0] = "SlotTriggerPbmxlFile";
+                args[0] = "intentpatternslotlayer";
+                args[0] = "MergeGoogAndBingTopDomainUrls";
                 
+                args[0] = "QueryPatternChangeModule";
+                
+                args[0] = "TunningElectionLabelFile";
+                args[0] = "IntentSlotQueryFormat";
+                
+                args[0] = "TurnAddFeatureModule";
+                args[0] = "AppendTopSiteLabelFeature_ByQueryPatternV2";
+                args[0] = "Calculater";
             }
             string[] cmdArgs = args.Skip(1).ToArray();
             if (args[0].Equals("queryslotformat", StringComparison.OrdinalIgnoreCase))
@@ -52,7 +46,8 @@ namespace Ranking
             }
             else if (args[0].Equals("appendtopsitelabelfeature_byquerypatternv2", StringComparison.OrdinalIgnoreCase))
             {
-                Ranking.AppendTopSiteLabelFeature_ByQueryPatternV2.Program.Run(cmdArgs);
+                Ranking.RankingPro.AppendTopSiteLabelFeature_ByQueryPatternV2.AppendTopSiteLabelFeature_ByQueryPatternV2.Run(cmdArgs);
+                //Ranking.AppendTopSiteLabelFeature_ByQueryPatternV2.Program.Run(cmdArgs);
             }
             else if(args[0].Equals("simslotmining", StringComparison.OrdinalIgnoreCase))
             {
@@ -72,7 +67,7 @@ namespace Ranking
             }
             else if(args[0].Equals("querypatternchangemodule", StringComparison.OrdinalIgnoreCase))
             {
-                Ranking.QueryPatternChangeModule.QueryPatternChangeModule.Run(cmdArgs);
+                Ranking.RankingPro.QueryPatternChangeModule.QueryPatternChangeModule.Run(cmdArgs);
             }
             else if(args[0].Equals("intentslotanalysis", StringComparison.OrdinalIgnoreCase))
             {
@@ -101,6 +96,18 @@ namespace Ranking
             else if(args[0].Equals("AdjustBaseTopSiteTunning", StringComparison.OrdinalIgnoreCase))
             {
                 Ranking.TopSite.AdjustTopSiteListBasedOnPartialSort.TopSiteTunning.TopSiteTunning.Run(cmdArgs);
+            }
+            else if(args[0].Equals("TunningElectionLabelFile", StringComparison.OrdinalIgnoreCase))
+            {
+                Ranking.QU.TunningElectionLabelFile.TunningElectionLabelFile.Run(cmdArgs);
+            }
+            else if(args[0].Equals("TurnAddFeatureModule", StringComparison.OrdinalIgnoreCase))
+            {
+                Ranking.PipelineChange.TurnAddFeatureModule.TurnAddFeatureModule.Run(cmdArgs);
+            }
+            else if(args[0].Equals("Calculater", StringComparison.OrdinalIgnoreCase))
+            {
+                Ranking.TestGram.Calculater.Calculater.Run(cmdArgs);
             }
         }
     }

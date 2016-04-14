@@ -295,7 +295,7 @@ namespace Ranking.QU
         }
 
     
-        public static void RankingFormat(string infile, string outfile, HashSet<string> querySet, string intentFlag)
+        public static void RankingFormat(string infile, string outfile, Dictionary<string,string> queryIntent)
         {
             /*
              * Change original infomation to this format: "10 republican candidates 2016	[election.candidateword] [election.date] [election.party]	[10]:10|||[election.party]:republican|||[election.candidateword]:candidates|||[election.date]:2016"
@@ -318,7 +318,7 @@ namespace Ranking.QU
                     continue;
                 }
                 string query = arr[queryCol];
-                if(!querySet.Contains(query))
+                if(!queryIntent.ContainsKey(query))
                 {
                     continue;
                 }
@@ -326,6 +326,7 @@ namespace Ranking.QU
                 string[] slotKeyArr = arr[slotKeyCol].Split(new string[] { "|||" }, StringSplitOptions.RemoveEmptyEntries);
                 string[] slotValueArr = arr[slotValueCol].Split(new string[] { "|||" }, StringSplitOptions.RemoveEmptyEntries);
                 //slotStr = NormalizePattern(slotStr);
+                string intentFlag = queryIntent[query];
                 slotStr = Utility.Utility.NormalizationPatternSlot(slotStr, slotKeyArr, slotValueArr, intentFlag, slotIdealSlot);
 
                // string slotQuery = SlotQueryGen(slotKeyArr, slotValueArr);
@@ -336,8 +337,8 @@ namespace Ranking.QU
 
                 QueryForMatching = query;
                 QueryForScraping = query;
-                
-                string result = string.Format("{0}\t{1}\t{2}\t{3}\t{4}\t{5}\t{6}\t{7}\t{8}", query, slotStr,QueryPatternGroupId, QueryForMatching,QueryForScraping,QueryId,slotQuery, MatchingConditionId, EntitySlotMapping);
+
+                string result = string.Format("{0}\t{9}\t{1}\t{2}\t{3}\t{4}\t{5}\t{6}\t{7}\t{8}", query, slotStr, QueryPatternGroupId, QueryForMatching, QueryForScraping, QueryId, slotQuery, MatchingConditionId, EntitySlotMapping, intentFlag);
                 QueryId += 1;
                 sw.WriteLine("{0}", result);
             }
@@ -360,7 +361,7 @@ namespace Ranking.QU
             }
         }
 
-        public static void LoadQueryIntent(string infile, HashSet<string> querySet, string intentFlag)
+        public static void LoadQueryIntent(string infile, Dictionary<string, string> queryIntent)
         {
             int queryCol = 0, intentCol = 3;
             StreamReader sr = new StreamReader(infile);
@@ -373,10 +374,8 @@ namespace Ranking.QU
                     continue;
                 }
                 string query = arr[queryCol];
-                if(intentFlag == arr[intentCol])
-                {
-                    querySet.Add(query);
-                }
+                string intent = arr[intentCol];
+                queryIntent[query] = intent;
             }
             sr.Close();
         }
@@ -390,7 +389,7 @@ namespace Ranking.QU
                 args[0] = @"D:\Project\Election\TokenAndRules\pbxmlParse.tsv";
                 args[1] = @"D:\Project\Election\TokenAndRules\candidatePartyPoliticalViewMappingDic.tsv";
                 args[2] = @"D:\Project\Election\TokenAndRules\pbxmlParseRankingFormat.tsv";
-                args[3] = @"D:\Project\Election\TokenAndRules\electionV1.2.tsv";
+                args[3] = @"D:\Project\Election\TokenAndRules\electionv1.3.tsv";
                 
             }
             string infile = args[0];
@@ -400,14 +399,11 @@ namespace Ranking.QU
 
             int queryCol = 0, patCol = 1, intentCol = 3;
 
-            HashSet<string> querySet = new HashSet<string>();
-            LoadQueryIntent(PatternQueryFile, querySet, "CandidateList");
-
-
-            ReadIdealSlotExpress(idealSotFile);
-            
-            RankingFormat(infile, outfile, querySet, "CandidateList");
-
+            //HashSet<string> querySet = new HashSet<string>();
+            Dictionary<string, string> queryIntent = new Dictionary<string, string>();
+            LoadQueryIntent(PatternQueryFile, queryIntent);
+            ReadIdealSlotExpress(idealSotFile);          
+            RankingFormat(infile, outfile, queryIntent);
         }
     }
 }
