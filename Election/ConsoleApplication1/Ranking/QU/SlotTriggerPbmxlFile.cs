@@ -77,7 +77,7 @@ namespace Ranking.QU.SlotTriggerPbmxlFile
             {
                 args = new string[4];
                 args[0] = @"D:\Project\Election\TokenAndRules\ElectionEntityLexiconDirectory\electionSlotPatternConsraintWords.txt";
-                args[1] = @"D:\Project\Election\TokenAndRules\pbxmlParseOriginal.tsv";
+                args[1] = @"D:\Project\Election\TokenAndRules\pbxmlParseOriginalTest.tsv";
                 args[2] = @"D:\Project\Election\TokenAndRules\pbxmlParse.tsv";
                 args[3] = "2";
             }

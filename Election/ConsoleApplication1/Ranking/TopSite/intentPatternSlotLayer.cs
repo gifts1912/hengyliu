@@ -97,14 +97,13 @@ namespace Ranking.TopSite.intentPatternSlotLayer
         public static void TopSiteScoreCompute(string flag , bool topDomainFlag)
         {
             /*
-             * Compute the url socre of specified intent + slot layer.
-             */
-            //Dictionary<string, Dictionary<string, Dictionary<string, int>>> intentSlotUrlScore = new Dictionary<string,Dictionary<string,Dictionary<string,int>>>();
+             * Compute the url socre of specified intent + slot layer. Store them into static parameter Dictionary<string, Dictionary<string, Dictionary<string, int>>> intentSlotUrlScore = new Dictionary<string,Dictionary<string,Dictionary<string,int>>>();
+            */
 
             string pattern = "http(s)?://(www.)?([0-9a-zA-Z-.]+)/";
             Regex rgx = new Regex(pattern, RegexOptions.Compiled);
 
-            foreach (KeyValuePair<string, Dictionary<string, List<string>>> pair in intentPatternQuery)
+            foreach (KeyValuePair<string, Dictionary<string, List<string>>> pair in intentPatternQuery) // static paramters intentPatternQuery store query list of specified "intent + slot pattern"
             {
                 string intent = pair.Key;
                 if (!intentSlotUrlScore.ContainsKey(intent))
@@ -159,7 +158,7 @@ namespace Ranking.TopSite.intentPatternSlotLayer
                             if (urlPosArr.Length != 2)
                                 continue;
                             string url = urlPosArr[0];
-                            int posCur = int.Parse(urlPosArr[1]);
+                            int posCur = int.Parse(urlPosArr[1]); // position of the url
 
                             string urlDomain = url;
                             if (topDomainFlag)
@@ -348,8 +347,9 @@ namespace Ranking.TopSite.intentPatternSlotLayer
             result = string.Join(" ", slotPattern.ToArray());
             return result;
         }
-        public static void ReadPatternSlotFrequencyQuery(string infile, string queryIntentManualLabelledFile, Dictionary<string, Dictionary<string, Dictionary<string, int>>> intentSlotQueryFreq, params string[] intentFlag)
+        public static void ReadPatternSlotFrequencyQuery(string infile, string queryIntentManualLabelledFile, Dictionary<string, Dictionary<string, Dictionary<string, int>>> intentSlotQueryFreq)
         {
+            //To get the static parameters: Dictionary<string, Dictionary<string, List<string>>> intentPatternQuery, slotPattern is normalized, and query list is sorted by query's frequency.
             /*
              * Read pbxml file result, and slot query list of specsified "intent+patternSlot".
              * (1): Map query to intent. Map<query, intent>;
@@ -612,26 +612,29 @@ namespace Ranking.TopSite.intentPatternSlotLayer
                 outfile = outfile + flag + "TopUrlScore.tsv";
             }
 
-            string scoreFile = @"D:\Project\Election\QuerySet\queyJudge.tsv";
+            string scoreFile = @"D:\Project\Election\QuerySet\queyJudge.tsv"; // sbs judge file.
 
-            ReadQueryScore(scoreFile);
+            //load original query judge file. Get query and relevance score
+            ReadQueryScore(scoreFile); 
 
-            string PatternQueryFile = @"D:\Project\Election\TokenAndRules\electionV1.2FilterViewAndCandidateListIntent.tsv";
+            string PatternQueryFile = @"D:\Project\Election\TokenAndRules\electionV1.2FilterViewAndCandidateListIntent.tsv"; //store query and relevance intent that manually labelled
             int queryCol = 0, patCol = 1, intentCol = 3;
+            string slotValueIdealValueFile = @"D:\Project\Election\TokenAndRules\candidatePartyPoliticalViewMappingDic.tsv"; //store entity and it's normalized one.
+            //Map the entity name to ideal one.
+            LoadSlotIdealSlot(slotValueIdealValueFile); 
 
-            string slotValueIdealValueFile = @"D:\Project\Election\TokenAndRules\candidatePartyPoliticalViewMappingDic.tsv";
-            LoadSlotIdealSlot(slotValueIdealValueFile); // slot value replace with ideal value.
 
-
-            string patternSlotQueryFile = @"D:\Project\Election\TokenAndRules\pbxmlParse.tsv";
-           // ReadPatternSlotQuery(patternSlotQueryFile, PatternQueryFile); //PatternQueryFile: Get the manual labeled intent of each query.
-            Dictionary<string, Dictionary<string, Dictionary<string, int>>> intentSlotQueryFreq = new Dictionary<string, Dictionary<string, Dictionary<string, int>>>();
-            //ReadPatternSlotFrequencyQuery(patternSlotQueryFile, PatternQueryFile, intentSlotQueryFreq, "CandidateList");
-            ReadPatternSlotFrequencyQuery(patternSlotQueryFile, PatternQueryFile, intentSlotQueryFreq, "Candidate", "CandidateGeneral", "ElectionSchedule",  "CandidateNavigational", "ElectionGeneral", "CandidateCampain", "CandidateBio");
+            string patternSlotQueryFile = @"D:\Project\Election\TokenAndRules\pbxmlParse.tsv"; // store query and relevance slot pattern.
+            Dictionary<string, Dictionary<string, Dictionary<string, int>>> intentSlotPatternQueryFreq = new Dictionary<string, Dictionary<string, Dictionary<string, int>>>();
+            //to get query list of specified "intent + slot pattern" , and store them into static parameters: Dictionary<string, Dictionary<string, List<string>>> intentPatternQuery, slotPattern is normalized, and query list is sorted by query's frequency.
+            ReadPatternSlotFrequencyQuery(patternSlotQueryFile, PatternQueryFile, intentSlotPatternQueryFreq);
+            
             
             string infile = @"D:\Project\Election\TokenAndRules\" + flag + @"ScrapFeaturesTSV.tsv";
+            //get query and reletive "url + position of url"
             ReadQueryTopUrl(infile, 10); // query, scrap url come from aether experiment : aether://experiments/1f82e2ad-7955-4085-8d60-1bd4c213e578
 
+            //Compute the url and relative score , store them into static paramters : Dictionary<string, Dictionary<string, Dictionary<string, int>>> intentSlotUrlScore
             TopSiteScoreCompute(flag, domainUrlFlag);
 
             TopSiteStore(outfile, flag);
@@ -647,6 +650,7 @@ namespace Ranking.TopSite.intentPatternSlotLayer
            // RunFlag("Bing", false);
            // RunFlag("Google", true);
             RunFlag("Google", false);
+           // RunFlag("Google", false, args);
         }
     }
 }

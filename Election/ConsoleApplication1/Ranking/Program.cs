@@ -26,9 +26,9 @@ namespace Ranking
                 args[0] = "AdjustBaseTopoLogisticSort";
                 
                
-                args[0] = "SlotTriggerPbmxlFile";
-                args[0] = "intentpatternslotlayer";
-                args[0] = "MergeGoogAndBingTopDomainUrls";
+                
+                
+                
                 
                 args[0] = "QueryPatternChangeModule";
                 
@@ -43,6 +43,9 @@ namespace Ranking
                 
                 args[0] = "IntentSlotQueryFormat";
                 args[0] = "AdjustBaseTopSiteTunning";
+                args[0] = "SlotTriggerPbmxlFile";
+                args[0] = "intentpatternslotlayer";
+                args[0] = "MergeGoogAndBingTopDomainUrls";
             }
             string[] cmdArgs = args.Skip(1).ToArray();
             if (args[0].Equals("queryslotformat", StringComparison.OrdinalIgnoreCase))

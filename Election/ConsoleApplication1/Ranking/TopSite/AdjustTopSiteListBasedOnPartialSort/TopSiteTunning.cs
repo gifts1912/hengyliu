@@ -483,13 +483,17 @@ namespace Ranking.TopSite.AdjustTopSiteListBasedOnPartialSort.TopSiteTunning
             foreach (string intent in intentList)
             {
                 if (!intentSlotPatternPartialSort.ContainsKey(intent))
+                {
                     continue;
+                }
                 Dictionary<string, List<KeyValuePair<string, int>>> patternUrlList = intentPatternUrlList[intent];
                 List<string> patternList = patternUrlList.Keys.ToList();
                 foreach (string pattern in patternList)
                 {
                     if (!intentSlotPatternPartialSort[intent].ContainsKey(pattern))
+                    {
                         continue;
+                    }
                     List<KeyValuePair<string, int>> urlList = patternUrlList[pattern];
                     List<KeyValuePair<string, string>> partialList = intentSlotPatternPartialSort[intent][pattern];
                     Dictionary<string, List<string>> prePosUrlList = new Dictionary<string, List<string>>();
