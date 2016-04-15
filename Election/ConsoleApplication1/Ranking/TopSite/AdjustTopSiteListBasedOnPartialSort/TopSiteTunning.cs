@@ -476,6 +476,113 @@ namespace Ranking.TopSite.AdjustTopSiteListBasedOnPartialSort.TopSiteTunning
             Console.ReadKey();
         }
 
+        public static void AdjustTopSiteThrougChangeListAddNo(Dictionary<string, Dictionary<string, List<KeyValuePair<string, int>>>> intentPatternUrlList, Dictionary<string, Dictionary<string, List<KeyValuePair<string, string>>>> intentSlotPatternPartialSort)
+        {   
+            // add the url of partital that not exists in top site list.
+            List<string> intentList = intentPatternUrlList.Keys.ToList();
+            foreach (string intent in intentList)
+            {
+                if (!intentSlotPatternPartialSort.ContainsKey(intent))
+                    continue;
+                Dictionary<string, List<KeyValuePair<string, int>>> patternUrlList = intentPatternUrlList[intent];
+                List<string> patternList = patternUrlList.Keys.ToList();
+                foreach (string pattern in patternList)
+                {
+                    if (!intentSlotPatternPartialSort[intent].ContainsKey(pattern))
+                        continue;
+                    List<KeyValuePair<string, int>> urlList = patternUrlList[pattern];
+                    List<KeyValuePair<string, string>> partialList = intentSlotPatternPartialSort[intent][pattern];
+                    Dictionary<string, List<string>> prePosUrlList = new Dictionary<string, List<string>>();
+                    foreach (KeyValuePair<string, string> partialPair in partialList)
+                    {
+                        string preUrl = partialPair.Key;
+                        string posUrl = partialPair.Value;
+                        if (preUrl == "*")
+                            continue;
+                        if (posUrl == "*" && preUrl != "*")
+                        {
+                            urlList.RemoveAll(x => x.Key == preUrl);
+                            int tmpScore = urlList[0].Value;
+                            tmpScore = tmpScore + 2;
+                            urlList.Insert(0, new KeyValuePair<string, int>(preUrl, tmpScore));
+                            continue;
+                        }
+
+                        int preIdx = urlList.FindIndex(x => x.Key == preUrl);
+                        int posIdx = urlList.FindIndex(x => x.Key == posUrl);
+                        if (preIdx != -1 && posIdx != -1 && preIdx > posIdx)
+                        {
+                            int eScore = urlList[posIdx].Value;
+                            int bScore;//= 100;
+                            int curScore;//= eScore + 1;
+                            if (posIdx - 1 >= 0)
+                            {
+                                bScore = urlList[posIdx - 1].Value;
+                                int remainNum = (bScore + eScore) % 2 == 0 ? 0 : 1;
+                                curScore = (bScore + eScore) / 2 + remainNum;
+                            }
+                            else
+                            {
+                                curScore = eScore + 2;
+                            }
+                            urlList.RemoveAt(preIdx);
+                            urlList.RemoveAll(x => x.Key == preUrl);
+
+                            urlList.Insert(posIdx, new KeyValuePair<string, int>(preUrl, curScore));
+                        }
+                        else if(preIdx == -1)
+                        {
+                            if(!prePosUrlList.ContainsKey(preUrl))
+                            {
+                                prePosUrlList[preUrl] = new List<string>();
+                            }             
+                            prePosUrlList[preUrl].Add(posUrl);
+                        }
+                    }
+                    foreach(KeyValuePair<string, List<string>> pair in prePosUrlList)
+                    {
+                        string preUrlNotHave = pair.Key;
+                        List<string> posUrlList = pair.Value;
+                        int posIdxMin = -1, posIdxCur = -1;
+                        foreach(string posUrlCur in posUrlList)
+                        {
+                            posIdxCur = urlList.FindIndex(x => x.Key == posUrlCur);
+                            if (posIdxCur == -1)
+                                continue;
+                            if(posIdxMin == -1)
+                            {
+                                posIdxMin = posIdxCur;
+                            }
+                            else if(posIdxMin > posIdxCur)
+                            {
+                                posIdxMin = posIdxCur;
+                            }
+                        }
+                        if(posIdxMin != -1)
+                            InsertUrlAndScore(urlList, preUrlNotHave, posIdxMin);
+                    }
+                    intentPatternUrlList[intent][pattern] = urlList;
+                }
+            }
+        }
+
+        public static void InsertUrlAndScore(List<KeyValuePair<string, int>> urlList, string preUrl, int posIdx)
+        {
+            int eScore = urlList[posIdx].Value;
+            int bScore;//= 100;
+            int curScore;//= eScore + 1;
+            if (posIdx - 1 >= 0)
+            {
+                bScore = urlList[posIdx - 1].Value;
+                int remainNum = (bScore + eScore) % 2 == 0 ? 0 : 1;
+                curScore = (bScore + eScore) / 2 + remainNum;
+            }
+            else
+            {
+                curScore = eScore + 2;
+            }
+            urlList.Insert(posIdx, new KeyValuePair<string, int>(preUrl, curScore));
+        }
      
         public static void AdjustTopSiteThrougChangeList(Dictionary<string, Dictionary<string, List<KeyValuePair<string, int>>>> intentPatternUrlList, Dictionary<string, Dictionary<string, List<KeyValuePair<string, string>>>> intentSlotPatternPartialSort)
         {
@@ -553,15 +660,13 @@ namespace Ranking.TopSite.AdjustTopSiteListBasedOnPartialSort.TopSiteTunning
             if (args.Length == 0)
             {
                 args = new String[7];
-                args[0] = @"D:\demo\v1.5BAVSG.tsv";
+                args[0] = @"D:\demo\v1.5BAVSGTest.tsv";
                 args[1] = "1";
                 args[2] = @"D:\demo\queryIntentSlotPattern.tsv";
                 args[3] = @"D:\demo\urlPartialPairDataTest.tsv";
                 args[4] = "0.8";
-                args[5] = @"D:\demo\TopSite.tsv";
-                args[6] = @"D:\demo\NewTopSite.tsv";
-                
-                
+                args[5] = @"D:\demo\TopSiteTest.tsv";
+                args[6] = @"D:\demo\NewTopSite.tsv";                     
             }
             string sbsfile = args[0];
             int scoreThread = int.Parse(args[1]);
@@ -595,8 +700,8 @@ namespace Ranking.TopSite.AdjustTopSiteListBasedOnPartialSort.TopSiteTunning
             Dictionary<string, Dictionary<string, List<KeyValuePair<string, int>>>> intentPatternUrlList = new Dictionary<string, Dictionary<string, List<KeyValuePair<string, int>>>>();
             LoadPatternTopUrlList(topSitefile, intentPatternUrlList);
 
-            AdjustTopSiteThrougChangeList(intentPatternUrlList, intentSlotPatternPartialSet);
-
+            //AdjustTopSiteThrougChangeList(intentPatternUrlList, intentSlotPatternPartialSet);
+            AdjustTopSiteThrougChangeListAddNo(intentPatternUrlList, intentSlotPatternPartialSet);
             // PrintQueryPartialSort(slotPatternPartialSort);
             StoreAdjustedTopSite(intentPatternUrlList, outfile);          
         }

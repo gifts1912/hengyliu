@@ -338,7 +338,7 @@ namespace Ranking.QU
                 QueryForMatching = query;
                 QueryForScraping = query;
 
-                string result = string.Format("{0}\t{9}\t{1}\t{2}\t{3}\t{4}\t{5}\t{6}\t{7}\t{8}", query, slotStr, QueryPatternGroupId, QueryForMatching, QueryForScraping, QueryId, slotQuery, MatchingConditionId, EntitySlotMapping, intentFlag);
+                string result = string.Format("{0}\t{1}\t{2}\t{3}\t{4}\t{5}\t{6}\t{7}\t{8}\t{9}", query, slotStr, QueryPatternGroupId, QueryForMatching, QueryForScraping, QueryId, slotQuery, MatchingConditionId, EntitySlotMapping, intentFlag);
                 QueryId += 1;
                 sw.WriteLine("{0}", result);
             }

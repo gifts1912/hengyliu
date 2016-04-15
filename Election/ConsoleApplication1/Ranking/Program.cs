@@ -33,13 +33,15 @@ namespace Ranking
                 args[0] = "QueryPatternChangeModule";
                 
                 args[0] = "TunningElectionLabelFile";
-                args[0] = "IntentSlotQueryFormat";
+                
                 
                 args[0] = "TurnAddFeatureModule";
                 args[0] = "AppendTopSiteLabelFeature_ByQueryPatternV2";
                 args[0] = "Calculater";
                 args[0] = "ParseXml";
 
+                
+                args[0] = "IntentSlotQueryFormat";
                 args[0] = "AdjustBaseTopSiteTunning";
             }
             string[] cmdArgs = args.Skip(1).ToArray();
