@@ -6,15 +6,17 @@ using System.Threading.Tasks;
 using System.IO;
 using System.Text.RegularExpressions;
 
-namespace Ranking.TopSite
+
+namespace Ranking.Shipping.MinSameEntityButDifferentExp
 {
-    public class SimSlotMining
+    public class MinSameEntityButDifferentExp
     {
         public static Dictionary<string, string> queryIntent = new Dictionary<string, string>();
         public static HashSet<string> stayWords = new HashSet<string>(new string[] { "vice", "female", "male", "black", "white", "marriage", "top", "vs", "and", "or", "history" });
         public static HashSet<string> NeedDetailSlot = new HashSet<string>(new string[] { "[election.candidate.highconf]", "[election.candidate]", "[election.bpiissue]", "[election.party]" });
         public static Dictionary<string, Dictionary<string, int>> slotWordsTimes = new Dictionary<string, Dictionary<string, int>>();
         public static Dictionary<string, Dictionary<string, List<string>>> intentPatternQuery = new Dictionary<string, Dictionary<string, List<string>>>();
+        public static double lowConf = 0.5;
         public static void LoadQueryIntent(string infile, string filterFlag = "no")
         {
             int queryCol = 0, intentCol = 3;
@@ -155,9 +157,6 @@ namespace Ranking.TopSite
 
         public static void GenSpecifiedIntentSlotValueSet(string infile, Dictionary<string, int> slotValueFreq)
         {
-              /*
-              * (1): Gen specified intent pbxmlParser value. (2): Gen words:times of sim slot name. 
-             */
             StreamReader sr = new StreamReader(infile);
             string line, query, slotKey, slotValue;
             int queryCol = 0, slotKeyCol = 4, slotValueCol = 5;
@@ -173,23 +172,11 @@ namespace Ranking.TopSite
                 {
                     string slotEle = slotKeyArr[i];
                     string slotValueEle = slotValueArr[i];
-                    if (!NeedDetailSlot.Contains(slotEle))
-                        continue;
                     if(!slotValueFreq.ContainsKey(slotValueEle))
                     {
                         slotValueFreq[slotValueEle] = 0;
                     }
                     slotValueFreq[slotValueEle] += 1;
-
-                    if (!slotWordsTimes.ContainsKey(slotEle))
-                    {
-                        slotWordsTimes[slotEle] = new Dictionary<string, int>();
-                    }
-                    if (!slotWordsTimes[slotEle].ContainsKey(slotValueEle))
-                    {
-                        slotWordsTimes[slotEle][slotValueEle] = 0;
-                    }
-                    slotWordsTimes[slotEle][slotValueEle] += 1;
                 }
             }
             sr.Close();
@@ -245,32 +232,34 @@ namespace Ranking.TopSite
         public static double SimCompute(string wordsA, string wordsB)
         {
             double sim1 = 0.0, sim2 = 0.0;
-            wordsA = Regex.Replace(wordsA, "\\bon\\b", "");
-            wordsB = Regex.Replace(wordsB, "\\bon\\b", "");
+            wordsA = Regex.Replace(wordsA, "\\bon|in|the|policy|policy of|of|s|S|state\\b", "");
+            wordsB = Regex.Replace(wordsB, "\\bon|in|the|polich|policy of|of|s|S|state\\b", "");
             wordsA = wordsA.Trim();
             wordsB = wordsB.Trim();
             wordsA = Regex.Replace(wordsA, "\\s+", " ");
             wordsB = Regex.Replace(wordsB, "\\s+", " ");
+            if (wordsA.Length <= 3 || wordsB.Length <= 3)
+                return 0.0;
             sim1 = JacardSim(wordsA, wordsB);        
             sim2 = SimBasedOnEditDistance(wordsA, wordsB);
 
             return sim2+sim1;
         }
-        public static void ComputeSim(Dictionary<string, int> wordsNum, Dictionary<string, Dictionary<string, double>> wordsSimMatrix)
+        public static void ComputeSim(List<string> wordsNum, Dictionary<string, Dictionary<string, double>> wordsSimMatrix)
         {
-            foreach (KeyValuePair<string, int> pairOut in wordsNum)
+            /*
+             * Comput each pair similarity of the same slot name. And store in wordsSimMatrix
+             */
+            foreach (string wordsOut in wordsNum)
             {
-                string wordsOut = pairOut.Key;
-
                 if (!wordsSimMatrix.ContainsKey(wordsOut))
                 {
                     wordsSimMatrix[wordsOut] = new Dictionary<string, double>();
                 }
 
                 double sim = 0.0;
-                foreach (KeyValuePair<string, int> pairIn in wordsNum)
+                foreach (string wordsIn in wordsNum)
                 {
-                    string wordsIn = pairIn.Key;
                     if (wordsOut.ToLower().Equals(wordsIn, StringComparison.OrdinalIgnoreCase))
                     {
                         continue;
@@ -285,99 +274,248 @@ namespace Ranking.TopSite
         {
             return pairB.Value.CompareTo(pairA.Value);
         }
-        public static void ComputeSimSameSlotName(string outfile, Dictionary<string, double> slotConfDic, Dictionary<string, int> slotValueFreq)
+        
+        public static void ComputeSimSameSlotName(Dictionary<string, List<string>> slotValueList, Dictionary<string, int> slotValueFreq, Dictionary<string, double> slotConfDic, string simOutFile, Dictionary<string, List<string>> idealSlotSlotList)
         {
-            StreamWriter sw = new StreamWriter(outfile);
-            foreach (KeyValuePair<string, Dictionary<string, int>> pair in slotWordsTimes)
+            StreamWriter sw = new StreamWriter(simOutFile);
+            foreach (KeyValuePair<string, List<string>> pair in slotValueList)
             {
-                string slotName = pair.Key;
-                double lowConf = 0.0;
-                if(slotConfDic.ContainsKey(slotName))
+                string slotName = pair.Key; // such as election.candidate.highconf
+                
+                if(slotConfDic.ContainsKey(slotName)) // slot key name like : election.candidate.highconf
                 {
-                    lowConf = slotConfDic[slotName];
+                    lowConf = slotConfDic[slotName]; 
                 }
 
-                Dictionary<string, Dictionary<string, double>> wordsSimMatrix = new Dictionary<string, Dictionary<string, double>>();
-                ComputeSim(pair.Value, wordsSimMatrix);
-                foreach(KeyValuePair<string, Dictionary<string, double>> pairSim in wordsSimMatrix)
+                Dictionary<string, Dictionary<string, double>> wordsSimMatrix = new Dictionary<string, Dictionary<string, double>>(); // stay the every pair words sim value of the same slot key.
+                ComputeSim(pair.Value, wordsSimMatrix); //  pair.Value : words that belown to the same slot key name. Such as each similarity of pair in election.candidate.highconf
+
+                Dictionary<string, string> slotMapSlot = new Dictionary<string, string>();
+                foreach(KeyValuePair<string, Dictionary<string, double>> pairSim in wordsSimMatrix) // wordsSimMatrix stay the similarity of two pair in the same slot name.
                 {
-                    string wordsBase = pairSim.Key ;
-                    List<KeyValuePair<string, double>> wordsSimList = pairSim.Value.ToList();
+                    string wordsBase = pairSim.Key ;  // pariSim.Value saty the similarity words and similarity value of the wordsBase.
+                    List<KeyValuePair<string, double>> wordsSimList = pairSim.Value.ToList(); // the words and response similairy value with wordsBase                
                     wordsSimList.Sort(Cmp);
 
                     StringBuilder sb = new StringBuilder();
-                    //sb.Append(string.Format("{0}\t{1}", slotName, wordsBase));
                     sb.Append(wordsBase);
                     double maxConf = 0.0;
                     string maxConfWord = wordsBase;
                     if(slotValueFreq.ContainsKey(wordsBase))
                     {
-                        maxConf = slotValueFreq[wordsBase];
+                        maxConf = slotValueFreq[wordsBase]; //wordsBase's frequency 
                     }
 
+                    int satNum = 0;
                     foreach(KeyValuePair<string, double> wordsSimValue in wordsSimList)
                     {
                         double curConf = 0.0;
                         if(slotValueFreq.ContainsKey(wordsSimValue.Key))
                         {
-                            curConf = slotValueFreq[wordsSimValue.Key];
+                            curConf = slotValueFreq[wordsSimValue.Key]; // current word's frequency
                         }
-                        if(wordsSimValue.Value >= lowConf)
+                        if(wordsSimValue.Value >= lowConf) //stay the similarity words that larger than similarity threadhold.
                         {
                             if(curConf > maxConf)
                             {
+                                satNum++;
                                 maxConf = curConf;
-                                maxConfWord = wordsSimValue.Key;
+                                maxConfWord = wordsSimValue.Key; // catch the word that have the max frequency that belong to the same slot name.
                             }
-                            //sb.Append(string.Format("\t{0}:{1}", wordsSimValue.Key, wordsSimValue.Value));
-                            //num++;
                         }                           
                     }
-                    sb.Append(string.Format("\t{0}", maxConfWord));
+                    if (satNum <= 1 && maxConfWord == wordsBase)
+                        continue;
+                   
+                    sb.Append(string.Format("\t{0}", maxConfWord)); // sb stay each words and it's ideal expression .
                     sw.WriteLine(sb.ToString());
                 }
+                /*
+                foreach(KeyValuePair<string, string> pairCur in slotMapSlot)
+                {
+                    string x = pairCur.Key, y = pairCur.Value;
+                    y = FinallyIdeal(y, slotMapSlot);
+                    if(!idealSlotSlotList.ContainsKey(y))
+                    {
+                        idealSlotSlotList[y] = new List<string>();
+                    }
+                    idealSlotSlotList[y].Add(x);
+                    sw.WriteLine("{0}\t{1}", x, y);
+                }
+                 */
             }
 
             sw.Close();
         }
-        
-        public static void  ComputerSimSlot(string simOutFile)
+
+        public static string FinallyIdeal(string x, Dictionary<string, string> valueIdeal)
         {
-            StreamReader sr = new StreamReader(simOutFile);
+            string y = x;
+            int maxNum = 3, n = 0;
+            while(true)
+            {
+                if (n++ >= maxNum)
+                    break;
+                if (!valueIdeal.ContainsKey(x))
+                {
+                    break;
+                }
+                y = valueIdeal[x];
+                if (x == y)
+                {
+                    break;
+                }
+                x = y;         
+            }
+            return y;
+        }
+        public static bool IsIllegal(string value)
+        {
+            string[] arr = value.Split();
+            if (arr.Length >= 4)
+                return true;
+            foreach(string ele in arr)
+            {
+                if(ele.Length >= 15)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public static string  StopWordsDelete(string value)
+        {
+            string result = value;
+            result = Regex.Replace(value, "\\bon|in|the|policy|policy of|of|s|S|state\\b", "");
+            result = Regex.Replace(result, "\\s+", " ");
+            result = result.Trim();
+            return result;
+        }
+        public static void  ReadElectionTokens(string tokenfile, Dictionary<string, List<string>> tokenValues, HashSet<string> needDetailSlot)
+        {
+            using (StreamReader sr = new StreamReader(tokenfile))
+            {
+                string line;
+                while ((line = sr.ReadLine()) != null)
+                {
+                    string[] arr = line.Split('\t');
+                    if (arr.Length != 2)
+                        continue;
+                    string value = arr[0];
+                    
+                    value = value.Substring("qpv2tkn-".Length);
+                    if (IsIllegal(value))
+                        continue;
+                    value = StopWordsDelete(value);
+                    string key = arr[1].Split(';')[0].Trim(new char[] { '<', '>' });
+                    if (!key.Contains('.') || !needDetailSlot.Contains(key))
+                    {
+                        continue;
+                    }
+                    if (!tokenValues.ContainsKey(key))
+                    {
+                        tokenValues[key] = new List<string>();
+                    }
+                    tokenValues[key].Add(value);
+                }
+            }
+        }
+
+        public static void StoreValueListDic(Dictionary<string, List<string>> tokenValueList)
+        {
+            StreamWriter sw = new StreamWriter(@"D:\demo\watch.tsv");
+            foreach(KeyValuePair<string, List<string>> pair in tokenValueList)
+            {
+                sw.WriteLine("{0}\t{1}", pair.Key, string.Join("\t", pair.Value));
+            }
+            sw.Close();
+        }
+
+        public static void FilterSlotBoundChar(HashSet<string> needDetailSlot)
+        {
+            foreach(string ele in Utility.Utility.DefaultNeedDetailSlot)
+            {
+                string slot = ele.Trim(new char[] { '[', ']' });
+                needDetailSlot.Add(slot);
+            }
+        }
+
+        public static void StoreSameSlot(Dictionary<string, List<string>> idealSlotValueList, string idealSlotFile)
+        {
+            StreamWriter sw = new StreamWriter(idealSlotFile);
+            foreach(KeyValuePair<string, List<string>> pair in idealSlotValueList)
+            {
+                sw.WriteLine("{0}\t{1}", pair.Key, string.Join("\t", pair.Value.ToArray()));
+            }
+            sw.Close();
+        }
+
+        public static void FilterLessFrequencyMakeFinalMap(string rawFile, string filterFile)
+        {
+            Dictionary<string, string> slotIdealSlot = new Dictionary<string, string>();
+            StreamReader sr = new StreamReader(rawFile);
             string line;
-            Dictionary<string, List<string>> idealSlotValueList = new Dictionary<string, List<string>>();
+            Dictionary<string, HashSet<string>> idealSlotNormalList = new Dictionary<string, HashSet<string>>();
             while((line = sr.ReadLine()) != null)
             {
                 string[] arr = line.Split('\t');
                 if (arr.Length != 2)
                     continue;
-                if(!idealSlotValueList.ContainsKey(arr[1]))
+                if(!idealSlotNormalList.ContainsKey(arr[1]))
                 {
-                    idealSlotValueList[arr[1]] = new List<string>();
+                    idealSlotNormalList[arr[1]] = new HashSet<string>();
                 }
-                idealSlotValueList[arr[1]].Add(arr[0]);
+                idealSlotNormalList[arr[1]].Add(arr[0]);
+                slotIdealSlot[arr[0]] = arr[1];
             }
             sr.Close();
+
+            int numThread = 2;
+            StreamWriter sw = new StreamWriter(filterFile);
+            HashSet<string> slotMap = new HashSet<string>();
+            foreach(KeyValuePair<string, HashSet<string>> pair in idealSlotNormalList)
+            {
+                string y = pair.Key; // represent the ideal expression of the slot
+                y = FinallyIdeal(y, slotIdealSlot);
+                if (pair.Value.Count() <= numThread && y != "republican" && y != "democratic")
+                    continue;
+                foreach(string ele in pair.Value)
+                {
+                    slotMap.Add(string.Format("{0}\t{1}", ele, y));
+                }
+            }
+            
+            foreach(string ele in slotMap)
+            {
+                sw.WriteLine(ele);
+            }
+            sw.Close();
         }
         public static void Run(string[] args)
         {
-            
-            string PatternQueryFile = @"D:\Project\Election\TokenAndRules\electionV1.2.tsv";
-            string intentFilter = "candidateview"; // "no" will store all intent query set.
-            LoadQueryIntent(PatternQueryFile, intentFilter);
 
-            int queryCol = 0, patCol = 1, intentCol = 3;
+            string electionTokensFile = @"D:\Project\Election\TokenAndRules\ElectionTokens.tsv";
+            Dictionary<string, List<string>> slotValueList = new Dictionary<string, List<string>>();
+            HashSet<string> needDetailSlot = new HashSet<string>(); //Utility.Utility.DefaultNeedDetailSlot;
+            FilterSlotBoundChar(needDetailSlot); //Solve the problem that needDetialSlot begin with "[" and ElectionTokens starts with "<"
+            //needDetailSlot = new HashSet<string>(new string[] { "election.party" });
+           // needDetailSlot.Remove("location.state");
+            ReadElectionTokens(electionTokensFile, slotValueList, needDetailSlot); // Read entity slot and response values.
+
             string patternSlotQueryFile = @"D:\Project\Election\TokenAndRules\pbxmlParse.tsv";
             Dictionary<string, int> slotValueFrequency = new Dictionary<string, int>();
+            GenSpecifiedIntentSlotValueSet(patternSlotQueryFile, slotValueFrequency); //(1): Gen specified intent pbxmlParser value. (2): Gen words:times of sim slot name. 
 
-            GenSpecifiedIntentSlotValueSet(patternSlotQueryFile, slotValueFrequency);//(1): Gen specified intent pbxmlParser value. (2): Gen words:times of sim slot name. 
-            
             string simOutFile = @"D:\Project\Election\TokenAndRules\candidatePartyPoliticalViewMappingDic.tsv";
+            Dictionary<string, double> slotConfDic = new Dictionary<string, double> { { "election.candidate", 0.5 }, { "election.candidate.highconf", 0.5 }, { "election.bpiissue", 0.9}, {"election.party", 0.8} };
 
-            Dictionary<string, double> slotConfDic = new Dictionary<string, double> { { "[election.candidate]", 0.5 }, { "[election.candidate.highconf]", 0.5 }, { "[election.bpiissue]", 0.9}, {"[election.party]", 0.8} };
-            ComputeSimSameSlotName(simOutFile, slotConfDic, slotValueFrequency); // Gen sim value of slot value that belong to same slot name.
+            Dictionary<string, List<string>> idealSlotValueList = new Dictionary<string, List<string>>();
+            ComputeSimSameSlotName(slotValueList, slotValueFrequency, slotConfDic, simOutFile, idealSlotValueList); // Gen sim value of slot value that belong to same slot name.
 
-         
+            string slotIdealSlotFile = @"D:\Project\Election\TokenAndRules\slotIdealSlot.tsv";
+            FilterLessFrequencyMakeFinalMap(simOutFile, slotIdealSlotFile);
+           
         }
     }
 }

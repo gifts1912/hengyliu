@@ -704,8 +704,8 @@ namespace Ranking.TopSite.AdjustTopSiteListBasedOnPartialSort.TopSiteTunning
             Dictionary<string, Dictionary<string, List<KeyValuePair<string, int>>>> intentPatternUrlList = new Dictionary<string, Dictionary<string, List<KeyValuePair<string, int>>>>();
             LoadPatternTopUrlList(topSitefile, intentPatternUrlList);
 
-            //AdjustTopSiteThrougChangeList(intentPatternUrlList, intentSlotPatternPartialSet);
-            AdjustTopSiteThrougChangeListAddNo(intentPatternUrlList, intentSlotPatternPartialSet);
+            AdjustTopSiteThrougChangeList(intentPatternUrlList, intentSlotPatternPartialSet);
+          //  AdjustTopSiteThrougChangeListAddNo(intentPatternUrlList, intentSlotPatternPartialSet);
             // PrintQueryPartialSort(slotPatternPartialSort);
             StoreAdjustedTopSite(intentPatternUrlList, outfile);          
         }

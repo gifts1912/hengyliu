@@ -20,7 +20,7 @@ namespace Ranking.Utility
         {"CandidateView", new HashSet<string>(new string[] {"[election.candidate.highconf]", "[election.candidate]", "[election.bpiissue]", "[election.party]", "[election.timelineword]", "[location.state]"})},
         {"Candidate", new HashSet<string> (new string[] {"[election.candidatehistory]", "[election.candidate.highconf]", "[election.infoword]","[election.candidate]", "[election.party]", "[election.candidate]", "[election.race]"})},
         {"ElectionSchedule", new HashSet<string> (new string[] {"[location.state]", "[election.primary]", "[election.voting]", "[election.party]", "[election.race]", "[election.candidate.highconf]"})},
-        {"CandidateCampain", new HashSet<string> (new string[] {"[election.candidate.highconf]", "[election.campaign]", "[election.Speech]", "[election.when]", "[election.Site]", "[election.CampaignFund]", "[election.CampaignManager]", "[election.CampaignTeam]", "[election.CampaignOther]"})},
+        {"CandidateCampain", new HashSet<string> (new string[] {"[election.candidate.highconf]", "[election.campaign]", "[election.Speech]", "[election.when]", "[election.Site]", "[election.Campaign.Fund]", "[election.Campaign.Manager]", "[election.Campaign.Team]", "[election.Campaign.platform]", "[election.Campaign.Site]", "[election.Campaign.Contack]", "[election.Campaign.Store]", "[election.Campaign.Logo]", "[election.Campaign.Volunteer]"})},
         {"CandidateBio", new HashSet<string> (new string[] {"[election.candidatehistory]", "[election.candidate.highconf]", "[I.NPE.Religion]"})}
         };
         

@@ -39,8 +39,20 @@ namespace Ranking.RankingPro.AppendTopSiteLabelFeature_ByQueryPatternV2
         private static bool KeepUrl(string url, TopSiteItem tsi)
         {
             url = url.Trim(new char[] { ' ', '/' });
-            if (url == tsi.topsite)
+            string url2 = url;
+            if(url2.StartsWith("http:"))
+            {
+                url2 = url2.Replace("http", "https");
+            }
+            else if(url2.StartsWith("https:"))
+            {
+                url2 = url2.Replace("https", "http");
+            }
+
+            if (url == tsi.topsite || url2 == tsi.topsite)
+            {
                 return true;
+            }
             else
             {
                 return false;
@@ -170,9 +182,9 @@ namespace Ranking.RankingPro.AppendTopSiteLabelFeature_ByQueryPatternV2
                 if (args.Length == 0)
                 {
                     args = new string[6];
-                    args[0] = @"D:\demo\QueryInfo.tsv";
-                    args[1] = @"D:\demo\TopSite.tsv";
-                    args[2] = @"D:\demo\QueryInfoTopSite.tsv";
+                    args[0] = @"D:\demo\QueryInfoTest.tsv";
+                    args[1] = @"D:\demo\TopSiteTest.tsv";
+                    args[2] = @"D:\demo\QueryInfoTopSiteTest.tsv";
                     args[3] = "false"; //IsMatchingHost
                     args[4] = "m:QueryIntent+m:QueryPattern"; //PatColumn
                     args[5] = "0+1"; // the key is the value combination of 0th and 1th column.
