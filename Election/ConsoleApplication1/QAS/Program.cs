@@ -25,7 +25,8 @@ namespace QAS
                 args[2] = @"D:\demo\watch.tsv";
                 args[3] = @"D:\demo\queryPattern.tsv"; // queryCol = 0, patternCol = 2
                 args[4] = @"D:\demo\ElectionQueryIntent.tsv"; //queryCol = 0, intentCol = 3;
-                args[5] = @"D:\Project\Election\TokenAndRules\slotIdealSlot.tsv";
+              //  args[5] = @"D:\Project\Election\TokenAndRules\candidatePartyPoliticalViewMappingDic.tsv";
+                args[5] = @"D:\demo\slotIdealSlot.tsv";
             }
             string tokenfile = args[0];
             string tokenRuleFile = args[1];
@@ -34,7 +35,7 @@ namespace QAS
             string slotIdealFile = args[5];
 
             Dictionary<string, List<string>> tokenValues = new Dictionary<string, List<string>>();
-            loadTokens(tokenfile, tokenValues); //filename);
+            loadTokens(tokenfile, tokenValues); //filename ;
 
             Dictionary<string, string> patternIntentDic = new Dictionary<string, string>();
             LoadPatternIntent(patternQueryFile, queryIntentFile, patternIntentDic);
@@ -51,6 +52,9 @@ namespace QAS
         
         public static void LoadSlotIdealExp(string slotIdealFile, Dictionary<string, HashSet<string>> idealSlotExpList, Dictionary<string, string> slotIdealSlot)
         {
+            /*
+             * As slotidealSlotFile the expression of slot have make StopWordsDelete(value) process.
+             */
             StreamReader sr = new StreamReader(slotIdealFile);
             string line;
             while((line = sr.ReadLine()) != null)
@@ -65,6 +69,12 @@ namespace QAS
                     idealSlotExpList[arr[1]].Add(arr[1]);
                 }
                 idealSlotExpList[arr[1]].Add(arr[0]);
+            }
+            //add KeyValuePair<string, string> idealSlotIdealSlot to dictionary slotIdealSlot
+            HashSet<string> vcHS = new HashSet<string>(slotIdealSlot.Values.ToArray());
+            foreach(string iv in vcHS)
+            {
+                slotIdealSlot[iv] = iv;
             }
             sr.Close();
         }
@@ -86,6 +96,7 @@ namespace QAS
                     pattern = pattern.Replace('[', ' ').Replace(']', ' ');
                     pattern = Regex.Replace(pattern, @"\s+", " ");
                     pattern = pattern.Trim();
+                  //  pattern = StopWordsDelete(pattern);
                     patternQuery[pattern] = query;
                 }
             }
@@ -149,6 +160,7 @@ namespace QAS
                     rule = rule.Replace('<', ' ').Replace('>', ' ');
                     rule = Regex.Replace(rule, @"\s+", " ");
                     rule = rule.Trim();
+                 //   rule = StopWordsDelete(rule);
                     rulesSet.Add(rule);
                 }
             }
@@ -161,9 +173,16 @@ namespace QAS
             Console.ReadKey();
             */
         }
+        public static string StopWordsDelete(string value)
+        {
+            string result = value;
+            result = Regex.Replace(value, "\\b(on|in|the|of|s|S|state)\\b", "");
+            result = Regex.Replace(result, "\\s+", " ");
+            result = result.Trim();
+            return result;
+        }
         public static void GenerateXML(Dictionary<string, List<string>> tokenValues, HashSet<string> rulesHS, Dictionary<string, string> patternIntents, Dictionary<string, HashSet<string>> idealSlotExpHs, Dictionary<string, string> slotIdealSlot, string intentIndexFile)
         {
-           
             Dictionary<string, int> intentCurIdx = new Dictionary<string, int>();
             Dictionary<string, string> intentIdxPattern = new Dictionary<string, string>();
             intentCurIdx.Add("Intent0", 1);
@@ -192,7 +211,6 @@ namespace QAS
             }
             
             // Add tokenValus of specified token.
-
             foreach(KeyValuePair<string, List<string>> pair in tokenValues)
             {
                 string tokenName = pair.Key;
@@ -203,6 +221,7 @@ namespace QAS
                  HashSet<string> refIdealSlot = new HashSet<string>();
                     foreach (var a in tokenValueList)
                     {
+                       // string tv = StopWordsDelete(a);
                         if(slotIdealSlot.ContainsKey(a))
                         {
                             refIdealSlot.Add(slotIdealSlot[a]);
@@ -239,7 +258,9 @@ namespace QAS
                     intent = patternIntents[rule];
                 }
                 else
+                {
                     continue;
+                }               
                 if(!intentCurIdx.ContainsKey(intent))
                 {
                     intentCurIdx[intent] = 0;
@@ -315,77 +336,7 @@ namespace QAS
             }
             sw.Close();
         }
-      /*   static void WritePCFGAtoms(List<PCFGAtomInfo> atoms, List<string> patterns, string pcfgFile)
-        {
-            string rootId = "#CLASSIFIERNAME#";
-            XElement Grammar = new XElement("grammar", new XAttribute("root", rootId));
-
-            Dictionary<string, List<string>> dictCategory2SubCategories = new Dictionary<string, List<string>>();
-
-            #region Write Category+SubCategory Nodes
-            foreach (var atom in atoms)
-            {
-                XElement atomNode = new XElement("rule", new XAttribute("id", atom.AtomName));
-                if (!string.IsNullOrEmpty(atom.ExternalFeatureName))
-                {
-                    XElement refNode = new XElement("ruleref", new XAttribute("uri", "#" + atom.ExternalFeatureName));
-                    atomNode.Add(refNode);
-                    XElement tagNode = new XElement("tag");
-                    if (atom.ExternalFeatureName == "SrcEntity")
-                    {
-                        tagNode.SetValue("$ = " + atom.Tag);
-                    }
-                    else
-                    {
-                        tagNode.SetValue("$=$$");
-                    }
-                    atomNode.Add(tagNode);
-
-                    Grammar.Add(atomNode);
-                    if (!string.IsNullOrEmpty(atom.SubCategory))
-                    {
-                        if (!dictCategory2SubCategories.ContainsKey(atom.Category))
-                        {
-                            dictCategory2SubCategories.Add(atom.Category, new List<string>());
-                        }
-
-                        dictCategory2SubCategories[atom.Category].Add(atom.SubCategory);
-                    }
-                }
-                else if (atom.Atoms != null && atom.Atoms.Count != 0)
-                {
-                    XElement oneofNode = new XElement("one-of");
-                    foreach (var a in atom.Atoms)
-                    {
-                        XElement itemNode = new XElement("item");
-                        itemNode.SetValue(a);
-                        oneofNode.Add(itemNode);
-                    }
-                    atomNode.Add(oneofNode);
-                    if (!string.IsNullOrEmpty(atom.Tag))
-                    {
-                        XElement tagNode = new XElement("tag");
-                        tagNode.SetValue("$=" + atom.Tag);
-                        atomNode.Add(tagNode);
-                    }
-
-                    Grammar.Add(atomNode);
-                    if (!string.IsNullOrEmpty(atom.SubCategory))
-                    {
-                        if (!dictCategory2SubCategories.ContainsKey(atom.Category))
-                        {
-                            dictCategory2SubCategories.Add(atom.Category, new List<string>());
-                        }
-
-                        dictCategory2SubCategories[atom.Category].Add(atom.SubCategory);
-                    }
-                }
-                else
-                {
-                    Console.Error.WriteLine("Illegal PCFG Rule for Atom: {0}!", GenAtomName(atom.Category, atom.SubCategory));
-                }
-            }
-    */    
+     
         public static void loadTokens(string tokenfile, Dictionary<string, List<string>> tokenValues)
         {
             using (StreamReader sr = new StreamReader(tokenfile))
@@ -397,7 +348,8 @@ namespace QAS
                     if (arr.Length != 2)
                         continue;
                     string value = arr[0];
-                    value = value.Substring("qpv2tkn-".Length);
+                    value = value.Substring("qpv2tkn-".Length); 
+                   // value = StopWordsDelete(value);
                     string key = arr[1].Split(';')[0].Trim(new char[] { '<', '>' });
                     if(!key.Contains('.'))
                     {

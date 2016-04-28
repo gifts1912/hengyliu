@@ -43,6 +43,7 @@ namespace Ranking
                 
                 args[0] = "simslotmining";
                 args[0] = "MinSameEntityButDifferentExp";
+                args[0] = "EntityClusterBasedOnElectionTokens";
             }
             string[] cmdArgs = args.Skip(1).ToArray();
             if (args[0].Equals("queryslotformat", StringComparison.OrdinalIgnoreCase))
@@ -125,6 +126,10 @@ namespace Ranking
             else if(args[0].Equals("MinSameEntityButDifferentExp", StringComparison.OrdinalIgnoreCase))
             {
                 Ranking.Shipping.MinSameEntityButDifferentExp.MinSameEntityButDifferentExp.Run(cmdArgs);
+            }
+            else if(args[0].Equals("EntityClusterBasedOnElectionTokens", StringComparison.OrdinalIgnoreCase))
+            {
+                Ranking.Shipping.EntityClusterBasedOnElectionTokens.Run(cmdArgs);
             }
         }
     }

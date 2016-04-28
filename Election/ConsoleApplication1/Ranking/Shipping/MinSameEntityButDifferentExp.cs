@@ -232,13 +232,13 @@ namespace Ranking.Shipping.MinSameEntityButDifferentExp
         public static double SimCompute(string wordsA, string wordsB)
         {
             double sim1 = 0.0, sim2 = 0.0;
-            wordsA = Regex.Replace(wordsA, "\\bon|in|the|policy|policy of|of|s|S|state\\b", "");
-            wordsB = Regex.Replace(wordsB, "\\bon|in|the|polich|policy of|of|s|S|state\\b", "");
+            wordsA = Regex.Replace(wordsA, "\\b(on|in|the|policy|policy of|policies|of|s|S|state|plan|plans|reform|problem|problems|issues|issue|public|right|rights)\\b", "");
+            wordsB = Regex.Replace(wordsB, "\\b(on|in|the|polich|policy of|policies|of|s|S|state|plan|plans|reform|problem|problems|issues|issue|public|right|rights)\\b", "");
             wordsA = wordsA.Trim();
             wordsB = wordsB.Trim();
             wordsA = Regex.Replace(wordsA, "\\s+", " ");
             wordsB = Regex.Replace(wordsB, "\\s+", " ");
-            if (wordsA.Length <= 3 || wordsB.Length <= 3)
+            if (wordsA.Length <= 2 || wordsB.Length <= 2)
                 return 0.0;
             sim1 = JacardSim(wordsA, wordsB);        
             sim2 = SimBasedOnEditDistance(wordsA, wordsB);
@@ -387,7 +387,8 @@ namespace Ranking.Shipping.MinSameEntityButDifferentExp
         public static string  StopWordsDelete(string value)
         {
             string result = value;
-            result = Regex.Replace(value, "\\bon|in|the|policy|policy of|of|s|S|state\\b", "");
+         //   result = Regex.Replace(value, "\\b(on|in|the|policy|policy of|policies|of|s|S|state|plan|plans|reform|problem|problems|issues|issue|public)\\b", "");
+            result = Regex.Replace(value, "\\b(on|in|the|of|s|S|state)\\b", "");
             result = Regex.Replace(result, "\\s+", " ");
             result = result.Trim();
             return result;
@@ -405,6 +406,11 @@ namespace Ranking.Shipping.MinSameEntityButDifferentExp
                     string value = arr[0];
                     
                     value = value.Substring("qpv2tkn-".Length);
+                    /*if (value == "dr ben carsons")
+                    {
+                        Console.WriteLine(value);
+                        Console.ReadKey();
+                    }*/
                     if (IsIllegal(value))
                         continue;
                     value = StopWordsDelete(value);
@@ -494,13 +500,13 @@ namespace Ranking.Shipping.MinSameEntityButDifferentExp
         }
         public static void Run(string[] args)
         {
-
+            
             string electionTokensFile = @"D:\Project\Election\TokenAndRules\ElectionTokens.tsv";
             Dictionary<string, List<string>> slotValueList = new Dictionary<string, List<string>>();
             HashSet<string> needDetailSlot = new HashSet<string>(); //Utility.Utility.DefaultNeedDetailSlot;
             FilterSlotBoundChar(needDetailSlot); //Solve the problem that needDetialSlot begin with "[" and ElectionTokens starts with "<"
-            //needDetailSlot = new HashSet<string>(new string[] { "election.party" });
-           // needDetailSlot.Remove("location.state");
+            needDetailSlot = new HashSet<string>(new string[] { "election.bpiissue" });
+            needDetailSlot.Remove("location.state");
             ReadElectionTokens(electionTokensFile, slotValueList, needDetailSlot); // Read entity slot and response values.
 
             string patternSlotQueryFile = @"D:\Project\Election\TokenAndRules\pbxmlParse.tsv";
@@ -508,14 +514,15 @@ namespace Ranking.Shipping.MinSameEntityButDifferentExp
             GenSpecifiedIntentSlotValueSet(patternSlotQueryFile, slotValueFrequency); //(1): Gen specified intent pbxmlParser value. (2): Gen words:times of sim slot name. 
 
             string simOutFile = @"D:\Project\Election\TokenAndRules\candidatePartyPoliticalViewMappingDic.tsv";
-            Dictionary<string, double> slotConfDic = new Dictionary<string, double> { { "election.candidate", 0.5 }, { "election.candidate.highconf", 0.5 }, { "election.bpiissue", 0.9}, {"election.party", 0.8} };
+            Dictionary<string, double> slotConfDic = new Dictionary<string, double> { { "election.candidate", 0.5 }, { "election.candidate.highconf", 0.5 }, { "election.bpiissue", 0.5}, {"election.party", 0.8} };
 
             Dictionary<string, List<string>> idealSlotValueList = new Dictionary<string, List<string>>();
             ComputeSimSameSlotName(slotValueList, slotValueFrequency, slotConfDic, simOutFile, idealSlotValueList); // Gen sim value of slot value that belong to same slot name.
 
+            // Manually reform simOutFile and then run the following function  
+            string simOutFileTurn = @"D:\Project\Election\TokenAndRules\candidatePartyPoliticalViewMappingDicTurn.tsv";
             string slotIdealSlotFile = @"D:\Project\Election\TokenAndRules\slotIdealSlot.tsv";
-            FilterLessFrequencyMakeFinalMap(simOutFile, slotIdealSlotFile);
-           
+            FilterLessFrequencyMakeFinalMap(simOutFileTurn, slotIdealSlotFile);
         }
     }
 }
