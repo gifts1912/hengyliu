@@ -7,52 +7,95 @@ using System.Xml.Linq;
 using System.IO;
 using System.Text.RegularExpressions;
 
-namespace QAS
+
+namespace QAS.PCFG
 {
-    class Program
+    class GrammaXmlGenerate
     {
-       public static void Main(string[] args)
+        public static HashSet<string> DefaultNeedDetailSlot = new HashSet<string>(new string[] { "election.candidate.highconf", "election.candidate", "election.bpiissue", "election.party", "location.state", "I.NPE.Religion", "election.Speech" }); //"[election.candidate.highconf]", "[election.candidate]", "[election.bpiissue]", "[election.party]", "[location.state]" });
+        public static HashSet<string> stayWords = new HashSet<string>(new string[] { "donation", "woman", "women", "vice", "female", "male", "black", "white", "marriage", "top", "vs", "and", "or", "history", "how old", "age", "info", "information", "education", "election", "religious", "story", "life", "voluntee" });
+        public static Dictionary<string, HashSet<string>> intentNeedStaySlot = new Dictionary<string, HashSet<string>> {{"CandidateList", new HashSet<string> (new string[] {"[election.party]", "[location.state]", "[election.national]",
+        "[location.state]", "[election.candidate.highconf]", "[election.newsword]", "[election.candidate]",
+        "[election.primary]", "[election.voting]", "[election.campaign]", "[election.next]", 
+        "[election.winlose]", "[election.Gender.Female]", "[election.howmany]", "[election.when]", "[election.timelineword]", "[election.Speech]", "[election.timelineword]" })},
+        {"CandidateView", new HashSet<string>(new string[] {"[election.candidate.highconf]", "[election.candidate]", "[election.bpiissue]", "[election.party]", "[election.timelineword]", "[location.state]"})},
+        {"Candidate", new HashSet<string> (new string[] {"[election.candidatehistory]", "[election.candidate.highconf]", "[election.infoword]","[election.candidate]", "[election.party]", "[election.candidate]", "[election.race]"})},
+        {"ElectionSchedule", new HashSet<string> (new string[] {"[location.state]", "[election.primary]", "[election.voting]", "[election.party]", "[election.race]", "[election.candidate.highconf]"})},
+        {"CandidateCampain", new HashSet<string> (new string[] {"[election.candidate.highconf]", "[election.campaign]", "[election.Speech]", "[election.when]", "[election.Site]", "[election.Campaign.Fund]", "[election.Campaign.Manager]", "[election.Campaign.Team]", "[election.Campaign.platform]", "[election.Campaign.Site]", "[election.Campaign.Contack]", "[election.Campaign.Store]", "[election.Campaign.Logo]", "[election.Campaign.Volunteer]"})},
+        {"CandidateBio", new HashSet<string> (new string[] {"[election.candidatehistory]", "[election.candidate.highconf]", "[I.NPE.Religion]"})}
+        };
+
+
+        public static HashSet<string> DetailSlots = new HashSet<string>();
+        public static HashSet<string> StaySlots = new HashSet<string>();
+        public static void Run(string[] args)
         {
-          //  Run(args);
-            if(args.Length == 0)
+           
+            if (args.Length == 0)
             {
-                args = new string[1];        
-                args[0] = "XMLTurn";
-                args[0] = "PatternEngineFormat";
-                args[0] = "GenerateDicFile";
-                args[0] = "PatternEngineUrlFormat";
-                args[0] = "GrammaXmlGenerate";
-                args[0] = "IntentIdFeatureIds";
-                
+                args = new string[7];
+                args[0] = @"D:\demo\ElectionTokens.tsv";
+                args[1] = @"D:\demo\ElectionRules.tsv";
+                args[2] = @"D:\demo\watch.tsv";
+                args[3] = @"D:\demo\queryPattern.tsv"; // queryCol = 0, patternCol = 2
+                args[4] = @"D:\demo\ElectionQueryIntent.tsv"; //queryCol = 0, intentCol = 3;
+                args[5] = @"D:\demo\IdealSlotToDophineFile.tsv";
+
             }
-            string[] cmdArgs = args.Skip(1).ToArray();
-            if(args[0].Equals("XMLTurn", StringComparison.OrdinalIgnoreCase))
-            {
-                QAS.PCFG.grammarToLabelId.grammarToLabelId.Run(cmdArgs);
-            }
-            else if(args[0].Equals("PatternEngineFormat", StringComparison.OrdinalIgnoreCase))
-            {
-                QAS.PatternEngine.PatternEngineFormat.Run(cmdArgs);
-            }
-            else if(args[0].Equals("GenerateDicFile", StringComparison.OrdinalIgnoreCase))
-            {
-                QAS.PatternEngine.GenerateDicFile.Run(cmdArgs);
-            }
-            else if(args[0].Equals("PatternEngineUrlFormat", StringComparison.OrdinalIgnoreCase))
-            {
-                QAS.PatternEngine.GenerateDicFile.Run(cmdArgs); // First generate the url and response format url dictionary.
-                QAS.PatternEngine.GenerateFormatUrlOfPatterns.Run(cmdArgs); // Generate url format of each intent + slotPattern based on the url format that generate in the previous step.
-            }
-            else if(args[0].Equals("GrammaXmlGenerate", StringComparison.OrdinalIgnoreCase))
-            {
-                PCFG.GrammaXmlGenerate.Run(cmdArgs);
-            }
-            else if(args[0].Equals("IntentIdFeatureIds", StringComparison.OrdinalIgnoreCase))
-            {
-                PCFG.IntentIdFeatureIds.Run(cmdArgs);
-            }
+            string tokenfile = args[0];
+            string tokenRuleFile = args[1];
+            string patternQueryFile = args[3];
+            string queryIntentFile = args[4];
+            string slotIdealFile = args[5];
+            
+
+            Dictionary<string, List<string>> tokenValues = new Dictionary<string, List<string>>();
+            loadTokens(tokenfile, tokenValues); // Load tokens and response values and store them into Dictionary<string, List<string>> tokenValues;
+            
+
+            Dictionary<string, string> patternIntentDic = new Dictionary<string, string>();
+            LoadPatternIntent(patternQueryFile, queryIntentFile, patternIntentDic); // generate each pattern's intent
+
+            HashSet<string> rules = new HashSet<string>();
+            LoadTokenRules(tokenRuleFile, rules); // load election rules
+
+            Dictionary<string, HashSet<string>> idealSlotExpHs = new Dictionary<string, HashSet<string>>();
+            Dictionary<string, string> slotIdealSlot = new Dictionary<string, string>();
+            
+            LoadSlotIdealExp(tokenfile, idealSlotExpHs, slotIdealSlot); // Generate ideal slot expression of each slot value.
+
+            
+            GenStayAndDetailSlot();
+
+            GenerateXML(tokenValues, rules, patternIntentDic, idealSlotExpHs, slotIdealSlot, slotIdealFile, @"D:\sumStoneTemplate\pcfg\MSElection\MSElection.grammar.xml");
         }
 
+        public static void  GenStayAndDetailSlot()
+        {//DefaultNeedDetailSlot
+            foreach (string detailSlotEle in DefaultNeedDetailSlot)
+            {
+                string ele = detailSlotEle.Trim(new char[] { '[', ']' });
+                DetailSlots.Add(ele);
+            }
+            foreach(KeyValuePair<string, HashSet<string>> pair in intentNeedStaySlot)
+            {
+                foreach(string stayEle in pair.Value)
+                {
+                    string ele = stayEle.Trim(new char[] { '[', ']' });
+                    if(!DetailSlots.Contains(ele))
+                        StaySlots.Add(ele);
+                }
+            }
+
+            /*
+           Console.WriteLine("Detail slot: {0}", string.Join("\t", DetailSlots.ToArray()));
+
+            Console.WriteLine("Stay slot: {0}", string.Join("\t", StaySlots.ToArray()));
+
+            Console.ReadKey();
+             */
+           
+        }
         public static void IntentIdx(string inFile)
         {
             Dictionary<string, int> ruleIdx = new Dictionary<string, int>();
@@ -78,48 +121,7 @@ namespace QAS
             }
             sw.Close();
         }
-        public static void Run(string[] args)
-        {
-            if (args.Length == 0)
-            {
-                args = new string[7];
-                args[0] = @"D:\demo\ElectionTokens.tsv";
-                args[1] = @"D:\demo\ElectionRules.tsv";
-                args[2] = @"D:\demo\watch.tsv";
-                args[3] = @"D:\demo\queryPattern.tsv"; // queryCol = 0, patternCol = 2
-                args[4] = @"D:\demo\ElectionQueryIntent.tsv"; //queryCol = 0, intentCol = 3;
-                //  args[5] = @"D:\Project\Election\TokenAndRules\candidatePartyPoliticalViewMappingDic.tsv";
-                args[5] = @"D:\demo\slotIdealSlot.tsv";
-                args[6] = @"D:\demo\slotIdxMappingManuallyLabel.tsv";
-
-            }
-            string tokenfile = args[0];
-            string tokenRuleFile = args[1];
-            string patternQueryFile = args[3];
-            string queryIntentFile = args[4];
-            string slotIdealFile = args[5];
-            string slotIdxMapFile = args[6];
-
-         //   IntentIdx(intentLabelFile);
-
-            Dictionary<string, List<string>> tokenValues = new Dictionary<string, List<string>>();
-            loadTokens(tokenfile, tokenValues); // Load tokens and response values and store them into Dictionary<string, List<string>> tokenValues;
-
-            //  SlotIndex(slotIdealFile, slotIdxMapFile);
-
-            Dictionary<string, string> patternIntentDic = new Dictionary<string, string>();
-            LoadPatternIntent(patternQueryFile, queryIntentFile, patternIntentDic); // get the intent of each pattern.
-
-            HashSet<string> rules = new HashSet<string>();
-            LoadTokenRules(tokenRuleFile, rules); // load rule and store them into rules.
-
-            Dictionary<string, HashSet<string>> idealSlotExpHs = new Dictionary<string, HashSet<string>>();
-            Dictionary<string, string> slotIdealSlot = new Dictionary<string, string>();
-            LoadSlotIdealExp(slotIdealFile, idealSlotExpHs, slotIdealSlot);
-
-            GenerateXML(tokenValues, rules, patternIntentDic, idealSlotExpHs, slotIdealSlot, @"D:\demo\patternIntentIdex.tsv", slotIdxMapFile);
-        }
-
+        
         public static void SlotIndex(string slotIdealFile, string slotIdxMapFile)
         {
             int curIdx = 1;
@@ -147,34 +149,39 @@ namespace QAS
             }
             sw.Close();
         }
-        public static void LoadSlotIdealExp(string slotIdealFile, Dictionary<string, HashSet<string>> idealSlotExpList, Dictionary<string, string> slotIdealSlot)
+        public static void LoadSlotIdealExp(string electionTokenFile, Dictionary<string, HashSet<string>> idealSlotExpList, Dictionary<string, string> slotIdealSlot)
         {
-            /*
-             * As slotidealSlotFile the expression of slot have make StopWordsDelete(value) process.
-             */
-            StreamReader sr = new StreamReader(slotIdealFile);
+            StreamReader sr = new StreamReader(electionTokenFile);
             string line;
             while ((line = sr.ReadLine()) != null)
             {
                 string[] arr = line.Split('\t');
                 if (arr.Length != 2)
                     continue;
-                slotIdealSlot[arr[0]] = arr[1];
-                if (!idealSlotExpList.ContainsKey(arr[1]))
+                string tokenValue = arr[0];
+                tokenValue = tokenValue.Substring("qpv2tkn-".Length);
+                string tokenKey = arr[1].Split(';')[1];
+                if(string.IsNullOrWhiteSpace(tokenKey))
                 {
-                    idealSlotExpList[arr[1]] = new HashSet<string>();
+                    continue;
+                }
+
+                slotIdealSlot[tokenValue] = tokenKey ;
+                if (!idealSlotExpList.ContainsKey(tokenKey))
+                {
+                    idealSlotExpList[tokenKey] = new HashSet<string>();
                     // idealSlotExpList[arr[1]].Add(arr[1]);
                 }
-                idealSlotExpList[arr[1]].Add(arr[0]);
+                idealSlotExpList[tokenKey].Add(tokenValue);
             }
-            //add KeyValuePair<string, string> idealSlotIdealSlot to dictionary slotIdealSlot
-            HashSet<string> vcHS = new HashSet<string>(slotIdealSlot.Values.ToArray());
+           /* HashSet<string> vcHS = new HashSet<string>(slotIdealSlot.Values.ToArray());
             foreach (string iv in vcHS)
             {
                 if (iv.IndexOf("-") != -1)
                     continue;
                 slotIdealSlot[iv] = iv;
             }
+            */
             sr.Close();
         }
         public static void LoadPatternIntent(string patternQueryFile, string queryIntentFile, Dictionary<string, string> patternIntents)
@@ -288,39 +295,41 @@ namespace QAS
             while ((line = sr.ReadLine()) != null)
             {
                 string[] arr = line.Split('\t');
-                if (arr.Length != 2)
+                if (arr.Length != 3)
                     continue;
-                string key = arr[0], value = arr[1];
+                string key = arr[1], value = arr[2];
                 key = key.Trim();
                 value = value.Trim();
                 candIdx[key] = value;
             }
-
             sr.Close();
         }
-        public static void GenerateXML(Dictionary<string, List<string>> tokenValues, HashSet<string> rulesHS, Dictionary<string, string> patternIntents, Dictionary<string, HashSet<string>> idealSlotExpHs, Dictionary<string, string> slotIdealSlot, string intentIndexFile, string slotIdxFile)
+        public static void GenerateXML(Dictionary<string, List<string>> tokenValues, HashSet<string> rulesHS, Dictionary<string, string> patternIntents, Dictionary<string, HashSet<string>> idealSlotExpHs, Dictionary<string, string> slotIdealSlot, string idealSlotToDophineFile, string grammaFile)
         {
+            /*  public static HashSet<string> DetailSlots = new HashSet<string>();
+                public static HashSet<string> StaySlots = new HashSet<string>();
+            */
+
             Dictionary<string, string> candIdx = new Dictionary<string, string>();
-           // ReadCandIdx(candIdx, slotIdxFile);
+            ReadCandIdx(candIdx, idealSlotToDophineFile);
 
             Dictionary<string, int> intentCurIdx = new Dictionary<string, int>();
             Dictionary<string, string> intentIdxPattern = new Dictionary<string, string>();
             intentCurIdx.Add("Intent0", 1);
-
-            string pcfgFile = @"D:\sumStoneTemplate\pcfg\MSElection\MSElection.grammar.xml";
             string rootId = "MSElection";
             XElement Grammar = new XElement("grammar", new XAttribute("root", rootId));
+           
             /*
              * Add slot value list of response ideal slot expression. 
              */
             foreach (KeyValuePair<string, HashSet<string>> pair in idealSlotExpHs)
             {
-                string label = pair.Key;
-                if (candIdx.ContainsKey(label))
+                string slotIdealExp = pair.Key;
+                if(candIdx.ContainsKey(slotIdealExp))
                 {
-                    label = candIdx[label];
+                    slotIdealExp = candIdx[slotIdealExp];
                 }
-                XElement atomNode = new XElement("rule", new XAttribute("id", pair.Key));
+                XElement atomNode = new XElement("rule", new XAttribute("id", slotIdealExp));
                 XElement oneofNode = new XElement("one-of");
                 XElement tagNode = new XElement("tag");
                 foreach (string ele in pair.Value)
@@ -330,13 +339,12 @@ namespace QAS
                     oneofNode.Add(itemNode);
                 }
                 atomNode.Add(oneofNode);
-
-                tagNode.SetValue(string.Format("$=\"{0}\"", label));
+                tagNode.SetValue(string.Format("$=\"-{0}\"", slotIdealExp));
                 atomNode.Add(tagNode);
                 Grammar.Add(atomNode);
             }
 
-            // Add tokenValus of specified token. if token value doesn't belown to a idealslot cluster, directly add it. Else add them together with other refIdealSlot.
+            // Add tokenValus of specified token. if token value doesn't belong to a idealslot cluster, directly add it. Else add them together with other refIdealSlot.
             foreach (KeyValuePair<string, List<string>> pair in tokenValues)
             {
                 string tokenName = pair.Key;
@@ -344,10 +352,11 @@ namespace QAS
                 XElement atomNode = new XElement("rule", new XAttribute("id", tokenName));
 
                 XElement oneofNode = new XElement("one-of");
+                XElement tagNodeToken = new XElement("tag");
+
                 HashSet<string> refIdealSlot = new HashSet<string>();
                 foreach (var a in tokenValueList)
                 {
-                    // string tv = StopWordsDelete(a);
                     if (slotIdealSlot.ContainsKey(a))
                     {
                         string label = slotIdealSlot[a];
@@ -369,13 +378,16 @@ namespace QAS
                         XElement itemNode = new XElement("item");
                         XElement refNode = new XElement("ruleref", new XAttribute("uri", "#" + idealSlot));
                         XElement tagNode = new XElement("tag");
-                        tagNode.SetValue("$=$$");
+                        tagNode.SetValue("$ = $$");
                         itemNode.Add(refNode);
                         itemNode.Add(tagNode);
                         oneofNode.Add(itemNode);
                     }
                 }
+                tagNodeToken.SetValue(string.Format("$ = \"-{0}\"", tokenName));
                 atomNode.Add(oneofNode);
+                if(StaySlots.Contains(tokenName))
+                    atomNode.Add(tagNodeToken);
                 Grammar.Add(atomNode);
             }
 
@@ -401,7 +413,7 @@ namespace QAS
 
                 string ruleId = string.Format("{0}_{1}", intent, cur);
                 gramaRuleHs.Add(ruleId);
-                intentIdxPattern[ruleId] = rule;
+               // intentIdxPattern[ruleId] = rule;
                 XElement atomNode = new XElement("rule", new XAttribute("id", ruleId));
                 // XElement oneofNode = new XElement("one-of");
                 string[] arr = rule.Split(' ');
@@ -413,6 +425,13 @@ namespace QAS
                     {
                         XElement itemNode = new XElement("item");
                         itemNode.SetValue(ele);
+                        /*if(stayWords.Contains(ele))
+                        {
+                            XElement tagNode = new XElement("tag");
+                            tagNode.SetValue("$ = $ + \"-\" + $$");
+                            itemNode.Add(tagNode);
+                        }
+                        */
                         atomNode.Add(itemNode);
                         //  oneofNode.Add(itemNode);              
                     }
@@ -423,11 +442,11 @@ namespace QAS
                         XElement tagNode = new XElement("tag");
                         if (first)
                         {
-                            tagNode.SetValue("$=$$");
+                            tagNode.SetValue("$ = $$");
                         }
                         else
                         {
-                            tagNode.SetValue("$ = $+$$");
+                            tagNode.SetValue("$ = $ + \"-\" + $$");
                         }
                         itemNode.Add(refNode);
                         itemNode.Add(tagNode);
@@ -451,7 +470,7 @@ namespace QAS
                     XElement refNodeLast = new XElement("ruleref", new XAttribute("uri", "#" + eleLast));
                     XElement tagNodeLast = new XElement("tag");
 
-                    string label = ruleId;
+                    string label = intent;
                     if (candIdx.ContainsKey(label))
                     {
                         label = candIdx[label];
@@ -493,14 +512,8 @@ namespace QAS
             RAtomNode.Add(ROneofNode);
             Grammar.Add(RAtomNode);
 
-            Grammar.Save(pcfgFile);
+            Grammar.Save(grammaFile);
 
-            StreamWriter sw = new StreamWriter(intentIndexFile);
-            foreach (KeyValuePair<string, string> pair in intentIdxPattern)
-            {
-                sw.WriteLine("{0}\t{1}", pair.Key, pair.Value);
-            }
-            sw.Close();
         }
 
         public static void loadTokens(string tokenfile, Dictionary<string, List<string>> tokenValues)
@@ -544,4 +557,3 @@ namespace QAS
         }
     }
 }
-

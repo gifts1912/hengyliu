@@ -7,50 +7,53 @@ using System.Xml.Linq;
 using System.IO;
 using System.Text.RegularExpressions;
 
-namespace QAS
+
+namespace QAS.PCFG
 {
-    class Program
+    class GrammaXmlGenerate
     {
-       public static void Main(string[] args)
+        public static void Run(string[] args)
         {
-          //  Run(args);
-            if(args.Length == 0)
+           
+            if (args.Length == 0)
             {
-                args = new string[1];        
-                args[0] = "XMLTurn";
-                args[0] = "PatternEngineFormat";
-                args[0] = "GenerateDicFile";
-                args[0] = "PatternEngineUrlFormat";
-                args[0] = "GrammaXmlGenerate";
-                args[0] = "IntentIdFeatureIds";
-                
+                args = new string[7];
+                args[0] = @"D:\demo\ElectionTokens.tsv";
+                args[1] = @"D:\demo\ElectionRules.tsv";
+                args[2] = @"D:\demo\watch.tsv";
+                args[3] = @"D:\demo\queryPattern.tsv"; // queryCol = 0, patternCol = 2
+                args[4] = @"D:\demo\ElectionQueryIntent.tsv"; //queryCol = 0, intentCol = 3;
+                args[5] = @"D:\demo\slotIdealSlot.tsv";
+                args[6] = @"D:\demo\slotIdxMappingManuallyLabel.tsv";
+
             }
-            string[] cmdArgs = args.Skip(1).ToArray();
-            if(args[0].Equals("XMLTurn", StringComparison.OrdinalIgnoreCase))
-            {
-                QAS.PCFG.grammarToLabelId.grammarToLabelId.Run(cmdArgs);
-            }
-            else if(args[0].Equals("PatternEngineFormat", StringComparison.OrdinalIgnoreCase))
-            {
-                QAS.PatternEngine.PatternEngineFormat.Run(cmdArgs);
-            }
-            else if(args[0].Equals("GenerateDicFile", StringComparison.OrdinalIgnoreCase))
-            {
-                QAS.PatternEngine.GenerateDicFile.Run(cmdArgs);
-            }
-            else if(args[0].Equals("PatternEngineUrlFormat", StringComparison.OrdinalIgnoreCase))
-            {
-                QAS.PatternEngine.GenerateDicFile.Run(cmdArgs); // First generate the url and response format url dictionary.
-                QAS.PatternEngine.GenerateFormatUrlOfPatterns.Run(cmdArgs); // Generate url format of each intent + slotPattern based on the url format that generate in the previous step.
-            }
-            else if(args[0].Equals("GrammaXmlGenerate", StringComparison.OrdinalIgnoreCase))
-            {
-                PCFG.GrammaXmlGenerate.Run(cmdArgs);
-            }
-            else if(args[0].Equals("IntentIdFeatureIds", StringComparison.OrdinalIgnoreCase))
-            {
-                PCFG.IntentIdFeatureIds.Run(cmdArgs);
-            }
+            string tokenfile = args[0];
+            string tokenRuleFile = args[1];
+            string patternQueryFile = args[3];
+            string queryIntentFile = args[4];
+            string slotIdealFile = args[5];
+            string slotIdxMapFile = args[6];
+
+            //MappingCandidateToUniqExp(tokenfile, slotIdealFile, slotIdxMapFile);
+
+            //   IntentIdx(intentLabelFile);
+
+            Dictionary<string, List<string>> tokenValues = new Dictionary<string, List<string>>();
+            loadTokens(tokenfile, tokenValues); // Load tokens and response values and store them into Dictionary<string, List<string>> tokenValues;
+
+            //  SlotIndex(slotIdealFile, slotIdxMapFile);
+
+            Dictionary<string, string> patternIntentDic = new Dictionary<string, string>();
+            LoadPatternIntent(patternQueryFile, queryIntentFile, patternIntentDic); // generate each pattern's intent
+
+            HashSet<string> rules = new HashSet<string>();
+            LoadTokenRules(tokenRuleFile, rules); // load election rules
+
+            Dictionary<string, HashSet<string>> idealSlotExpHs = new Dictionary<string, HashSet<string>>();
+            Dictionary<string, string> slotIdealSlot = new Dictionary<string, string>();
+            LoadSlotIdealExp(slotIdealFile, idealSlotExpHs, slotIdealSlot); // Generate ideal slot expression of each slot value.
+
+            GenerateXML(tokenValues, rules, patternIntentDic, idealSlotExpHs, slotIdealSlot, @"D:\demo\patternIntentIdex.tsv", slotIdxMapFile);
         }
 
         public static void IntentIdx(string inFile)
@@ -78,48 +81,7 @@ namespace QAS
             }
             sw.Close();
         }
-        public static void Run(string[] args)
-        {
-            if (args.Length == 0)
-            {
-                args = new string[7];
-                args[0] = @"D:\demo\ElectionTokens.tsv";
-                args[1] = @"D:\demo\ElectionRules.tsv";
-                args[2] = @"D:\demo\watch.tsv";
-                args[3] = @"D:\demo\queryPattern.tsv"; // queryCol = 0, patternCol = 2
-                args[4] = @"D:\demo\ElectionQueryIntent.tsv"; //queryCol = 0, intentCol = 3;
-                //  args[5] = @"D:\Project\Election\TokenAndRules\candidatePartyPoliticalViewMappingDic.tsv";
-                args[5] = @"D:\demo\slotIdealSlot.tsv";
-                args[6] = @"D:\demo\slotIdxMappingManuallyLabel.tsv";
-
-            }
-            string tokenfile = args[0];
-            string tokenRuleFile = args[1];
-            string patternQueryFile = args[3];
-            string queryIntentFile = args[4];
-            string slotIdealFile = args[5];
-            string slotIdxMapFile = args[6];
-
-         //   IntentIdx(intentLabelFile);
-
-            Dictionary<string, List<string>> tokenValues = new Dictionary<string, List<string>>();
-            loadTokens(tokenfile, tokenValues); // Load tokens and response values and store them into Dictionary<string, List<string>> tokenValues;
-
-            //  SlotIndex(slotIdealFile, slotIdxMapFile);
-
-            Dictionary<string, string> patternIntentDic = new Dictionary<string, string>();
-            LoadPatternIntent(patternQueryFile, queryIntentFile, patternIntentDic); // get the intent of each pattern.
-
-            HashSet<string> rules = new HashSet<string>();
-            LoadTokenRules(tokenRuleFile, rules); // load rule and store them into rules.
-
-            Dictionary<string, HashSet<string>> idealSlotExpHs = new Dictionary<string, HashSet<string>>();
-            Dictionary<string, string> slotIdealSlot = new Dictionary<string, string>();
-            LoadSlotIdealExp(slotIdealFile, idealSlotExpHs, slotIdealSlot);
-
-            GenerateXML(tokenValues, rules, patternIntentDic, idealSlotExpHs, slotIdealSlot, @"D:\demo\patternIntentIdex.tsv", slotIdxMapFile);
-        }
-
+        
         public static void SlotIndex(string slotIdealFile, string slotIdxMapFile)
         {
             int curIdx = 1;
@@ -301,7 +263,7 @@ namespace QAS
         public static void GenerateXML(Dictionary<string, List<string>> tokenValues, HashSet<string> rulesHS, Dictionary<string, string> patternIntents, Dictionary<string, HashSet<string>> idealSlotExpHs, Dictionary<string, string> slotIdealSlot, string intentIndexFile, string slotIdxFile)
         {
             Dictionary<string, string> candIdx = new Dictionary<string, string>();
-           // ReadCandIdx(candIdx, slotIdxFile);
+            ReadCandIdx(candIdx, slotIdxFile);
 
             Dictionary<string, int> intentCurIdx = new Dictionary<string, int>();
             Dictionary<string, string> intentIdxPattern = new Dictionary<string, string>();
@@ -544,4 +506,3 @@ namespace QAS
         }
     }
 }
-
