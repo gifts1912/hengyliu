@@ -1,4 +1,4 @@
-﻿﻿using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -30,7 +30,7 @@ namespace QAS.PCFG
         public static HashSet<string> StaySlots = new HashSet<string>();
         public static void Run(string[] args)
         {
-
+           
             if (args.Length == 0)
             {
                 args = new string[7];
@@ -47,11 +47,11 @@ namespace QAS.PCFG
             string patternQueryFile = args[3];
             string queryIntentFile = args[4];
             string slotIdealFile = args[5];
-
+            
 
             Dictionary<string, List<string>> tokenValues = new Dictionary<string, List<string>>();
             loadTokens(tokenfile, tokenValues); // Load tokens and response values and store them into Dictionary<string, List<string>> tokenValues;
-
+            
 
             Dictionary<string, string> patternIntentDic = new Dictionary<string, string>();
             LoadPatternIntent(patternQueryFile, queryIntentFile, patternIntentDic); // generate each pattern's intent
@@ -61,28 +61,28 @@ namespace QAS.PCFG
 
             Dictionary<string, HashSet<string>> idealSlotExpHs = new Dictionary<string, HashSet<string>>();
             Dictionary<string, string> slotIdealSlot = new Dictionary<string, string>();
-
+            
             LoadSlotIdealExp(tokenfile, idealSlotExpHs, slotIdealSlot); // Generate ideal slot expression of each slot value.
 
-
+            
             GenStayAndDetailSlot();
 
             GenerateXML(tokenValues, rules, patternIntentDic, idealSlotExpHs, slotIdealSlot, slotIdealFile, @"D:\sumStoneTemplate\pcfg\MSElection\MSElection.grammar.xml");
         }
 
-        public static void GenStayAndDetailSlot()
+        public static void  GenStayAndDetailSlot()
         {//DefaultNeedDetailSlot
             foreach (string detailSlotEle in DefaultNeedDetailSlot)
             {
                 string ele = detailSlotEle.Trim(new char[] { '[', ']' });
                 DetailSlots.Add(ele);
             }
-            foreach (KeyValuePair<string, HashSet<string>> pair in intentNeedStaySlot)
+            foreach(KeyValuePair<string, HashSet<string>> pair in intentNeedStaySlot)
             {
-                foreach (string stayEle in pair.Value)
+                foreach(string stayEle in pair.Value)
                 {
                     string ele = stayEle.Trim(new char[] { '[', ']' });
-                    if (!DetailSlots.Contains(ele))
+                    if(!DetailSlots.Contains(ele))
                         StaySlots.Add(ele);
                 }
             }
@@ -94,7 +94,7 @@ namespace QAS.PCFG
 
             Console.ReadKey();
              */
-
+           
         }
         public static void IntentIdx(string inFile)
         {
@@ -121,7 +121,7 @@ namespace QAS.PCFG
             }
             sw.Close();
         }
-
+        
         public static void SlotIndex(string slotIdealFile, string slotIdxMapFile)
         {
             int curIdx = 1;
@@ -161,12 +161,12 @@ namespace QAS.PCFG
                 string tokenValue = arr[0];
                 tokenValue = tokenValue.Substring("qpv2tkn-".Length);
                 string tokenKey = arr[1].Split(';')[1];
-                if (string.IsNullOrWhiteSpace(tokenKey))
+                if(string.IsNullOrWhiteSpace(tokenKey))
                 {
                     continue;
                 }
 
-                slotIdealSlot[tokenValue] = tokenKey;
+                slotIdealSlot[tokenValue] = tokenKey ;
                 if (!idealSlotExpList.ContainsKey(tokenKey))
                 {
                     idealSlotExpList[tokenKey] = new HashSet<string>();
@@ -174,14 +174,14 @@ namespace QAS.PCFG
                 }
                 idealSlotExpList[tokenKey].Add(tokenValue);
             }
-            /* HashSet<string> vcHS = new HashSet<string>(slotIdealSlot.Values.ToArray());
-             foreach (string iv in vcHS)
-             {
-                 if (iv.IndexOf("-") != -1)
-                     continue;
-                 slotIdealSlot[iv] = iv;
-             }
-             */
+           /* HashSet<string> vcHS = new HashSet<string>(slotIdealSlot.Values.ToArray());
+            foreach (string iv in vcHS)
+            {
+                if (iv.IndexOf("-") != -1)
+                    continue;
+                slotIdealSlot[iv] = iv;
+            }
+            */
             sr.Close();
         }
         public static void LoadPatternIntent(string patternQueryFile, string queryIntentFile, Dictionary<string, string> patternIntents)
@@ -318,14 +318,14 @@ namespace QAS.PCFG
             intentCurIdx.Add("Intent0", 1);
             string rootId = "MSElection";
             XElement Grammar = new XElement("grammar", new XAttribute("root", rootId));
-
+           
             /*
              * Add slot value list of response ideal slot expression. 
              */
             foreach (KeyValuePair<string, HashSet<string>> pair in idealSlotExpHs)
             {
                 string slotIdealExp = pair.Key;
-                if (candIdx.ContainsKey(slotIdealExp))
+                if(candIdx.ContainsKey(slotIdealExp))
                 {
                     slotIdealExp = candIdx[slotIdealExp];
                 }
@@ -339,7 +339,7 @@ namespace QAS.PCFG
                     oneofNode.Add(itemNode);
                 }
                 atomNode.Add(oneofNode);
-                tagNode.SetValue(string.Format("$=\"{0}\"", slotIdealExp));
+                tagNode.SetValue(string.Format("$=\"-{0}\"", slotIdealExp));
                 atomNode.Add(tagNode);
                 Grammar.Add(atomNode);
             }
@@ -372,19 +372,16 @@ namespace QAS.PCFG
                     XElement itemNode = new XElement("item");
                     itemNode.SetValue(a);
                     XElement tagNode = new XElement("tag");
-                    if (detailToken)
+                    if(detailToken)
                     {
-                        tagNode.SetValue("$ = $$");                 
+                        tagNode.SetValue("$ = \"-\" + $$");
+                        itemNode.Add(tagNode);
                     }
-                    else if (stayToken)
+                    else if(stayToken)
                     {
-                        tagNode.SetValue(string.Format("$ = {0}", tokenName));                      
+                        tagNode.SetValue(string.Format("$ = -{0}", tokenName));
+                        itemNode.Add(tagNode);
                     }
-                    else 
-                    {
-                        tagNode.SetValue("$ = \"\"");                      
-                    }
-                    itemNode.Add(tagNode);
                     oneofNode.Add(itemNode);
                 }
                 if (refIdealSlot.Count() > 0)
@@ -398,9 +395,9 @@ namespace QAS.PCFG
                         {
                             tagNode.SetValue("$ = $$");
                         }
-                        else if (stayToken)
+                        else if(stayToken)
                         {
-                            tagNode.SetValue(string.Format("$ = {0}", tokenName));
+                            tagNode.SetValue(string.Format("$ = -{0}", tokenName));
                         }
                         else
                         {
@@ -411,7 +408,21 @@ namespace QAS.PCFG
                         oneofNode.Add(itemNode);
                     }
                 }
-                atomNode.Add(oneofNode);  
+                
+                if(detailToken)
+                {
+                    tagNodeToken.SetValue("$ = \"-\" + $$");
+                }
+                else if(stayToken)
+                {
+                    tagNodeToken.SetValue(string.Format("$=-{0}", tokenName));
+                }
+                else
+                {
+                    tagNodeToken.SetValue("$=\"\"");
+                }      
+                atomNode.Add(oneofNode);
+                atomNode.Add(tagNodeToken);  
                 Grammar.Add(atomNode);
             }
 
@@ -437,7 +448,9 @@ namespace QAS.PCFG
 
                 string ruleId = string.Format("{0}_{1}", intent, cur);
                 gramaRuleHs.Add(ruleId);
+               // intentIdxPattern[ruleId] = rule;
                 XElement atomNode = new XElement("rule", new XAttribute("id", ruleId));
+                // XElement oneofNode = new XElement("one-of");
                 string[] arr = rule.Split(' ');
                 bool first = true;
                 for (int i = 0; i < arr.Length - 1; i++)
@@ -449,29 +462,17 @@ namespace QAS.PCFG
                         itemNode.SetValue(ele);
                         XElement tagNode = new XElement("tag");
                         if(stayWords.Contains(ele))
-                        {
-                            
-                            if(first)
-                            {
-                                tagNode.SetValue(string.Format("$ = {0}", ele));
-                            }
-                            else
-                            {
-                                tagNode.SetValue(string.Format("$ = $ + {0}", ele));
-                            }
-                            itemNode.Add(tagNode);                                             
+                        {                           
+                            tagNode.SetValue("$ = \"-\" + $$");
+                           
                         }
                         else
                         {
-                            if (first)
-                            {
-                                tagNode.SetValue("$=\"\"");
-                                itemNode.Add(tagNode);
-                            }
-                     
+                            tagNode.SetValue("$=\"\"");
                         }
-                        
-                        atomNode.Add(itemNode);             
+                        itemNode.Add(tagNode);
+                        atomNode.Add(itemNode);
+                        //  oneofNode.Add(itemNode);              
                     }
                     else
                     {
@@ -497,42 +498,40 @@ namespace QAS.PCFG
                 string eleLast = arr[arr.Length - 1];
                 if (!eleLast.Contains("."))
                 {
-                    string label = intent;
-                    if (candIdx.ContainsKey(label))
-                    {
-                        label = candIdx[label];
-                    }
                     XElement itemNode = new XElement("item");
-                    XElement tagNode = new XElement("tag");
                     itemNode.SetValue(eleLast);
+                    XElement tagNodeLast = new XElement("tag");
+                    string label = intent;
+                    string word = "";
                     if (stayWords.Contains(eleLast))
                     {
-
-                        if (first)
+                        word = string.Format("-{0}", eleLast);
+                    }
+                    if (!first)
+                    {
+                        if(word == "")
                         {
-                            tagNode.SetValue(string.Format("$ = \"{0}\" + {1}", label, eleLast));
+                            tagNodeLast.SetValue(string.Format("$ = \"{0}\" + $", label, word));
                         }
                         else
                         {
-                            tagNode.SetValue(string.Format("$ = \"{0}\" + $ + {1}", label, eleLast));
-                        }
-                        itemNode.Add(tagNode);
+                            tagNodeLast.SetValue(string.Format("$ = \"{0}\" + $ + {1}", label, word));
+                        }                          
                     }
                     else
                     {
-                        if (first)
+                        if(word == "")
                         {
-                            tagNode.SetValue(string.Format("$ = \"{0}\"", label));
-                            
+                            tagNodeLast.SetValue(string.Format("$ = \"{0}\"", label, word));
                         }
                         else
                         {
-                            tagNode.SetValue(string.Format("$ = \"{0}\" + $", label));
-                        }
-                        itemNode.Add(tagNode);
-
+                            tagNodeLast.SetValue(string.Format("$ = \"{0}\" + {1}", label, word));
+                        }                      
                     }
-                    atomNode.Add(itemNode);            
+                    itemNode.Add(tagNodeLast);
+                    atomNode.Add(itemNode);
+                    //  oneofNode.Add(itemNode);              
                 }
                 else
                 {

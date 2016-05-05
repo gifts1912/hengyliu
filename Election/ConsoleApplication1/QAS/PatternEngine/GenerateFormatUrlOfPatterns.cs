@@ -102,19 +102,19 @@ namespace QAS.PatternEngine
                 while((line = sr.ReadLine()) != null)
                 {
                     string[] arr = line.Split('\t');
-
-                    if(!idxToUrlSocre.ContainsKey(arr[0]))
+                    string idx = int.Parse(arr[0]).ToString();
+                    if(!idxToUrlSocre.ContainsKey(idx))
                     {
-                        idxToUrlSocre[arr[0]] = new Dictionary<string, int>();
+                        idxToUrlSocre[idx] = new Dictionary<string, int>();
                     }
                     string url = ProcessUrl(arr[1]);
-                    if(!idxToUrlSocre[arr[0]].ContainsKey(url))
+                    if(!idxToUrlSocre[idx].ContainsKey(url))
                     {
-                        idxToUrlSocre[arr[0]][url] = int.Parse(arr[2]);
+                        idxToUrlSocre[idx][url] = int.Parse(arr[2]);
                     }
                     else
                     {
-                        ProcLog(string.Format("RepUrl in same intent: (1): {0}\t(2):{1}", line, string.Format("{0}\t{1}\t{2}", arr[0], url, idxToUrlSocre[arr[0]][url])));
+                        ProcLog(string.Format("RepUrl in same intent: (1): {0}\t(2):{1}", line, string.Format("{0}\t{1}\t{2}", idx, url, idxToUrlSocre[idx][url])));
                     }
                 }
             }
@@ -140,9 +140,10 @@ namespace QAS.PatternEngine
             //private static Dictionary<string, Dictionary<string, int>> idxToUrlSocre = new Dictionary<string, Dictionary<string, int>>();
             using (StreamWriter sw = new StreamWriter(outfile))
             {
+                sw.WriteLine("[KeyTermDict:SIIntentLevelPlatformAuthoritySites:8]");
                 foreach (KeyValuePair<string, Dictionary<string, int>> idxUrlScorePair in idxToUrlSocre)
                 {
-                    sw.WriteLine(string.Format("[KeyTermDict:Election:{0}]", idxUrlScorePair.Key));
+                    sw.WriteLine(string.Format("MatchConstraint=QLF$2950:{0}", idxUrlScorePair.Key));
                     int cur_idx = 0;
                     string preUrl = "KeyTerm_", preScore = "Socre_";
                     foreach (KeyValuePair<string, int> urlScorePair in idxUrlScorePair.Value.ToList())

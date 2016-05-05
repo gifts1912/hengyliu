@@ -79,7 +79,8 @@ namespace QAS.PCFG
                     ExpandSlotPat(slotPatArr, 0, slotPatArr.Length, permutation);
                     foreach (string ele in permutation)
                     {
-                        sw.WriteLine("{0}-{1}\tExternalInput3\t0\t1\t{2}\t1\t0\t0", arr[0], ele, arr[3]);
+                        string idx = int.Parse(arr[3]).ToString();
+                        sw.WriteLine("{0}{1}\tExternalInput3\t0\t1\t{2}\t1\t0\t0", arr[0], ele, idx);
                     }
                 }
             }
@@ -90,7 +91,7 @@ namespace QAS.PCFG
         {
             if (b >= e - 1 )
             {
-                permutation.Add(string.Join("-", arr));
+                permutation.Add(string.Join("", arr));
             }
             else
             {

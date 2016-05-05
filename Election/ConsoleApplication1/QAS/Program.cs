@@ -20,9 +20,14 @@ namespace QAS
                 args[0] = "XMLTurn";
                 args[0] = "PatternEngineFormat";
                 args[0] = "GenerateDicFile";
+                
+                
+               
                 args[0] = "PatternEngineUrlFormat";
-                args[0] = "GrammaXmlGenerate";
+               
+                
                 args[0] = "IntentIdFeatureIds";
+                args[0] = "GrammaXmlGenerate";
                 
             }
             string[] cmdArgs = args.Skip(1).ToArray();
@@ -40,7 +45,7 @@ namespace QAS
             }
             else if(args[0].Equals("PatternEngineUrlFormat", StringComparison.OrdinalIgnoreCase))
             {
-                QAS.PatternEngine.GenerateDicFile.Run(cmdArgs); // First generate the url and response format url dictionary.
+             //   QAS.PatternEngine.GenerateDicFile.Run(cmdArgs); // First generate the url and response format url dictionary.
                 QAS.PatternEngine.GenerateFormatUrlOfPatterns.Run(cmdArgs); // Generate url format of each intent + slotPattern based on the url format that generate in the previous step.
             }
             else if(args[0].Equals("GrammaXmlGenerate", StringComparison.OrdinalIgnoreCase))
