@@ -227,11 +227,19 @@ namespace QAS.PCFG
                 if (queryIntents.ContainsKey(query))
                 {
                     string intent = queryIntents[query];
-                    patternIntents[pattern] = intent;
+                    if(patternIntents.ContainsKey(pattern) && patternIntents[pattern] != intent)
+                    {
+                        patternIntents.Remove(pattern);   
+                    }
+                    else
+                    {
+                        patternIntents[pattern] = intent;
+                    }
+                    
                 }
             }
 
-            /*
+            
             StreamWriter sw = new StreamWriter(@"D:\demo\watch.tsv");
             Dictionary<string, List<string>> intentPatterns = new Dictionary<string, List<string>>();
             foreach(KeyValuePair<string, string> pair in patternIntents)
@@ -249,7 +257,7 @@ namespace QAS.PCFG
                 sw.WriteLine("{0}\t{1}", pair.Key, string.Join("\t", pair.Value));
             }
             sw.Close();
-             */
+             
         }
         public static void LoadTokenRules(string tokenRuleFile, HashSet<string> rulesSet)
         {

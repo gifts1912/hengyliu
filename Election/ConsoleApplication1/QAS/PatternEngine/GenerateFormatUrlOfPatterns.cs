@@ -140,9 +140,11 @@ namespace QAS.PatternEngine
             //private static Dictionary<string, Dictionary<string, int>> idxToUrlSocre = new Dictionary<string, Dictionary<string, int>>();
             using (StreamWriter sw = new StreamWriter(outfile))
             {
-                sw.WriteLine("[KeyTermDict:SIIntentLevelPlatformAuthoritySites:8]");
+                int startnum = 8;       
                 foreach (KeyValuePair<string, Dictionary<string, int>> idxUrlScorePair in idxToUrlSocre)
                 {
+                    sw.WriteLine(string.Format("[KeyTermDict:SIIntentLevelPlatformAuthoritySites:{0}]", startnum));
+                    startnum++;
                     sw.WriteLine(string.Format("MatchConstraint=QLF$2950:{0}", idxUrlScorePair.Key));
                     int cur_idx = 0;
                     string preUrl = "KeyTerm_", preScore = "Socre_";

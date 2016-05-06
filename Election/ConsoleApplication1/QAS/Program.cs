@@ -18,16 +18,18 @@ namespace QAS
             {
                 args = new string[1];        
                 args[0] = "XMLTurn";
-                args[0] = "PatternEngineFormat";
+                
                 args[0] = "GenerateDicFile";
                 
                 
                
-                args[0] = "PatternEngineUrlFormat";
+               
                
                 
                 args[0] = "IntentIdFeatureIds";
                 args[0] = "GrammaXmlGenerate";
+                args[0] = "PatternEngineFormat";
+                args[0] = "PatternEngineUrlFormat";
                 
             }
             string[] cmdArgs = args.Skip(1).ToArray();
