@@ -143,11 +143,12 @@ namespace QAS.PatternEngine
                 int startnum = 8;       
                 foreach (KeyValuePair<string, Dictionary<string, int>> idxUrlScorePair in idxToUrlSocre)
                 {
+                    sw.WriteLine();
                     sw.WriteLine(string.Format("[KeyTermDict:SIIntentLevelPlatformAuthoritySites:{0}]", startnum));
                     startnum++;
                     sw.WriteLine(string.Format("MatchConstraint=QLF$2950:{0}", idxUrlScorePair.Key));
                     int cur_idx = 0;
-                    string preUrl = "KeyTerm_", preScore = "Socre_";
+                    string preUrl = "KeyTerm_", preScore = "Score_";
                     foreach (KeyValuePair<string, int> urlScorePair in idxUrlScorePair.Value.ToList())
                     {
                         string url = urlScorePair.Key;
