@@ -14,6 +14,8 @@ using System.Xml.XPath;
 using PBXMLUtil;
 using Newtonsoft.Json.Linq;
 using System.IO;
+using System.Text.RegularExpressions;
+using System.Xml;
 
 
 namespace BotApplicationV1
@@ -55,7 +57,8 @@ namespace BotApplicationV1
                         else if (srviceName.Equals("EntityWebAnswer", StringComparison.OrdinalIgnoreCase))
                         {
                             // seResult = ParsePbxml(ToStream(PbxmlString), @"SatoriId:results[*]\Containers[*]\EntityContent\RelatedEntities[*]\RelatedEntity\SatoriId;Name:results[*]\Containers[*]\EntityContent\RelatedEntities[*]\RelatedEntity\Name;Relaption:results[*]\Containers[*]\EntityContent\RelatedEntities[*]\RelatedEntity\Relationship", srviceName, scenaro);
-                            seResult = ParsePbxml(ToStream(PbxmlString), @"SatoriId:results[0]\Containers[0]\EntityContent\RelatedEntities[*]\RelatedEntity\SatoriId", srviceName, scenaro);
+                           // seResult = ParsePbxml(ToStream(PbxmlString), @"SatoriId:results[0]\Containers[0]\EntityContent\RelatedEntities[*]\RelatedEntity\SatoriId;Relationship:results[0]\Containers[0]\EntityContent\RelatedEntities[*]\RelatedEntity\Relationship", srviceName, scenaro);
+                            seResult = ParsePbxmlRelateEntity(ToStream(PbxmlString), @"SatoriId:results[0]\Containers[0]\EntityContent\RelatedEntities[*]\RelatedEntity\SatoriId;Relationship:results[0]\Containers[0]\EntityContent\RelatedEntities[*]\Relationship", srviceName, scenaro);
                         }
                         else if (srviceName.Equals("PreWebEntityAnswer", StringComparison.OrdinalIgnoreCase))
                         {
@@ -138,6 +141,87 @@ namespace BotApplicationV1
             return seRes;
         }
 
+        public static string ParsePbxmlRelateEntity(Stream pbxmlStream, string FieldName2PathMapping, string service, string scenario)
+        {        
+            string seRes = null;
+            // string FieldName2PathMapping = @"Result:Results[*]\ResultEntityList[*]\Id";
+            string[] strArray1 = FieldName2PathMapping.Split(new char[1]
+            {
+                ';'
+            }, StringSplitOptions.RemoveEmptyEntries);
+            string[] strArray2 = new string[strArray1.Length];
+            string[] fields = new string[strArray1.Length];
+            for (int index = 0; index < strArray1.Length; ++index)
+            {
+                string[] strArray3 = strArray1[index].Split(':');
+                strArray2[index] = strArray3[0];
+                fields[index] = strArray3[1];
+            }
+
+            // string service = "Dolphin", scenario = "Fetch";
+            /* XPathDocument pbxml = new XPathDocument(pbxmlStream);
+             XPathExpression answerExpression = Util.PBXMLUtil.GetKif(service, scenario);
+             JObject json = Util.PBXMLUtil.GetKifJson(pbxml, answerExpression);
+             */
+            List<string> jsonList = new List<string>();
+            PositionJson(pbxmlStream, jsonList);
+            foreach (string jsonEle in jsonList)
+            {
+                JObject json = JObject.Parse(jsonEle);
+                string[] fieldValues = new string[fields.Length];
+                for (int i = 0; i < fields.Length; i++)
+                {
+                    string field = fields[i];
+                    string[] hierachy = field.Split(new char[] { '\\', '/' }, StringSplitOptions.RemoveEmptyEntries);
+                    List<string> values = new List<string>();
+                    try
+                    {
+                        GetFieldValue(hierachy, 0, json as JToken, ref values);
+                        fieldValues[i] = string.Join("|||", values);
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("Error: {0}", ex.Message);
+                        //  return null;
+                    }
+                }
+                List<string> conditionValueList = new List<string>();
+                if (fields.Length != 2)
+                {
+                    return null;
+                }                   
+                else
+                {
+                    string[] valueArr = fieldValues[0].Split(new string[] { "|||" }, StringSplitOptions.None);
+                    string[] condArr = fieldValues[1].Split(new string[] { "|||" }, StringSplitOptions.None);
+                    for (int i = 0; i < condArr.Length; i++)
+                    {
+                        if (Regex.IsMatch(condArr[i], @"^\d{4}$"))
+                        {
+                            conditionValueList.Add(valueArr[i]);
+                        }
+                    }
+                    seRes = string.Join("|||", conditionValueList.ToArray());
+                }
+                if (!string.IsNullOrEmpty(seRes))
+                    break;
+            }
+            
+            return seRes;
+        }
+
+        public static void PositionJson(Stream pbxmlStream, List<string> jsonList)
+        {
+            XmlDocument doc = new XmlDocument();
+            doc.Load(pbxmlStream);
+            XmlElement root = doc.DocumentElement;
+           // List<string> jsonStr = new List<string>();
+            XmlNodeList listNodes = root.SelectNodes(string.Format("/PropertyBag/s_AnswerResponseCommand/s_AnswerQueryResponse/a_AnswerDataArray/s_AnswerData[c_AnswerServiceName=\"{0}\"][c_AnswerDataScenario=\"{1}\"]/k_AnswerDataKifResponse", "EntityWebAnswer", "EntityWebPerson"));
+            foreach(XmlNode node in listNodes)
+            {
+                jsonList.Add(node.InnerText);
+            }
+        }
         private static void GetFieldValue(string[] hierachy, int layer, JToken json, ref List<string> values)
         {
             if (layer == hierachy.Length)
