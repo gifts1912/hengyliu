@@ -33,6 +33,7 @@ namespace QAS.PatternEngine
             LoaderUrlList(topSiteFile);
 
             GenKeyTermPat(keyTermPatFile);
+            GenKeyTermPatOffline(@"D:\demo\KeyTermPatternOffline.tsv");
             logWriter.Close();
         }
 
@@ -166,6 +167,40 @@ namespace QAS.PatternEngine
                     }
                 }
             }    
+        }
+
+        public static void GenKeyTermPatOffline(string outfile)
+        {
+            //private static Dictionary<string, string> urlToPdi = new Dictionary<string, string>();
+            //private static Dictionary<string, Dictionary<string, int>> idxToUrlSocre = new Dictionary<string, Dictionary<string, int>>();
+            using (StreamWriter sw = new StreamWriter(outfile))
+            {
+                int startnum = 8;
+                foreach (KeyValuePair<string, Dictionary<string, int>> idxUrlScorePair in idxToUrlSocre)
+                {
+                    sw.WriteLine();
+                    sw.WriteLine(string.Format("[KeyTermDict:SIIntentLevelPlatformAuthoritySites:{0}]", startnum));
+                    startnum++;
+                    sw.WriteLine(string.Format("MatchConstraint=QLF$2950:{0}", idxUrlScorePair.Key));
+                    int cur_idx = 0;
+                    string preUrl = "KeyTerm_", preScore = "Score_";
+                    foreach (KeyValuePair<string, int> urlScorePair in idxUrlScorePair.Value.ToList())
+                    {
+                        string url = urlScorePair.Key;
+                        if (urlToPdi.ContainsKey(url))
+                        {
+                            string metaStream = urlToPdi[url];
+                            sw.WriteLine(string.Format("{0}\t{1}\t{2}", idxUrlScorePair.Key, url, urlScorePair.Value));
+                           // sw.WriteLine(string.Format("{0}{1}={2}", preScore, cur_idx, urlScorePair.Value));
+                            cur_idx++;
+                        }
+                        else
+                        {
+                            ProcLog(string.Format("Not in urlToPdi: {0}", url));
+                        }
+                    }
+                }
+            }
         }
 
         public static void ProcLog(string line)

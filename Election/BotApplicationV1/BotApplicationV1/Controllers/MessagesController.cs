@@ -34,14 +34,44 @@ namespace BotApplicationV1
 
                 // return our reply to the user
                 //  return message.CreateReplyMessage($"You sent {length} characters");
+                Dictionary<string, string> serviceScenario = new Dictionary<string, string>();
+                serviceScenario.Add("Dolphin", "Fetch");
+                serviceScenario.Add("EntityWebAnswer", "EntityWebPerson");
+                serviceScenario.Add("PreWebEntityAnswer", "QueryToEntityLookUp");
                 int counter = message.GetBotPerUserInConversationData<int>("counter");
                 string query = message.Text;
-                string URL2 = "http://www.bing.com/search?q=" + string.Join("+", query.Split(' ')) + "&filter=dolphin%7Cfetch&format=pbxml&p1=%5bAnswerReducer%20Mode=%22Disabled%22%5d";
-                PageContentCrawlerByWebrequest crawler2 = new PageContentCrawlerByWebrequest();
-                string PbxmlString = crawler2.crawl(URL2);
-                
-                string seResult = ParsePbxml(ToStream(PbxmlString));
-                if(String.IsNullOrEmpty(seResult))
+                string seResult = null;
+                foreach (KeyValuePair<string, string> pair in serviceScenario)
+                {
+                    string srviceName = pair.Key, scenaro = pair.Value;
+                    string URL2 = "http://www.bing.com/search?q=" + string.Join("+", query.Split(' ')) + string.Format("&filter={0}%7C{1}&format=pbxml&p1=%5bAnswerReducer%20Mode=%22Disabled%22%5d", srviceName, scenaro);
+                    PageContentCrawlerByWebrequest crawler2 = new PageContentCrawlerByWebrequest();
+                    string PbxmlString = crawler2.crawl(URL2);
+
+                    try
+                    {
+                        if (srviceName.Equals("Dolphin", StringComparison.OrdinalIgnoreCase))
+                            seResult = ParsePbxml(ToStream(PbxmlString), @"Result:Results[*]\ResultEntityList[*]\Id", srviceName, scenaro);
+                        else if (srviceName.Equals("EntityWebAnswer", StringComparison.OrdinalIgnoreCase))
+                        {
+                            // seResult = ParsePbxml(ToStream(PbxmlString), @"SatoriId:results[*]\Containers[*]\EntityContent\RelatedEntities[*]\RelatedEntity\SatoriId;Name:results[*]\Containers[*]\EntityContent\RelatedEntities[*]\RelatedEntity\Name;Relaption:results[*]\Containers[*]\EntityContent\RelatedEntities[*]\RelatedEntity\Relationship", srviceName, scenaro);
+                            seResult = ParsePbxml(ToStream(PbxmlString), @"SatoriId:results[0]\Containers[0]\EntityContent\RelatedEntities[*]\RelatedEntity\SatoriId", srviceName, scenaro);
+                        }
+                        else if (srviceName.Equals("PreWebEntityAnswer", StringComparison.OrdinalIgnoreCase))
+                        {
+                            seResult = ParsePbxml(ToStream(PbxmlString), @"Result:results[*]\EntityFeatures[*]\Id", srviceName, scenaro);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex.ToString());
+                    }
+                    if (!string.IsNullOrEmpty(seResult))
+                    {
+                        break;
+                    }
+                }
+                if (string.IsNullOrEmpty(seResult))
                 {
                     seResult = "Out of our service!";
                 }
@@ -54,6 +84,7 @@ namespace BotApplicationV1
             }
         }
 
+
         public static Stream ToStream(string str)
         {
             MemoryStream stream = new MemoryStream();
@@ -64,10 +95,10 @@ namespace BotApplicationV1
             return stream;
         }
 
-        public static string ParsePbxml(Stream pbxmlStream)
-        { 
+        public static string ParsePbxml(Stream pbxmlStream, string FieldName2PathMapping, string service, string scenario)
+        {
             string seRes = null;
-            string FieldName2PathMapping = @"Result:Results[*]\ResultEntityList[*]\Id";
+            // string FieldName2PathMapping = @"Result:Results[*]\ResultEntityList[*]\Id";
             string[] strArray1 = FieldName2PathMapping.Split(new char[1]
             {
                 ';'
@@ -81,7 +112,7 @@ namespace BotApplicationV1
                 fields[index] = strArray3[1];
             }
 
-            string service = "Dolphin", scenario = "Fetch";
+            // string service = "Dolphin", scenario = "Fetch";
             XPathDocument pbxml = new XPathDocument(pbxmlStream);
             XPathExpression answerExpression = Util.PBXMLUtil.GetKif(service, scenario);
             JObject json = Util.PBXMLUtil.GetKifJson(pbxml, answerExpression);

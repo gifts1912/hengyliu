@@ -20,16 +20,14 @@ namespace QAS
                 args[0] = "XMLTurn";
                 
                 args[0] = "GenerateDicFile";
-                
-                
-               
-               
-               
+                           
                 
                 args[0] = "IntentIdFeatureIds";
                 args[0] = "GrammaXmlGenerate";
                 args[0] = "PatternEngineFormat";
                 args[0] = "PatternEngineUrlFormat";
+                args[0] = "QASTestOnDoDt";
+                args[0] = "SlotIntentClassiferTrainDataGen";
                 
             }
             string[] cmdArgs = args.Skip(1).ToArray();
@@ -57,6 +55,14 @@ namespace QAS
             else if(args[0].Equals("IntentIdFeatureIds", StringComparison.OrdinalIgnoreCase))
             {
                 PCFG.IntentIdFeatureIds.Run(cmdArgs);
+            }
+            else if(args[0].Equals("QASTestOnDoDt", StringComparison.OrdinalIgnoreCase))
+            {
+                QAS.PatternEngine.QASTestOnDoDt.Run(cmdArgs);
+            }
+           else if(args[0].Equals("SlotIntentClassiferTrainDataGen", StringComparison.OrdinalIgnoreCase))
+            {
+                IntentTLC.SlotIntentClassiferTrainDataGen.Run(cmdArgs);
             }
         }
 
