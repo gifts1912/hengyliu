@@ -10,6 +10,7 @@ namespace QAS.IntentTLC
 {
     class SlotIntentClassiferTrainDataGen
     {
+        public static StreamWriter lw;
         public static void Run(string [] args)
         {
             if(args.Length == 0)
@@ -19,32 +20,19 @@ namespace QAS.IntentTLC
                 args[1] = @"D:\demo\ElectionQueryIntent.tsv"; //queryCol = 0, intentCol = 3;
                 args[2] = @"D:\demo\ruleToIntentTrain.tsv";
             }
+            lw = new StreamWriter(@"D:\demo\log.tsv");
             string queryPatFile = args[0];
             string queryIntentFile =args[1];
             string ruleToIntentFile = args[2];
 
             GenRuleToIntentTrainData(queryPatFile, queryIntentFile, ruleToIntentFile);
+            lw.Close();
         }
 
         public static void  GenRuleToIntentTrainData(string queryPatFile, string queryIntentFile, string ruleToIntentFile)
         {
             StreamReader sr = new StreamReader(queryPatFile);
-            string line;
-            Dictionary<string, List<string>> patQueryList  = new Dictionary<string, List<string>>();
-            while((line = sr.ReadLine()) != null)
-            {
-                string[] arr = line.Split('\t');
-                if (arr.Length <= 2)
-                    continue;
-                string query = arr[0], pat = arr[2];
-                if(!patQueryList.ContainsKey(pat))
-                {
-                    patQueryList[pat] = new List<string>();
-                }
-                patQueryList[pat].Add(query);
-            }
-            sr.Close();
-
+            string line; 
             Dictionary<string, string> queryToInt = new Dictionary<string, string>();
             sr = new StreamReader(queryIntentFile);
             while((line = sr.ReadLine()) != null)
@@ -55,14 +43,69 @@ namespace QAS.IntentTLC
             }
             sr.Close();
 
-            foreach(KeyValuePair<string, List<string>> pair in patQueryList)
+            sr = new StreamReader(queryIntentFile);
+            Dictionary<string, Dictionary<string, int>> patIntentsDic= new Dictionary<string, Dictionary<string, int>>();
+            while ((line = sr.ReadLine()) != null)
             {
-                if(pair.Value.Count != 1)
+                string[] arr = line.Split('\t');
+                if (arr.Length <= 2)
+                    continue;
+                string query = arr[0], pat = arr[1];
+                if(!queryToInt.ContainsKey(query))
                 {
-                    Console.WriteLine("{0}\t{1}", pair.Key, string.Join("\t", pair.Value));
+                    LogWrite(query);
+                    continue;
+                }
+                string intent = queryToInt[query];
+
+                if (!patIntentsDic.ContainsKey(pat))
+                {
+                    patIntentsDic[pat] = new Dictionary<string, int>();
+                }
+                if(!patIntentsDic[pat].ContainsKey(intent))
+                {
+                    patIntentsDic[pat][intent] = 0;
+                }
+                patIntentsDic[pat][intent] += 1;
+            }
+            sr.Close();
+
+
+            StreamWriter sw = new StreamWriter(ruleToIntentFile);
+            foreach (KeyValuePair<string, Dictionary<string, int>> pair in patIntentsDic)
+            {
+                string pattern = pair.Key;
+                string intent = MostFreq(pair.Value);
+                if (string.IsNullOrEmpty(intent))
+                {
+                    LogWrite(string.Format("most intent not exists:{0}", string.Join(" ", pair.Value.Keys.ToArray())));
+                    continue;
+                }
+                pattern = pattern.Replace("[","").Replace("]", "");
+                pattern = pattern.Trim();                         
+                sw.WriteLine("{0}\t{1}", pattern, intent);              
+            }
+            sw.Close();           
+        }
+
+        public static void LogWrite(string query)
+        {
+            lw.WriteLine(query);
+        }
+
+        public static string MostFreq(Dictionary<string, int> intentFreq)
+        {
+            int max = -1;
+            string mostFreqInt = null;
+            foreach (KeyValuePair<string, int> pair in intentFreq)
+            {
+                if (max < pair.Value)
+                {
+                    max = pair.Value;
+                    mostFreqInt = pair.Key;
                 }
             }
-            Console.ReadKey();
+            return mostFreqInt;
         }
     }
 }

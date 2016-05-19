@@ -40,9 +40,11 @@ namespace BotApplicationV1
                 serviceScenario.Add("Dolphin", "Fetch");
                 serviceScenario.Add("EntityWebAnswer", "EntityWebPerson");
                 serviceScenario.Add("PreWebEntityAnswer", "QueryToEntityLookUp");
+              //  serviceScenario.Add("WebAnswer", "queryrequest");
                 int counter = message.GetBotPerUserInConversationData<int>("counter");
                 string query = message.Text;
                 string seResult = null;
+                string structQueryLabel = null;
                 foreach (KeyValuePair<string, string> pair in serviceScenario)
                 {
                     string srviceName = pair.Key, scenaro = pair.Value;
@@ -53,17 +55,33 @@ namespace BotApplicationV1
                     try
                     {
                         if (srviceName.Equals("Dolphin", StringComparison.OrdinalIgnoreCase))
+                        {
                             seResult = ParsePbxml(ToStream(PbxmlString), @"Result:Results[*]\ResultEntityList[*]\Id", srviceName, scenaro);
+                            structQueryLabel = ParsePbxml(ToStream(PbxmlString), @"StructQueryLabel:ParserOutputV3\Rules[*]\Result\EntityIndexQueryTriggerHints[0]", srviceName, scenaro);
+                            if(!string.IsNullOrEmpty(seResult))
+                                seResult = string.Format("{0}\t{1}", seResult, structQueryLabel);
+                        }
                         else if (srviceName.Equals("EntityWebAnswer", StringComparison.OrdinalIgnoreCase))
                         {
                             // seResult = ParsePbxml(ToStream(PbxmlString), @"SatoriId:results[*]\Containers[*]\EntityContent\RelatedEntities[*]\RelatedEntity\SatoriId;Name:results[*]\Containers[*]\EntityContent\RelatedEntities[*]\RelatedEntity\Name;Relaption:results[*]\Containers[*]\EntityContent\RelatedEntities[*]\RelatedEntity\Relationship", srviceName, scenaro);
-                           // seResult = ParsePbxml(ToStream(PbxmlString), @"SatoriId:results[0]\Containers[0]\EntityContent\RelatedEntities[*]\RelatedEntity\SatoriId;Relationship:results[0]\Containers[0]\EntityContent\RelatedEntities[*]\RelatedEntity\Relationship", srviceName, scenaro);
+                            // seResult = ParsePbxml(ToStream(PbxmlString), @"SatoriId:results[0]\Containers[0]\EntityContent\RelatedEntities[*]\RelatedEntity\SatoriId;Relationship:results[0]\Containers[0]\EntityContent\RelatedEntities[*]\RelatedEntity\Relationship", srviceName, scenaro);
                             seResult = ParsePbxmlRelateEntity(ToStream(PbxmlString), @"SatoriId:results[0]\Containers[0]\EntityContent\RelatedEntities[*]\RelatedEntity\SatoriId;Relationship:results[0]\Containers[0]\EntityContent\RelatedEntities[*]\Relationship", srviceName, scenaro);
                         }
                         else if (srviceName.Equals("PreWebEntityAnswer", StringComparison.OrdinalIgnoreCase))
                         {
                             seResult = ParsePbxml(ToStream(PbxmlString), @"Result:results[*]\EntityFeatures[*]\Id", srviceName, scenaro);
                         }
+                        else if (srviceName.Equals("WebAnswer", StringComparison.OrdinalIgnoreCase))
+                        {
+                            //                seResult = ParsePbxml(ToStream(PbxmlString), @"Types:FcsHostCollapseResults\Kif.Value[*]\SatoriEntityListV1\Entities[*]\Types[*]", srviceName, scenaro);
+                            seResult = WebAnserParsePbxml(ToStream(PbxmlString), @"SatoryId:FcsHostCollapseResults\Kif.Value[*]\SatoriEntityListV1\Entities[*]\Id;Types:FcsHostCollapseResults\Kif.Value[*]\SatoriEntityListV1\Entities[*]\Types[0]", "WebAnswer", "queryrequest", true);
+                            if(string.IsNullOrEmpty(seResult))
+                            {
+                                seResult = WebAnserParsePbxml(ToStream(PbxmlString), @"SatoryId:FcsHostCollapseResults\Kif.Value[*]\SatoriEntityListV1\Entities[0]\Id;Types:FcsHostCollapseResults\Kif.Value[*]\SatoriEntityListV1\Entities[0]\Types[*]", "WebAnswer", "queryrequest", false);
+                            }
+                            //   seResult = ParsePbxml(ToStream(PbxmlString), @"SatoryId:FcsHostCollapseResults\Kif.Value[*]\SatoriEntityListV1\Entities[*]\Id;Types:FcsHostCollapseResults\Kif.Value[*]\SatoriEntityListV1\Entities[*]\Types[*]", srviceName, scenaro);
+                        }
+
                     }
                     catch (Exception ex)
                     {
@@ -78,7 +96,11 @@ namespace BotApplicationV1
                 {
                     seResult = "Out of our service!";
                 }
-                Message replyMessage = message.CreateReplyMessage($"{seResult}");
+                Message replyMessage;
+
+
+                replyMessage = message.CreateReplyMessage($"{seResult}");
+
                 return replyMessage;
             }
             else
@@ -141,8 +163,8 @@ namespace BotApplicationV1
             return seRes;
         }
 
-        public static string ParsePbxmlRelateEntity(Stream pbxmlStream, string FieldName2PathMapping, string service, string scenario)
-        {        
+        public static string WebAnserParsePbxml(Stream pbxmlStream, string FieldName2PathMapping, string service = "WebAnswer", string scenario = "queryrequest", bool flag = true)
+        {
             string seRes = null;
             // string FieldName2PathMapping = @"Result:Results[*]\ResultEntityList[*]\Id";
             string[] strArray1 = FieldName2PathMapping.Split(new char[1]
@@ -189,7 +211,89 @@ namespace BotApplicationV1
                 if (fields.Length != 2)
                 {
                     return null;
-                }                   
+                }
+                else 
+                {
+                    if(flag)
+                    {
+                        string[] valueArr = fieldValues[0].Split(new string[] { "|||" }, StringSplitOptions.None);
+                        string[] condArr = fieldValues[1].Split(new string[] { "|||" }, StringSplitOptions.None);
+                        for (int i = 0; i < condArr.Length; i++)
+                        {
+                            if (condArr[i] == "film.film")
+                            {
+                                conditionValueList.Add(valueArr[i]);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        string[] condArr = fieldValues[1].Split(new string[] { "|||" }, StringSplitOptions.None);
+                        if(condArr.Contains("film.film"))
+                        {
+                            conditionValueList.Add(fieldValues[0]);
+                        }
+                    }
+                    
+                    seRes = string.Join("|||", conditionValueList.ToArray());
+                }
+
+                if (!string.IsNullOrEmpty(seRes))
+                    break;
+            }
+
+            return seRes;
+        }
+
+        public static string ParsePbxmlRelateEntity(Stream pbxmlStream, string FieldName2PathMapping, string service, string scenario)
+        {
+            string seRes = null;
+            // string FieldName2PathMapping = @"Result:Results[*]\ResultEntityList[*]\Id";
+            string[] strArray1 = FieldName2PathMapping.Split(new char[1]
+            {
+                ';'
+            }, StringSplitOptions.RemoveEmptyEntries);
+            string[] strArray2 = new string[strArray1.Length];
+            string[] fields = new string[strArray1.Length];
+            for (int index = 0; index < strArray1.Length; ++index)
+            {
+                string[] strArray3 = strArray1[index].Split(':');
+                strArray2[index] = strArray3[0];
+                fields[index] = strArray3[1];
+            }
+
+            // string service = "Dolphin", scenario = "Fetch";
+            /* XPathDocument pbxml = new XPathDocument(pbxmlStream);
+             XPathExpression answerExpression = Util.PBXMLUtil.GetKif(service, scenario);
+             JObject json = Util.PBXMLUtil.GetKifJson(pbxml, answerExpression);
+             */
+            List<string> jsonList = new List<string>();
+            PositionJson(pbxmlStream, jsonList);
+            foreach (string jsonEle in jsonList)
+            {
+                JObject json = JObject.Parse(jsonEle);
+                string[] fieldValues = new string[fields.Length];
+                for (int i = 0; i < fields.Length; i++)
+                {
+                    string field = fields[i];
+                    string[] hierachy = field.Split(new char[] { '\\', '/' }, StringSplitOptions.RemoveEmptyEntries);
+                    List<string> values = new List<string>();
+                    try
+                    {
+                        GetFieldValue(hierachy, 0, json as JToken, ref values);
+                        fieldValues[i] = string.Join("|||", values);
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("Error: {0}", ex.Message);
+                        //  return null;
+                    }
+                }
+                List<string> conditionValueList = new List<string>();
+                if (fields.Length != 2)
+                {
+                    return null;
+                }
                 else
                 {
                     string[] valueArr = fieldValues[0].Split(new string[] { "|||" }, StringSplitOptions.None);
@@ -206,7 +310,7 @@ namespace BotApplicationV1
                 if (!string.IsNullOrEmpty(seRes))
                     break;
             }
-            
+
             return seRes;
         }
 
@@ -215,9 +319,9 @@ namespace BotApplicationV1
             XmlDocument doc = new XmlDocument();
             doc.Load(pbxmlStream);
             XmlElement root = doc.DocumentElement;
-           // List<string> jsonStr = new List<string>();
+            // List<string> jsonStr = new List<string>();
             XmlNodeList listNodes = root.SelectNodes(string.Format("/PropertyBag/s_AnswerResponseCommand/s_AnswerQueryResponse/a_AnswerDataArray/s_AnswerData[c_AnswerServiceName=\"{0}\"][c_AnswerDataScenario=\"{1}\"]/k_AnswerDataKifResponse", "EntityWebAnswer", "EntityWebPerson"));
-            foreach(XmlNode node in listNodes)
+            foreach (XmlNode node in listNodes)
             {
                 jsonList.Add(node.InnerText);
             }

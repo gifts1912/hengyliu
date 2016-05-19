@@ -22,7 +22,7 @@ namespace QAS.PatternEngine
             string outfile = args[1];
         //    QueryTextFormat(infile, outfile);
             Dictionary<string, string> patternIntentDic = new Dictionary<string, string>();
-            LoadPatternIntent(patternQueryFile, queryIntentFile, patternIntentDic); // generate each pattern's intent
+           // LoadPatternIntent(patternQueryFile, queryIntentFile, patternIntentDic); // generate each pattern's intent
         }
 
         public static void QueryTextFormat(string infile, string outfile)
