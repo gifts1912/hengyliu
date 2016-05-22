@@ -40,7 +40,7 @@ namespace BotApplicationV1
                 serviceScenario.Add("Dolphin", "Fetch");
                 serviceScenario.Add("EntityWebAnswer", "EntityWebPerson");
                 serviceScenario.Add("PreWebEntityAnswer", "QueryToEntityLookUp");
-              //  serviceScenario.Add("WebAnswer", "queryrequest");
+                serviceScenario.Add("WebAnswer", "queryrequest");
                 int counter = message.GetBotPerUserInConversationData<int>("counter");
                 string query = message.Text;
                 string seResult = null;
@@ -58,13 +58,11 @@ namespace BotApplicationV1
                         {
                             seResult = ParsePbxml(ToStream(PbxmlString), @"Result:Results[*]\ResultEntityList[*]\Id", srviceName, scenaro);
                             structQueryLabel = ParsePbxml(ToStream(PbxmlString), @"StructQueryLabel:ParserOutputV3\Rules[*]\Result\EntityIndexQueryTriggerHints[0]", srviceName, scenaro);
-                            if(!string.IsNullOrEmpty(seResult))
+                            if (!string.IsNullOrEmpty(seResult))
                                 seResult = string.Format("{0}\t{1}", seResult, structQueryLabel);
                         }
                         else if (srviceName.Equals("EntityWebAnswer", StringComparison.OrdinalIgnoreCase))
                         {
-                            // seResult = ParsePbxml(ToStream(PbxmlString), @"SatoriId:results[*]\Containers[*]\EntityContent\RelatedEntities[*]\RelatedEntity\SatoriId;Name:results[*]\Containers[*]\EntityContent\RelatedEntities[*]\RelatedEntity\Name;Relaption:results[*]\Containers[*]\EntityContent\RelatedEntities[*]\RelatedEntity\Relationship", srviceName, scenaro);
-                            // seResult = ParsePbxml(ToStream(PbxmlString), @"SatoriId:results[0]\Containers[0]\EntityContent\RelatedEntities[*]\RelatedEntity\SatoriId;Relationship:results[0]\Containers[0]\EntityContent\RelatedEntities[*]\RelatedEntity\Relationship", srviceName, scenaro);
                             seResult = ParsePbxmlRelateEntity(ToStream(PbxmlString), @"SatoriId:results[*]\Containers[*]\EntityContent\RelatedEntities[*]\RelatedEntity\SatoriId;Relationship:results[*]\Containers[*]\EntityContent\RelatedEntities[*]\Relationship", srviceName, scenaro);
                         }
                         else if (srviceName.Equals("PreWebEntityAnswer", StringComparison.OrdinalIgnoreCase))
@@ -73,13 +71,7 @@ namespace BotApplicationV1
                         }
                         else if (srviceName.Equals("WebAnswer", StringComparison.OrdinalIgnoreCase))
                         {
-                            //                seResult = ParsePbxml(ToStream(PbxmlString), @"Types:FcsHostCollapseResults\Kif.Value[*]\SatoriEntityListV1\Entities[*]\Types[*]", srviceName, scenaro);
-                            seResult = WebAnserParsePbxml(ToStream(PbxmlString), @"SatoryId:FcsHostCollapseResults\Kif.Value[*]\SatoriEntityListV1\Entities[*]\Id;Types:FcsHostCollapseResults\Kif.Value[*]\SatoriEntityListV1\Entities[*]\Types[0]", "WebAnswer", "queryrequest", true);
-                            if(string.IsNullOrEmpty(seResult))
-                            {
-                                seResult = WebAnserParsePbxml(ToStream(PbxmlString), @"SatoryId:FcsHostCollapseResults\Kif.Value[*]\SatoriEntityListV1\Entities[0]\Id;Types:FcsHostCollapseResults\Kif.Value[*]\SatoriEntityListV1\Entities[0]\Types[*]", "WebAnswer", "queryrequest", false);
-                            }
-                            //   seResult = ParsePbxml(ToStream(PbxmlString), @"SatoryId:FcsHostCollapseResults\Kif.Value[*]\SatoriEntityListV1\Entities[*]\Id;Types:FcsHostCollapseResults\Kif.Value[*]\SatoriEntityListV1\Entities[*]\Types[*]", srviceName, scenaro);
+                            seResult = WebAnserParsePbxml(ToStream(PbxmlString), @"SatoryId:FcsHostCollapseResults\Kif.Value[*]\SatoriEntityListV1\Entities[*]\Id;Types:FcsHostCollapseResults\Kif.Value[*]\SatoriEntityListV1\Entities[*]\Types[*]", "WebAnswer", "queryrequest");
                         }
 
                     }
@@ -163,7 +155,7 @@ namespace BotApplicationV1
             return seRes;
         }
 
-        public static string WebAnserParsePbxml(Stream pbxmlStream, string FieldName2PathMapping, string service = "WebAnswer", string scenario = "queryrequest", bool flag = true)
+        public static string WebAnserParsePbxml(Stream pbxmlStream, string FieldName2PathMapping, string service = "WebAnswer", string scenario = "queryrequest")
         {
             string seRes = null;
             // string FieldName2PathMapping = @"Result:Results[*]\ResultEntityList[*]\Id";
@@ -179,14 +171,8 @@ namespace BotApplicationV1
                 strArray2[index] = strArray3[0];
                 fields[index] = strArray3[1];
             }
-
-            // string service = "Dolphin", scenario = "Fetch";
-            /* XPathDocument pbxml = new XPathDocument(pbxmlStream);
-             XPathExpression answerExpression = Util.PBXMLUtil.GetKif(service, scenario);
-             JObject json = Util.PBXMLUtil.GetKifJson(pbxml, answerExpression);
-             */
             List<string> jsonList = new List<string>();
-            PositionJson(pbxmlStream, jsonList);
+            PositionJson(pbxmlStream, jsonList, service, scenario);
             foreach (string jsonEle in jsonList)
             {
                 JObject json = JObject.Parse(jsonEle);
@@ -198,7 +184,7 @@ namespace BotApplicationV1
                     List<string> values = new List<string>();
                     try
                     {
-                        GetFieldValue(hierachy, 0, json as JToken, ref values);
+                        GetFieldValueEndArrJoinBySemon(hierachy, 0, json as JToken, ref values);
                         fieldValues[i] = string.Join("|||", values);
                     }
                     catch (Exception ex)
@@ -212,29 +198,24 @@ namespace BotApplicationV1
                 {
                     return null;
                 }
-                else 
+                else
                 {
-                    if(flag)
+                    if (string.IsNullOrEmpty(fieldValues[0]) || string.IsNullOrEmpty(fieldValues[1]))
                     {
-                        string[] valueArr = fieldValues[0].Split(new string[] { "|||" }, StringSplitOptions.None);
-                        string[] condArr = fieldValues[1].Split(new string[] { "|||" }, StringSplitOptions.None);
-                        for (int i = 0; i < condArr.Length; i++)
+                        continue;
+                    }
+                    string[] valueArr = fieldValues[0].Split(new string[] { "|||" }, StringSplitOptions.None);
+                    string[] condArr = fieldValues[1].Split(new string[] { "|||" }, StringSplitOptions.None);
+                    if (valueArr.Length != condArr.Length)
+                        continue;
+                    for (int i = 0; i < condArr.Length; i++)
+                    {
+                        List<string> condListCur = new List<string>(condArr[i].Trim().Split(','));
+                        if (condListCur.Contains("film.film"))
                         {
-                            if (condArr[i] == "film.film")
-                            {
-                                conditionValueList.Add(valueArr[i]);
-                            }
+                            conditionValueList.Add(valueArr[i]);
                         }
                     }
-                    else
-                    {
-                        string[] condArr = fieldValues[1].Split(new string[] { "|||" }, StringSplitOptions.None);
-                        if(condArr.Contains("film.film"))
-                        {
-                            conditionValueList.Add(fieldValues[0]);
-                        }
-                    }
-                    
                     seRes = string.Join("|||", conditionValueList.ToArray());
                 }
 
@@ -296,7 +277,7 @@ namespace BotApplicationV1
                 }
                 else
                 {
-                    if(string.IsNullOrEmpty(fieldValues[0]) || string.IsNullOrEmpty(fieldValues[1]))
+                    if (string.IsNullOrEmpty(fieldValues[0]) || string.IsNullOrEmpty(fieldValues[1]))
                     {
                         continue;
                     }
@@ -320,22 +301,81 @@ namespace BotApplicationV1
             return seRes;
         }
 
-        public static void PositionJson(Stream pbxmlStream, List<string> jsonList)
+        public static void PositionJson(Stream pbxmlStream, List<string> jsonList, string serviceName = "EntityWebAnswer", string scenario = "EntityWebPerson")
         {
             XmlDocument doc = new XmlDocument();
             doc.Load(pbxmlStream);
             XmlElement root = doc.DocumentElement;
             // List<string> jsonStr = new List<string>();
-            XmlNodeList listNodes = root.SelectNodes(string.Format("/PropertyBag/s_AnswerResponseCommand/s_AnswerQueryResponse/a_AnswerDataArray/s_AnswerData[c_AnswerServiceName=\"{0}\"][c_AnswerDataScenario=\"{1}\"]/k_AnswerDataKifResponse", "EntityWebAnswer", "EntityWebPerson"));
+            XmlNodeList listNodes = root.SelectNodes(string.Format("/PropertyBag/s_AnswerResponseCommand/s_AnswerQueryResponse/a_AnswerDataArray/s_AnswerData[c_AnswerServiceName=\"{0}\"][c_AnswerDataScenario=\"{1}\"]/k_AnswerDataKifResponse", serviceName, scenario));
             foreach (XmlNode node in listNodes)
             {
                 jsonList.Add(node.InnerText);
             }
         }
+
+        private static void GetFieldValueEndArrJoinBySemon(string[] hierachy, int layer, JToken json, ref List<string> values)
+        {
+            if (layer == hierachy.Length)
+            {
+                values.Add(json.ToString());
+                return;
+            }
+
+            JToken currToken = json;
+            if (currToken == null)
+            {
+                return;
+            }
+
+            string path = hierachy[layer];
+            if (path.Contains('[') && path.Contains('*'))
+            {
+                JArray arr = currToken[path.Substring(0, path.IndexOf('['))] as JArray;
+                if (arr == null)
+                {
+                    return;
+                }
+                if (layer == hierachy.Length - 1)
+                {
+                    List<string> arrRes = new List<string>();
+                    for (int j = 0; j < arr.Count; j++)
+                    {
+                        JToken subToken = arr[j];
+                        if (subToken == null)
+                            continue;
+                        arrRes.Add(subToken.ToString());
+                    }
+                    values.Add(string.Join(",", arrRes.ToArray()));
+                    return;
+                }
+                for (int j = 0; j < arr.Count; j++)
+                {
+                    JToken subToken = arr[j];
+                    GetFieldValueEndArrJoinBySemon(hierachy, layer + 1, subToken, ref values);
+                }
+            }
+            else if (path.Contains('[') && !path.Contains('*'))
+            {
+                int idx = int.Parse(path.Substring(path.IndexOf('[') + 1, path.IndexOf(']') - path.IndexOf('[') - 1));
+                JArray arr = currToken[path.Substring(0, path.IndexOf('['))] as JArray;
+                if (arr == null || arr.Count <= idx)
+                {
+                    return;
+                }
+                currToken = arr[idx];
+                GetFieldValueEndArrJoinBySemon(hierachy, layer + 1, currToken, ref values);
+            }
+            else
+            {
+                currToken = currToken[path];
+                GetFieldValueEndArrJoinBySemon(hierachy, layer + 1, currToken, ref values);
+            }
+        }
         private static void GetFieldValue(string[] hierachy, int layer, JToken json, ref List<string> values)
         {
             if (layer == hierachy.Length)
-            { 
+            {
                 values.Add(json.ToString());
                 return;
             }
