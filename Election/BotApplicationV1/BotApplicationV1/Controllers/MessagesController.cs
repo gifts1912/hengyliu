@@ -65,7 +65,7 @@ namespace BotApplicationV1
                         {
                             // seResult = ParsePbxml(ToStream(PbxmlString), @"SatoriId:results[*]\Containers[*]\EntityContent\RelatedEntities[*]\RelatedEntity\SatoriId;Name:results[*]\Containers[*]\EntityContent\RelatedEntities[*]\RelatedEntity\Name;Relaption:results[*]\Containers[*]\EntityContent\RelatedEntities[*]\RelatedEntity\Relationship", srviceName, scenaro);
                             // seResult = ParsePbxml(ToStream(PbxmlString), @"SatoriId:results[0]\Containers[0]\EntityContent\RelatedEntities[*]\RelatedEntity\SatoriId;Relationship:results[0]\Containers[0]\EntityContent\RelatedEntities[*]\RelatedEntity\Relationship", srviceName, scenaro);
-                            seResult = ParsePbxmlRelateEntity(ToStream(PbxmlString), @"SatoriId:results[0]\Containers[0]\EntityContent\RelatedEntities[*]\RelatedEntity\SatoriId;Relationship:results[0]\Containers[0]\EntityContent\RelatedEntities[*]\Relationship", srviceName, scenaro);
+                            seResult = ParsePbxmlRelateEntity(ToStream(PbxmlString), @"SatoriId:results[*]\Containers[*]\EntityContent\RelatedEntities[*]\RelatedEntity\SatoriId;Relationship:results[*]\Containers[*]\EntityContent\RelatedEntities[*]\Relationship", srviceName, scenaro);
                         }
                         else if (srviceName.Equals("PreWebEntityAnswer", StringComparison.OrdinalIgnoreCase))
                         {
@@ -281,7 +281,7 @@ namespace BotApplicationV1
                     try
                     {
                         GetFieldValue(hierachy, 0, json as JToken, ref values);
-                        fieldValues[i] = string.Join("|||", values);
+                        fieldValues[i] = string.Join("|||", values.ToArray());
                     }
                     catch (Exception ex)
                     {
@@ -296,8 +296,14 @@ namespace BotApplicationV1
                 }
                 else
                 {
+                    if(string.IsNullOrEmpty(fieldValues[0]) || string.IsNullOrEmpty(fieldValues[1]))
+                    {
+                        continue;
+                    }
                     string[] valueArr = fieldValues[0].Split(new string[] { "|||" }, StringSplitOptions.None);
                     string[] condArr = fieldValues[1].Split(new string[] { "|||" }, StringSplitOptions.None);
+                    if (valueArr.Length != condArr.Length)
+                        continue;
                     for (int i = 0; i < condArr.Length; i++)
                     {
                         if (Regex.IsMatch(condArr[i], @"^\d{4}$"))
@@ -329,7 +335,7 @@ namespace BotApplicationV1
         private static void GetFieldValue(string[] hierachy, int layer, JToken json, ref List<string> values)
         {
             if (layer == hierachy.Length)
-            {
+            { 
                 values.Add(json.ToString());
                 return;
             }
