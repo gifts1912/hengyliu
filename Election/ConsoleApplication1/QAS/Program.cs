@@ -28,7 +28,8 @@ namespace QAS
                 args[0] = "PatternEngineUrlFormat";
                 args[0] = "QASTestOnDoDt";
                 args[0] = "SlotIntentClassiferTrainDataGen";
-                
+                args[0] = "sampe1KQueryToJudge";
+
             }
             string[] cmdArgs = args.Skip(1).ToArray();
             if(args[0].Equals("XMLTurn", StringComparison.OrdinalIgnoreCase))
@@ -63,6 +64,10 @@ namespace QAS
            else if(args[0].Equals("SlotIntentClassiferTrainDataGen", StringComparison.OrdinalIgnoreCase))
             {
                 IntentTLC.SlotIntentClassiferTrainDataGen.Run(cmdArgs);
+            }
+            else if(args[0].Equals("sampe1KQueryToJudge", StringComparison.OrdinalIgnoreCase))
+            {
+                PCFG.sampe1KQueryToJudge.Run(cmdArgs);
             }
         }
 

@@ -40,6 +40,7 @@ namespace QAS.PCFG
                 args[3] = @"D:\demo\queryPattern.tsv"; // queryCol = 0, patternCol = 2
                 args[4] = @"D:\demo\ElectionQueryIntent.tsv"; //queryCol = 0, intentCol = 3;
                 args[5] = @"D:\demo\IdealSlotToDophineFile.tsv";
+               
 
             }
             string tokenfile = args[0];
