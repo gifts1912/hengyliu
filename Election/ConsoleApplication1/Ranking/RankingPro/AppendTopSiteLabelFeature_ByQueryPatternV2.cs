@@ -107,7 +107,7 @@ namespace Ranking.RankingPro.AppendTopSiteLabelFeature_ByQueryPatternV2
             }
             return key.ToString();
         }
-        private static void Preprocessing(string pat2topsite, string keyDef = "0+1", string keySortDef = "1")
+        private static void Preprocessing(string pat2topsite, string keyDef = "0", string keySortDef = "1")
         {
             List<int> keyCol = new List<int>();
             List<int> keySortCol = new List<int>();
@@ -190,7 +190,7 @@ namespace Ranking.RankingPro.AppendTopSiteLabelFeature_ByQueryPatternV2
                     args[5] = "0+1"; // the key is the value combination of 0th and 1th column.
                 }
                 string keyColCombination = args[5];
-                Preprocessing(args[1], keyColCombination, "1");
+                Preprocessing(args[1], keyColCombination, "1"); // process pattern engine template URL
                 m_isMatchingHost = args[3] == "true";
                 string keyFeature = args[4]; //m:QueryPattern
                 string keySortFeature = "m:QueryPattern";
