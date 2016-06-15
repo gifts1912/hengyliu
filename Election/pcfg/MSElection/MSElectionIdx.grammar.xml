@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Users>
+  <User ID="11111">
+    <name>EricSun</name>
+    <password>123456</password>
+    <description>Hello I'm from Dalinan</description>
+  </User>
+  <User ID="22222">
+    <name>Ray</name>
+    <password>654321</password>
+    <description>Hello I'm from JiLin</description>
+  </User>
+</Users>

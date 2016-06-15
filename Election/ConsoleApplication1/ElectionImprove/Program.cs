@@ -18,6 +18,9 @@ namespace ElectionImprove
                 args[0] = "AddIncreaseIdColumn";
                 args[0] = "PatternEngineTemplateFormat";
                 args[0] = "UrlAuthorityFeatureAdd";
+                args[0] = "EntityLexicon";
+                args[0] = "Sample10KQueryContainCandidat";
+                args[0] = "OtherSlotLexicon";
             }
             string[] cmdArgs = args.Skip(1).ToArray();
             if(args[0].Equals("tokenvaluegenerate", StringComparison.OrdinalIgnoreCase))
@@ -40,7 +43,20 @@ namespace ElectionImprove
             {
                 OfflineSBSPipeline.PatternEngineTemplateFormat.Run(cmdArgs);
             }
-    
+            else if(args[0].Equals("EntityLexicon", StringComparison.OrdinalIgnoreCase))
+            {
+                NewIntent.EntityLexicon.Run(cmdArgs);
+            }
+            else if(args[0].Equals("Sample10KQueryContainCandidat", StringComparison.OrdinalIgnoreCase))
+            {
+                NewIntent.Sample10KQueryContainCandidate.Run(cmdArgs);
+            }
+            else if(args[0].Equals("OtherSlotLexicon", StringComparison.OrdinalIgnoreCase))
+            {
+                NewIntent.OtherSlotLexicon.Run(cmdArgs);
+            }
+
+
         }
     }
 }

@@ -1,0 +1,65 @@
+<?xml version="1.0"?>
+<grammar root="MSSpouse"> 
+	<rule id="MSSpouse" scope="public">
+		<item>
+			<ruleref uri="#E.Person" />
+			<tag>$="SrcKey%20CONTAIN%20%22" + $$ + "%22"</tag>
+		</item>
+		<item>
+			<ruleref uri="#C.Seq" />
+			<tag>$=$ + "%20AND%20" + $$</tag>
+		</item>
+		<item>
+			<ruleref uri="#I.NPE.Spouse" />
+			<tag>$=$</tag>
+		</item>
+	</rule>
+	
+	<rule id="E.Person" scope="public">
+		<ruleref uri="#SrcEntity" />
+		<tag>$=$$</tag>
+	</rule>
+	
+	<rule id="I.NPE.Spouse">
+		<one-of>
+			<item>wife</item>
+			<item>husband</item>
+			<item>spouse</item>
+		</one-of>
+	</rule>
+	
+	<rule id="C.Seq" scope="public">
+		<one-of>
+			<item>
+				<ruleref uri="#C.Seq.First" />
+				<tag>$=$$</tag>
+			</item>
+			<item>
+				<ruleref uri="#C.Seq.Second" />
+				<tag>$=$$</tag>
+			</item>
+		</one-of>
+	</rule>
+	
+	<rule id="C.Seq.First">
+		<item>
+			<one-of>
+				<item>first</item>
+				<item>1st</item>
+				<item>1 st</item>
+			</one-of>
+		</item>
+		<tag>$="MarriageStartDesc^Equals^1"</tag>
+	</rule>
+	
+	<rule id="C.Seq.Second">
+		<item>
+			<one-of>
+				<item>second</item>
+				<item>2nd</item>
+				<item>2 nd</item>
+			</one-of>
+		</item>
+		<tag>$="MarriageStartDesc^Equals^2"</tag>
+	</rule>
+</grammar> 

@@ -1,0 +1,300 @@
+Start time:					Fri Apr 29 11:53:12 2016
+
+loading model...
+model loaded
+model loaded time:					Fri Apr 29 11:53:12 2016
+
+Queries processing start time:					Fri Apr 29 11:53:12 2016
+
+|-maxent.output.txt output:
+trump on gun control	1
+
+FeatureIds.output.txt output:
+trump on gun control	Parse0	0	1	MSElection{CandidateView_2{election.candidate.highconf{12{trump}election.bpiissue{75{on gun control}}}}	9.61485e-10	0	3	Semantic0	0	1	CandidateView_2-12--75-	9.61485e-10	0	3	trigger	1	0	0	1	0	0
+
+analyzedqueries.output.txt output:
+- {
+    "Version": 5, 
+    "Query": {
+        "Query": "trump on gun control", 
+        "QueryContext": {
+            "ClientId": "", 
+            "Offset": 0, 
+            "Type": 0, 
+            "QueryLevelFeatures": null, 
+            "ResultSetLevelFeaturesBegin": 0, 
+            "ResultSetLevelFeaturesEnd": 0, 
+            "FeaturizationOutputsBegin": 0, 
+            "FeaturizationOutputsEnd": 0, 
+            "RequestedDomains": [
+            ], 
+            "QuerySegmentationsBegin": 0, 
+            "QuerySegmentationsEnd": 0, 
+            "Language": "", 
+            "Market": "", 
+            "Country": "", 
+            "DefaultQueryViewName": "", 
+            "Locations": [
+            ], 
+            "TwoBoxLocation": "", 
+            "IsQueryAdvanced": false, 
+            "PreAnalyzedQuery": null, 
+            "DomainsWithThresholdOverride": [
+            ], 
+            "IsDebug": false, 
+            "IsProfile": false, 
+            "ClientDataCenter": "", 
+            "ClientIP": "", 
+            "RequestSource": "", 
+            "TenantId": "", 
+            "VirtualServices": [
+            ], 
+            "Flights": [
+            ], 
+            "TraceId": "", 
+            "TimeStamps": [
+            ], 
+            "UserId": ""
+        }, 
+        "QueryViews": [
+        ]
+    }, 
+    "AnalyzedQueries": [
+        {
+            "Query": {
+                "Query": "trump on gun control", 
+                "QueryContext": {
+                    "ClientId": "", 
+                    "Offset": 0, 
+                    "Type": 1, 
+                    "QueryLevelFeatures": null, 
+                    "ResultSetLevelFeaturesBegin": 0, 
+                    "ResultSetLevelFeaturesEnd": 0, 
+                    "FeaturizationOutputsBegin": 0, 
+                    "FeaturizationOutputsEnd": 0, 
+                    "RequestedDomains": [
+                    ], 
+                    "QuerySegmentationsBegin": 0, 
+                    "QuerySegmentationsEnd": 0, 
+                    "Language": "", 
+                    "Market": "", 
+                    "Country": "", 
+                    "DefaultQueryViewName": "", 
+                    "Locations": [
+                    ], 
+                    "TwoBoxLocation": "", 
+                    "IsQueryAdvanced": false, 
+                    "PreAnalyzedQuery": null, 
+                    "DomainsWithThresholdOverride": [
+                    ], 
+                    "IsDebug": false, 
+                    "IsProfile": false, 
+                    "ClientDataCenter": "", 
+                    "ClientIP": "", 
+                    "RequestSource": "", 
+                    "TenantId": "", 
+                    "VirtualServices": [
+                    ], 
+                    "Flights": [
+                    ], 
+                    "TraceId": "", 
+                    "TimeStamps": [
+                    ], 
+                    "UserId": ""
+                }, 
+                "QueryViews": [
+                ]
+            }, 
+            "DomainsBegin": 0, 
+            "DomainsEnd": 1, 
+            "GeneratedQueries": [
+            ]
+        }
+    ], 
+    "Domains": [
+        {
+            "Name": "MSSpouse", 
+            "DomainId": 0, 
+            "ConfidenceLevel": 1, 
+            "ClassificationLevel": 4, 
+            "CategoriesBegin": 0, 
+            "CategoriesEnd": 0, 
+            "QueryParsesBegin": 0, 
+            "QueryParsesEnd": 0, 
+            "MetadataBegin": 0, 
+            "MetadataEnd": 0, 
+            "MetadataViewBegin": 0, 
+            "MetadataViewEnd": 0, 
+            "ResultSetLevelFeaturesBegin": 0, 
+            "ResultSetLevelFeaturesEnd": 0, 
+            "FeaturizationOutputsBegin": 0, 
+            "FeaturizationOutputsEnd": 3, 
+            "QuerySegmentationsBegin": 0, 
+            "QuerySegmentationsEnd": 0, 
+            "QueryInformationItem": null, 
+            "DomainTaxonomiesBegin": 0, 
+            "DomainTaxonomiesEnd": 0, 
+            "HypothesesBegin": 0, 
+            "HypothesesEnd": 0
+        }
+    ], 
+    "EntityTypes": [
+    ], 
+    "QueryStrings": [
+    ], 
+    "Categories": [
+    ], 
+    "QueryParses": [
+    ], 
+    "QueryEntities": [
+    ], 
+    "LabeledKeywords": [
+    ], 
+    "Metadata": [
+    ], 
+    "MetadataViewEdges": [
+    ], 
+    "FeaturizationOutputs": [
+        {
+            "FeatureSetName": "Parse0", 
+            "FeatureSetId": 64, 
+            "FeatureIdsSize": 0, 
+            "MatchSegments": [
+            ], 
+            "StringFeatures": [
+                {
+                    "BeginIdx": 0, 
+                    "EndIdx": 3, 
+                    "Value": "MSElection{CandidateView_2{election.candidate.highconf{12{trump}election.bpiissue{75{on gun control}}}}", 
+                    "FeatureId": -1, 
+                    "Weight": 9.61485114e-10
+                }
+            ], 
+            "TokenizedQuery": [
+            ], 
+            "UInt32Features": [
+            ], 
+            "Int64Features": [
+            ], 
+            "DoubleFeatures": [
+            ], 
+            "DenseUInt8Features": [
+            ], 
+            "DenseUInt32Features": [
+            ], 
+            "DenseFloatFeatures": [
+            ]
+        }, 
+        {
+            "FeatureSetName": "Semantic0", 
+            "FeatureSetId": 65, 
+            "FeatureIdsSize": 0, 
+            "MatchSegments": [
+            ], 
+            "StringFeatures": [
+                {
+                    "BeginIdx": 0, 
+                    "EndIdx": 3, 
+                    "Value": "CandidateView_2-12--75-", 
+                    "FeatureId": -1, 
+                    "Weight": 9.61485114e-10
+                }
+            ], 
+            "TokenizedQuery": [
+            ], 
+            "UInt32Features": [
+            ], 
+            "Int64Features": [
+            ], 
+            "DoubleFeatures": [
+            ], 
+            "DenseUInt8Features": [
+            ], 
+            "DenseUInt32Features": [
+            ], 
+            "DenseFloatFeatures": [
+            ]
+        }, 
+        {
+            "FeatureSetName": "trigger", 
+            "FeatureSetId": 66, 
+            "FeatureIdsSize": 0, 
+            "MatchSegments": [
+                {
+                    "BeginIdx": 0, 
+                    "EndIdx": 0, 
+                    "FeatureId": 0, 
+                    "Weight": 1
+                }
+            ], 
+            "StringFeatures": [
+            ], 
+            "TokenizedQuery": [
+            ], 
+            "UInt32Features": [
+            ], 
+            "Int64Features": [
+            ], 
+            "DoubleFeatures": [
+            ], 
+            "DenseUInt8Features": [
+            ], 
+            "DenseUInt32Features": [
+            ], 
+            "DenseFloatFeatures": [
+            ]
+        }
+    ], 
+    "Documents": [
+    ], 
+    "DocumentTypes": [
+    ], 
+    "ResultSets": [
+    ], 
+    "QuerySegmentations": [
+    ], 
+    "UInt32NumericalMetadata": [
+    ], 
+    "Int64NumericalMetadata": [
+    ], 
+    "BoolNumericalMetadata": [
+    ], 
+    "FloatNumericalMetadata": [
+    ], 
+    "DoubleNumericalMetadata": [
+    ], 
+    "ExternalEntityIds": [
+    ], 
+    "StringValuesInQueryViews": [
+    ], 
+    "StringValues": [
+    ], 
+    "DomainTaxonomies": [
+    ], 
+    "Hypotheses": [
+    ], 
+    "TimeStamps": [
+    ], 
+    "Debug": {
+        "Debugs": [
+        ]
+    }, 
+    "Monitoring": {
+        "AnalyzedQueryMonitoringList": [
+        ]
+    }, 
+    "CompositeMetadata": [
+    ]
+}
+
+latencies.output.txt output:
+query	mselection::qd_MSSpouse_featurizer	mselection::qd_MSSpouse_domainclassifier	mselection::qd_MSSpouse_metadataretriever
+trump on gun control	7761	14	5
+
+
+End time:					Fri Apr 29 11:53:12 2016
+
+Processing time in seconds: 0
+Processed: 1 queries
+Average time per query: 0 ms
+Throughput query per ms: inf

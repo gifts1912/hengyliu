@@ -1,0 +1,756 @@
+10 republican candidates 2016	republican	31	10 republican candidates 2016	10 republican candidates 2016	1000	election.party:republican	3	election.party=E0	CandidateList
+16 gop candidates	republican	31	16 gop candidates	16 gop candidates	1001	election.party:republican	3	election.party=E0	CandidateList
+16 gop candidates for president	republican	31	16 gop candidates for president	16 gop candidates for president	1002	election.party:republican	3	election.party=E0	CandidateList
+2015 president candidates		31	2015 president candidates	2015 president candidates	1003		3		CandidateList
+2016 announced republican presidential candidates	republican	31	2016 announced republican presidential candidates	2016 announced republican presidential candidates	1004	election.party:republican	3	election.party=E0	CandidateList
+2016 candidate comparison		31	2016 candidate comparison	2016 candidate comparison	1005		3		CandidateCompare
+2016 candidates views		31	2016 candidates views	2016 candidates views	1006		3		CandidateView
+2016 caucus schedule	[election.primary]	31	2016 caucus schedule	2016 caucus schedule	1007	election.primary:caucus	3	election.primary=C0	ElectionSchedule
+2016 contenders for president		31	2016 contenders for president	2016 contenders for president	1008		3		CandidateList
+2016 declared presidential candidates		31	2016 declared presidential candidates	2016 declared presidential candidates	1009		3		CandidateList
+2016 declared republican presidential candidates	republican	31	2016 declared republican presidential candidates	2016 declared republican presidential candidates	1010	election.party:republican	3	election.party=E0	CandidateList
+2016 democratic presidential contenders	democratic	31	2016 democratic presidential contenders	2016 democratic presidential contenders	1011	election.party:democratic	3	election.party=E0	CandidateList
+2016 election campaign	[election.campaign]	31	2016 election campaign	2016 election campaign	1012	election.campaign:campaign	3	election.campaign=C0	CandidateCampain
+2016 election candidates list		31	2016 election candidates list	2016 election candidates list	1013		3		CandidateList
+2016 election days		31	2016 election days	2016 election days	1014		3		ElectionSchedule
+2016 election schedule		31	2016 election schedule	2016 election schedule	1015		3		ElectionSchedule
+2016 gop election	republican	31	2016 gop election	2016 gop election	1016	election.party:republican	3	election.party=E0	CandidateGeneral
+2016 libertarian presidential candidates		31	2016 libertarian presidential candidates	2016 libertarian presidential candidates	1017		3		CandidateList
+2016 national election		31	2016 national election	2016 national election	1018		3		CandidateGeneral
+2016 national elections		31	2016 national elections	2016 national elections	1019		3		ElectionGeneral
+2016 possible democratic candidates	democratic	31	2016 possible democratic candidates	2016 possible democratic candidates	1020	election.party:democratic	3	election.party=E0	CandidateList
+2016 presential canidates		31	2016 presential canidates	2016 presential canidates	1021		3		CandidateList
+2016 presidency candidates		31	2016 presidency candidates	2016 presidency candidates	1022		3		CandidateList
+2016 presidentail canidates		31	2016 presidentail canidates	2016 presidentail canidates	1023		3		CandidateGeneral
+2016 presidental run	[election.race]	31	2016 presidental run	2016 presidental run	1024	election.race:run	3	election.race=C0	ElectionSchedule
+2016 presidential candidate leaders		31	2016 presidential candidate leaders	2016 presidential candidate leaders	1025		3		CandidateList
+2016 presidential candidates		31	2016 presidential candidates	2016 presidential candidates	1026		3		CandidateList
+2016 presidential candidates and views		31	2016 presidential candidates and views	2016 presidential candidates and views	1027		3		CandidateView
+2016 presidential candidates front runners		31	2016 presidential candidates front runners	2016 presidential candidates front runners	1028		3		CandidateList
+2016 presidential candidates spectrum		31	2016 presidential candidates spectrum	2016 presidential candidates spectrum	1029		3		CandidateList
+2016 presidential candidates survey		31	2016 presidential candidates survey	2016 presidential candidates survey	1030		3		CandidateList
+2016 presidential candidates united states	[election.national]	31	2016 presidential candidates united states	2016 presidential candidates united states	1031	election.national:united states	3	election.national=E0	CandidateList
+2016 presidential candidates voting records	[election.voting]	31	2016 presidential candidates voting records	2016 presidential candidates voting records	1032	election.voting:voting	3	election.voting=I0	CandidateList
+2016 presidential election		31	2016 presidential election	2016 presidential election	1033		3		ElectionGeneral
+2016 presidential election articles		31	2016 presidential election articles	2016 presidential election articles	1034		3		ElectionGeneral
+2016 presidential race		31	2016 presidential race	2016 presidential race	1035		3		CandidateList
+2016 presidential republican candidates	republican	31	2016 presidential republican candidates	2016 presidential republican candidates	1036	election.party:republican	3	election.party=E0	CandidateList
+2016 presidential vote		31	2016 presidential vote	2016 presidential vote	1037		3		CandidateGeneral
+2016 presidents running		31	2016 presidents running	2016 presidents running	1038		3		CandidateGeneral
+2016 primaries date	[election.primary]	31	2016 primaries date	2016 primaries date	1039	election.primary:primaries	3	election.primary=C0	CandidateList
+2016 rep pres candidates		31	2016 rep pres candidates	2016 rep pres candidates	1040		3		CandidateList
+2016 republican candidates issues comparison chart	republican	31	2016 republican candidates issues comparison chart	2016 republican candidates issues comparison chart	1041	election.party:republican	3	election.party=E0	CandidateCompare
+2016 republican candidates military service	republican	31	2016 republican candidates military service	2016 republican candidates military service	1042	election.party:republican	3	election.party=E0	CandidateList
+2016 republican candidates president	republican	31	2016 republican candidates president	2016 republican candidates president	1043	election.party:republican	3	election.party=E0	CandidateList
+2016 republican contenders	republican	31	2016 republican contenders	2016 republican contenders	1044	election.party:republican	3	election.party=E0	CandidateList
+2016 republican pres candidates	republican	31	2016 republican pres candidates	2016 republican pres candidates	1045	election.party:republican	3	election.party=E0	CandidateList
+2016 republican president candidates	republican	31	2016 republican president candidates	2016 republican president candidates	1046	election.party:republican	3	election.party=E0	CandidateList
+2016 republican running for president	republican	31	2016 republican running for president	2016 republican running for president	1047	election.party:republican	3	election.party=E0	CandidateList
+2016 runners for president		31	2016 runners for president	2016 runners for president	1048		3		CandidateList
+2016 top republican candidates	republican top	31	2016 top republican candidates	2016 top republican candidates	1049	StayWords:top|||election.party:republican	3	StayWords=E0;election.party=E1	CandidateList
+2016 us presidential candidates list	[election.national]	31	2016 us presidential candidates list	2016 us presidential candidates list	1050	election.national:us	3	election.national=E0	CandidateList
+2016 us presidential election republican	republican	31	2016 us presidential election republican	2016 us presidential election republican	1051	election.party:republican	3	election.party=E0	ElectionGeneral
+2106 republican presidential candidates	republican	31	2106 republican presidential candidates	2106 republican presidential candidates	1052	election.party:republican	3	election.party=E0	CandidateList
+about the 2016 presidential candidates		31	about the 2016 presidential candidates	about the 2016 presidential candidates	1053		3		CandidateList
+about the republican candidates	republican	31	about the republican candidates	about the republican candidates	1054	election.party:republican	3	election.party=E0	CandidateList
+all 2016 republican candidates	republican	31	all 2016 republican candidates	all 2016 republican candidates	1055	election.party:republican	3	election.party=E0	CandidateList
+all presidential candidates 2016		31	all presidential candidates 2016	all presidential candidates 2016	1056		3		CandidateList
+american presidential candidates	[election.national]	31	american presidential candidates	american presidential candidates	1057	election.national:american	3	election.national=E0	CandidateList
+arly fiorina	carly fiorina	31	arly fiorina	arly fiorina	1058	election.candidate.highconf:carly fiorina	3	election.candidate.highconf=E0	CandidateGeneral
+background of marco rubio	[election.infoword] marco rubio	31	background of marco rubio	background of marco rubio	1059	election.infoword:background|||election.candidate.highconf:marco rubio	3	election.candidate.highconf=E0	Candidate
+ben carson	ben carson	31	ben carson	ben carson	1060	election.candidate.highconf:ben carson	3	election.candidate.highconf=E0	CandidateGeneral
+ben carson 2015 schedule	ben carson	31	ben carson 2015 schedule	ben carson 2015 schedule	1061	election.candidate.highconf:ben carson	3	election.candidate.highconf=E0	ElectionSchedule
+ben carson and muslim president	and ben carson	31	ben carson and muslim president	ben carson and muslim president	1062	election.candidate:ben carson|||StayWords:and	3	StayWords=E0	Candidate
+ben carson announces run for president	ben carson	31	ben carson announces run for president	ben carson announces run for president	1063	election.candidate:ben carson	3		CandidateGeneral
+ben carson background information	[election.infoword] ben carson	31	ben carson background information	ben carson background information	1064	election.candidate.highconf:ben carson|||election.infoword:background information	3	election.candidate.highconf=E0	Candidate
+ben carson biography religion	[election.candidatehistory] ben carson religion	31	ben carson biography religion	ben carson biography religion	1065	election.candidate.highconf:ben carson|||election.candidatehistory:biography|||I.NPE.Religion:religion	3	election.candidate.highconf=E0	CandidateBio
+ben carson campaign manager	[election.Campaign.Manager] [election.campaign] ben carson	31	ben carson campaign manager	ben carson campaign manager	1066	election.candidate.highconf:ben carson|||election.campaign:campaign|||election.Campaign.Manager:manager	3	election.candidate.highconf=E0;election.campaign=C0	CandidateCampain
+ben carson campaign store	[election.Campaign.Store] [election.campaign] ben carson	31	ben carson campaign store	ben carson campaign store	1067	election.candidate.highconf:ben carson|||election.campaign:campaign|||election.Campaign.Store:store	3	election.candidate.highconf=E0;election.campaign=C0	CandidateCampain
+ben carson childhood biography	[election.candidatehistory] [election.candidatehistory] ben carson	31	ben carson childhood biography	ben carson childhood biography	1068	election.candidate.highconf:ben carson|||election.candidatehistory:childhood|||election.candidatehistory:biography	3	election.candidate.highconf=E0	CandidateBio
+ben carson gun control stance	ben carson gun control	31	ben carson gun control stance	ben carson gun control stance	1069	election.candidate:ben carson|||election.bpiissue:gun control	3		CandidateView
+ben carson lgbt	ben carson	31	ben carson lgbt	ben carson lgbt	1070	election.candidate:ben carson	3		Candidate
+ben carson on abortion	abortion ben carson	31	ben carson on abortion	ben carson on abortion	1071	election.candidate:ben carson|||election.bpiissue:on abortion	3		CandidateView
+ben carson on gun	ben carson gun	31	ben carson on gun	ben carson on gun	1072	election.candidate:ben carson|||election.bpiissue:on gun	3		CandidateView
+ben carson on illegal immigration	ben carson immigration	31	ben carson on illegal immigration	ben carson on illegal immigration	1073	election.candidate:ben carson|||election.bpiissue:on immigration	3		CandidateView
+ben carson political position	ben carson	31	ben carson political position	ben carson political position	1074	election.candidate.highconf:ben carson	3	election.candidate.highconf=E0	CandidateView
+ben carson position on immigration	ben carson immigration	31	ben carson position on immigration	ben carson position on immigration	1075	election.candidate:ben carson|||election.bpiissue:on immigration	3		CandidateView
+ben carson president 2016	ben carson	31	ben carson president 2016	ben carson president 2016	1076	election.candidate:ben carson	3		Candidate
+ben carson s biography	[election.candidatehistory] ben carson	31	ben carson s biography	ben carson s biography	1077	election.candidate.highconf:ben carson|||election.candidatehistory:biography	3	election.candidate.highconf=E0	CandidateBio
+ben carson s political views	ben carson	31	ben carson s political views	ben carson s political views	1078	election.candidate.highconf:ben carson	3	election.candidate.highconf=E0	CandidateView
+ben carson s views on immigration	ben carson immigration	31	ben carson s views on immigration	ben carson s views on immigration	1079	election.candidate:ben carson|||election.bpiissue:immigration	3		CandidateView
+ben carson stand on gun control	ben carson gun control	31	ben carson stand on gun control	ben carson stand on gun control	1080	election.candidate:ben carson|||election.bpiissue:gun control	3		CandidateView
+ben carson views on education	ben carson education	31	ben carson views on education	ben carson views on education	1081	election.candidate:ben carson|||election.bpiissue:education	3		CandidateView
+ben carsons view on abortion	abortion ben carson	31	ben carsons view on abortion	ben carsons view on abortion	1082	election.candidate:ben carson|||election.bpiissue:on abortion	3		CandidateView
+ben neurosurgeon	ben carson	31	ben neurosurgeon	ben neurosurgeon	1083	election.candidate.highconf:ben carson	3	election.candidate.highconf=E0	Candidate
+bencarson campaign	ben carson	31	bencarson campaign	bencarson campaign	1084	election.candidate.highconf:ben carson	3	election.candidate.highconf=E0	CandidateCampain
+benjamin solomon carson	ben carson	31	benjamin solomon carson	benjamin solomon carson	1085	election.candidate.highconf:ben carson	3	election.candidate.highconf=E0	Candidate
+berbie sanders	bernie sanders	31	berbie sanders	berbie sanders	1086	election.candidate.highconf:bernie sanders	3	election.candidate.highconf=E0	CandidateGeneral
+bernard bernie sanders	[election.candidate.highconf]	31	bernard bernie sanders	bernard bernie sanders	1087		3		CandidateGeneral
+bernard sanders	bernie sanders	31	bernard sanders	bernard sanders	1088	election.candidate.highconf:bernie sanders	3	election.candidate.highconf=E0	CandidateGeneral
+bernie anders	bernie sanders	31	bernie anders	bernie anders	1089	election.candidate.highconf:bernie sanders	3	election.candidate.highconf=E0	CandidateGeneral
+bernie campaign	[election.campaign]	31	bernie campaign	bernie campaign	1090	election.campaign:campaign	3	election.campaign=C0	CandidateCampain
+bernie sand	bernie sanders	31	bernie sand	bernie sand	1091	election.candidate.highconf:bernie sanders	3	election.candidate.highconf=E0	CandidateGeneral
+bernie sanders	bernie sanders	31	bernie sanders	bernie sanders	1092	election.candidate.highconf:bernie sanders	3	election.candidate.highconf=E0	CandidateGeneral
+bernie sanders and public education	bernie sanders public education	31	bernie sanders and public education	bernie sanders and public education	1093	election.candidate:bernie sanders|||election.bpiissue:public education	3		CandidateView
+bernie sanders campaign contributions	[election.Campaign.Fund] [election.campaign] bernie sanders	31	bernie sanders campaign contributions	bernie sanders campaign contributions	1094	election.candidate.highconf:bernie sanders|||election.campaign:campaign|||election.Campaign.Fund:contributions	3	election.candidate.highconf=E0;election.campaign=C0	CandidateCampain
+bernie sanders campaign donations	[election.Campaign.Fund] [election.campaign] bernie sanders	31	bernie sanders campaign donations	bernie sanders campaign donations	1095	election.candidate.highconf:bernie sanders|||election.campaign:campaign|||election.Campaign.Fund:donations	3	election.candidate.highconf=E0;election.campaign=C0	CandidateCampain
+bernie sanders campaign events	[election.campaign] bernie sanders	31	bernie sanders campaign events	bernie sanders campaign events	1096	election.candidate.highconf:bernie sanders|||election.campaign:campaign	3	election.candidate.highconf=E0;election.campaign=C0	CandidateCampain
+bernie sanders campaign fund	[election.Campaign.Fund] [election.campaign] bernie sanders	31	bernie sanders campaign fund	bernie sanders campaign fund	1097	election.candidate.highconf:bernie sanders|||election.campaign:campaign|||election.Campaign.Fund:fund	3	election.candidate.highconf=E0;election.campaign=C0	CandidateCampain
+bernie sanders campaign funding	[election.Campaign.Fund] [election.campaign] bernie sanders	31	bernie sanders campaign funding	bernie sanders campaign funding	1098	election.candidate.highconf:bernie sanders|||election.campaign:campaign|||election.Campaign.Fund:funding	3	election.candidate.highconf=E0;election.campaign=C0	CandidateCampain
+bernie sanders career history	[election.candidatehistory] bernie sanders	31	bernie sanders career history	bernie sanders career history	1099	election.candidate.highconf:bernie sanders|||election.candidatehistory:career history	3	election.candidate.highconf=E0	Candidate
+bernie sanders for president	bernie sanders	31	bernie sanders for president	bernie sanders for president	1100	election.candidate:bernie sanders	3		CandidateList
+bernie sanders for president of the united states of america	[election.national] bernie sanders	31	bernie sanders for president of the united states of america	bernie sanders for president of the united states of america	1101	election.candidate:bernie sanders|||election.national:united states of america	3	election.national=E0	CandidateList
+bernie sanders issues on abortion	abortion bernie sanders	31	bernie sanders issues on abortion	bernie sanders issues on abortion	1102	election.candidate:bernie sanders|||election.bpiissue:on abortion	3		CandidateView
+bernie sanders on twitter	bernie sanders	31	bernie sanders on twitter	bernie sanders on twitter	1103	election.candidate.highconf:bernie sanders	3	election.candidate.highconf=E0	CandidateNavigational
+bernie sanders political viewpoints	bernie sanders	31	bernie sanders political viewpoints	bernie sanders political viewpoints	1104	election.candidate.highconf:bernie sanders	3	election.candidate.highconf=E0	CandidateView
+bernie sanders president	bernie sanders	31	bernie sanders president	bernie sanders president	1105	election.candidate:bernie sanders	3		Candidate
+bernie sanders presidential campaign donation	[election.Campaign.Fund] [election.campaign]	31	bernie sanders presidential campaign donation	bernie sanders presidential campaign donation	1106	election.campaign:campaign|||election.Campaign.Fund:donation	3	election.campaign=C0	CandidateCampain
+bernie sanders speech schedule	bernie sanders	31	bernie sanders speech schedule	bernie sanders speech schedule	1107	election.candidate.highconf:bernie sanders	3	election.candidate.highconf=E0	ElectionSchedule
+bernie sanders views	bernie sanders	31	bernie sanders views	bernie sanders views	1108	election.candidate.highconf:bernie sanders	3	election.candidate.highconf=E0	CandidateView
+bernie sanders views on environment	bernie sanders environment	31	bernie sanders views on environment	bernie sanders views on environment	1109	election.candidate:bernie sanders|||election.bpiissue:on environment	3		CandidateView
+bernie sanders voting record on abortion	abortion bernie sanders	31	bernie sanders voting record on abortion	bernie sanders voting record on abortion	1110	election.candidate:bernie sanders|||election.bpiissue:on abortion	3		CandidateView
+bernie sanders vs donald trump	bernie sanders donald trump	31	bernie sanders vs donald trump	bernie sanders vs donald trump	1111	election.candidate:bernie sanders|||election.candidate.highconf:donald trump	3	election.candidate.highconf=E0	CandidateCompare
+bernie sandersd	bernie sanders	31	bernie sandersd	bernie sandersd	1112	election.candidate.highconf:bernie sanders	3	election.candidate.highconf=E0	CandidateGeneral
+bernie sandres	bernie sanders	31	bernie sandres	bernie sandres	1113	election.candidate.highconf:bernie sanders	3	election.candidate.highconf=E0	CandidateGeneral
+bernie saunders for president	bernie sanders	31	bernie saunders for president	bernie saunders for president	1114	election.candidate:bernie sanders	3		CandidateList
+bernoe sanders	bernie sanders	31	bernoe sanders	bernoe sanders	1115	election.candidate.highconf:bernie sanders	3	election.candidate.highconf=E0	CandidateGeneral
+berrnie sanders	bernie sanders	31	berrnie sanders	berrnie sanders	1116	election.candidate.highconf:bernie sanders	3	election.candidate.highconf=E0	CandidateGeneral
+betnie sandwrs	bernie sanders	31	betnie sandwrs	betnie sandwrs	1117	election.candidate.highconf:bernie sanders	3	election.candidate.highconf=E0	CandidateGeneral
+bio jeb bush	[election.candidatehistory] jeb bush	31	bio jeb bush	bio jeb bush	1118	election.candidatehistory:bio|||election.candidate.highconf:jeb bush	3	election.candidate.highconf=E0	Candidate
+bio of carly fiorina	[election.candidatehistory] carly fiorina	31	bio of carly fiorina	bio of carly fiorina	1119	election.candidatehistory:bio|||election.candidate.highconf:carly fiorina	3	election.candidate.highconf=E0	CandidateBio
+bio of lindsey graham	[election.candidatehistory] lindsey graham	31	bio of lindsey graham	bio of lindsey graham	1120	election.candidatehistory:bio|||election.candidate.highconf:lindsey graham	3	election.candidate.highconf=E0	CandidateBio
+bio of rick santorum	[election.candidatehistory] rick santorum	31	bio of rick santorum	bio of rick santorum	1121	election.candidatehistory:bio|||election.candidate.highconf:rick santorum	3	election.candidate.highconf=E0	CandidateBio
+bio on dr ben carson	[election.candidatehistory] ben carson	31	bio on dr ben carson	bio on dr ben carson	1122	election.candidatehistory:bio|||election.candidate.highconf:ben carson	3	election.candidate.highconf=E0	CandidateBio
+bio on john kasich	[election.candidatehistory] john kasich	31	bio on john kasich	bio on john kasich	1123	election.candidatehistory:bio|||election.candidate.highconf:john kasich	3	election.candidate.highconf=E0	CandidateBio
+bio on mike huckabee	[election.candidatehistory] mike huckabee	31	bio on mike huckabee	bio on mike huckabee	1124	election.candidatehistory:bio|||election.candidate.highconf:mike huckabee	3	election.candidate.highconf=E0	CandidateBio
+biography of ben carson	[election.candidatehistory] ben carson	31	biography of ben carson	biography of ben carson	1125	election.candidatehistory:biography|||election.candidate.highconf:ben carson	3	election.candidate.highconf=E0	CandidateBio
+biography on bernie sanders	[election.candidatehistory] bernie sanders	31	biography on bernie sanders	biography on bernie sanders	1126	election.candidatehistory:biography|||election.candidate.highconf:bernie sanders	3	election.candidate.highconf=E0	CandidateBio
+biography ted cruz	[election.candidatehistory] ted cruz	31	biography ted cruz	biography ted cruz	1127	election.candidatehistory:biography|||election.candidate.highconf:ted cruz	3	election.candidate.highconf=E0	CandidateBio
+bobbie jindle	bobby	31	bobbie jindle	bobbie jindle	1128	election.candidate.highconf:bobby	3	election.candidate.highconf=E0	CandidateGeneral
+campaign 2016 republicans	[election.campaign]	31	campaign 2016 republicans	campaign 2016 republicans	1129	election.campaign:campaign	3	election.campaign=C0	CandidateCampain
+candidate 2016		31	candidate 2016	candidate 2016	1130		3		CandidateList
+candidate election 2016		31	candidate election 2016	candidate election 2016	1131		3		CandidateList
+candidate for president		31	candidate for president	candidate for president	1132		3		CandidateList
+candidates for 2016		31	candidates for 2016	candidates for 2016	1133		3		CandidateList
+candidates for 2016 presidential race		31	candidates for 2016 presidential race	candidates for 2016 presidential race	1134		3		CandidateList
+candidates for president		31	candidates for president	candidates for president	1135		3		CandidateList
+candidates for president 2016 democrat	democratic	31	candidates for president 2016 democrat	candidates for president 2016 democrat	1136	election.party:democratic	3	election.party=E0	CandidateList
+candidates for president of the united states	[election.national]	31	candidates for president of the united states	candidates for president of the united states	1137	election.national:united states	3	election.national=E0	CandidateList
+candidates for president republican	republican	31	candidates for president republican	candidates for president republican	1138	election.party:republican	3	election.party=E0	CandidateList
+candidates for us president	[election.national]	31	candidates for us president	candidates for us president	1139	election.national:us	3	election.national=E0	CandidateList
+candidates of the republican party	republican	31	candidates of the republican party	candidates of the republican party	1140	election.party:republican	3	election.party=E0	CandidateList
+candidates of the republican party 2016	republican	31	candidates of the republican party 2016	candidates of the republican party 2016	1141	election.party:republican	3	election.party=E0	CandidateList
+candidates republican 2016	republican	31	candidates republican 2016	candidates republican 2016	1142	election.party:republican	3	election.party=E0	CandidateList
+candidates running for election		31	candidates running for election	candidates running for election	1143		3		CandidateList
+canidates for the 2016 election		31	canidates for the 2016 election	canidates for the 2016 election	1144		3		CandidateList
+carla farina	carly fiorina	31	carla farina	carla farina	1145	election.candidate.highconf:carly fiorina	3	election.candidate.highconf=E0	CandidateGeneral
+carla fiorini	carly fiorina	31	carla fiorini	carla fiorini	1146	election.candidate.highconf:carly fiorina	3	election.candidate.highconf=E0	CandidateGeneral
+carla forina	carly fiorina	31	carla forina	carla forina	1147	election.candidate.highconf:carly fiorina	3	election.candidate.highconf=E0	CandidateGeneral
+carley farina	carly fiorina	31	carley farina	carley farina	1148	election.candidate.highconf:carly fiorina	3	election.candidate.highconf=E0	CandidateGeneral
+carley fiorina hp	carly fiorina	31	carley fiorina hp	carley fiorina hp	1149	election.candidate.highconf:carly fiorina	3	election.candidate.highconf=E0	CandidateGeneral
+carley florina	carly fiorina	31	carley florina	carley florina	1150	election.candidate.highconf:carly fiorina	3	election.candidate.highconf=E0	CandidateGeneral
+carli fiorna	carly fiorina	31	carli fiorna	carli fiorna	1151	election.candidate.highconf:carly fiorina	3	election.candidate.highconf=E0	CandidateGeneral
+carlie florina	carly fiorina	31	carlie florina	carlie florina	1152	election.candidate.highconf:carly fiorina	3	election.candidate.highconf=E0	CandidateGeneral
+carlson ben	ben carson	31	carlson ben	carlson ben	1153	election.candidate.highconf:ben carson	3	election.candidate.highconf=E0	CandidateGeneral
+carly fionia	carly fiorina	31	carly fionia	carly fionia	1154	election.candidate.highconf:carly fiorina	3	election.candidate.highconf=E0	CandidateGeneral
+carly fioriana	carly fiorina	31	carly fioriana	carly fioriana	1155	election.candidate.highconf:carly fiorina	3	election.candidate.highconf=E0	CandidateGeneral
+carly fiorina biographical information	[election.candidatehistory] carly fiorina	31	carly fiorina biographical information	carly fiorina biographical information	1156	election.candidate.highconf:carly fiorina|||election.candidatehistory:biographical information	3	election.candidate.highconf=E0	CandidateBio
+carly fiorina campaign manager	[election.Campaign.Manager] [election.campaign] carly fiorina	31	carly fiorina campaign manager	carly fiorina campaign manager	1157	election.candidate.highconf:carly fiorina|||election.campaign:campaign|||election.Campaign.Manager:manager	3	election.candidate.highconf=E0;election.campaign=C0	CandidateCampain
+carly fiorina illegal immigration	carly fiorina immigration	31	carly fiorina illegal immigration	carly fiorina illegal immigration	1158	election.candidate:carly fiorina|||election.bpiissue:on immigration	3		CandidateView
+carly fiorina on abortion	abortion carly fiorina	31	carly fiorina on abortion	carly fiorina on abortion	1159	election.candidate:carly fiorina|||election.bpiissue:on abortion	3		CandidateView
+carly fiorina on environment	carly fiorina environment	31	carly fiorina on environment	carly fiorina on environment	1160	election.candidate:carly fiorina|||election.bpiissue:on environment	3		CandidateView
+carly fiorina view on immigration	carly fiorina immigration	31	carly fiorina view on immigration	carly fiorina view on immigration	1161	election.candidate:carly fiorina|||election.bpiissue:immigration	3		CandidateView
+carly fiorina views	carly fiorina	31	carly fiorina views	carly fiorina views	1162	election.candidate.highconf:carly fiorina	3	election.candidate.highconf=E0	CandidateView
+carly firorina	carly fiorina	31	carly firorina	carly firorina	1163	election.candidate.highconf:carly fiorina	3	election.candidate.highconf=E0	CandidateGeneral
+carly florina for president	carly fiorina	31	carly florina for president	carly florina for president	1164	election.candidate:carly fiorina	3		CandidateList
+carson ben	ben carson	31	carson ben	carson ben	1165	election.candidate.highconf:ben carson	3	election.candidate.highconf=E0	CandidateGeneral
+carson gun control	ben carson gun control	31	carson gun control	carson gun control	1166	election.candidate.highconf:ben carson|||election.bpiissue:gun control	3	election.candidate.highconf=E0	CandidateView
+carson views	ben carson	31	carson views	carson views	1167	election.candidate.highconf:ben carson	3	election.candidate.highconf=E0	CandidateView
+carson vs trump	ben carson donald trump	31	carson vs trump	carson vs trump	1168	election.candidate.highconf:ben carson|||election.candidate:donald trump	3	election.candidate.highconf=E0	CandidateCompare
+chris christe for president	chris christie	31	chris christe for president	chris christe for president	1169	election.candidate:chris christie	3		CandidateList
+chris christi	chris christie	31	chris christi	chris christi	1170	election.candidate.highconf:chris christie	3	election.candidate.highconf=E0	CandidateGeneral
+chris christie	chris christie	31	chris christie	chris christie	1171	election.candidate.highconf:chris christie	3	election.candidate.highconf=E0	CandidateGeneral
+chris christie biographical information	[election.candidatehistory] chris christie	31	chris christie biographical information	chris christie biographical information	1172	election.candidate.highconf:chris christie|||election.candidatehistory:biographical information	3	election.candidate.highconf=E0	CandidateBio
+chris christie democrat or republican	chris christie democratic democratic or	31	chris christie democrat or republican	chris christie democrat or republican	1173	election.candidate:chris christie|||election.party:democratic|||StayWords:or|||election.party:republican	3	StayWords=E0;election.party=E1	Candidate
+chris christie for president	chris christie	31	chris christie for president	chris christie for president	1174	election.candidate:chris christie	3		CandidateList
+chris christie health care	chris christie health care	31	chris christie health care	chris christie health care	1175	election.candidate:chris christie|||election.bpiissue:health care	3		CandidateView
+chris christie political experience	[election.candidatehistory] chris christie	31	chris christie political experience	chris christie political experience	1176	election.candidate.highconf:chris christie|||election.candidatehistory:political experience	3	election.candidate.highconf=E0	Candidate
+chris christie president 2016	chris christie	31	chris christie president 2016	chris christie president 2016	1177	election.candidate:chris christie	3		Candidate
+chris cristie	chris christie	31	chris cristie	chris cristie	1178	election.candidate.highconf:chris christie	3	election.candidate.highconf=E0	CandidateGeneral
+christie for president	chris christie	31	christie for president	christie for president	1179	election.candidate:chris christie	3		CandidateList
+clinton campaign jobs	[election.campaign] hillary clinton	31	clinton campaign jobs	clinton campaign jobs	1180	election.candidate.highconf:hillary clinton|||election.campaign:campaign	3	election.candidate.highconf=E0;election.campaign=C0	CandidateCampain
+clinton stance on immigration	hillary clinton immigration	31	clinton stance on immigration	clinton stance on immigration	1181	election.candidate:hillary clinton|||election.bpiissue:immigration	3		CandidateView
+colorado primary election date 2016	[election.primary] colorado	31	colorado primary election date 2016	colorado primary election date 2016	1182	location.state:colorado|||election.primary:primary	3	location.state=E0;election.primary=C0	CandidateList
+compare 2016 gop presidential candidates	republican	31	compare 2016 gop presidential candidates	compare 2016 gop presidential candidates	1183	election.party:republican	3	election.party=E0	CandidateCompare
+compare presidential candidates 2016		31	compare presidential candidates 2016	compare presidential candidates 2016	1184		3		CandidateCompare
+compare republican candidates for president	republican	31	compare republican candidates for president	compare republican candidates for president	1185	election.party:republican	3	election.party=E0	CandidateCompare
+comparison of democratic candidates	democratic	31	comparison of democratic candidates	comparison of democratic candidates	1186	election.party:democratic	3	election.party=E0	CandidateCompare
+comparison of republican candidates	republican	31	comparison of republican candidates	comparison of republican candidates	1187	election.party:republican	3	election.party=E0	CandidateCompare
+comparison republican candidates 2016	republican	31	comparison republican candidates 2016	comparison republican candidates 2016	1188	election.party:republican	3	election.party=E0	CandidateCompare
+confirmed 2016 presidential candidates		31	confirmed 2016 presidential candidates	confirmed 2016 presidential candidates	1189		3		CandidateList
+conservative presidential candidates 2016		31	conservative presidential candidates 2016	conservative presidential candidates 2016	1190		3		CandidateList
+conservative ratings of presidential candidates		31	conservative ratings of presidential candidates	conservative ratings of presidential candidates	1191		3		CandidateList
+countdown to presidential election		31	countdown to presidential election	countdown to presidential election	1192		3		ElectionGeneral
+cruz campaign	ted cruz	31	cruz campaign	cruz campaign	1193	election.candidate.highconf:ted cruz	3	election.candidate.highconf=E0	CandidateCampain
+cruz on abortion	abortion ted cruz	31	cruz on abortion	cruz on abortion	1194	election.candidate:ted cruz|||election.bpiissue:on abortion	3		CandidateView
+ct primary elections	[election.primary] ct	31	ct primary elections	ct primary elections	1195	location.state:ct|||election.primary:primary	3	location.state=E0;election.primary=C0	CandidateList
+current declared presidential candidates		31	current declared presidential candidates	current declared presidential candidates	1196		3		CandidateList
+current democrat candidates for president	democratic	31	current democrat candidates for president	current democrat candidates for president	1197	election.party:democratic	3	election.party=E0	CandidateList
+current gop candidates for president	republican	31	current gop candidates for president	current gop candidates for president	1198	election.party:republican	3	election.party=E0	CandidateList
+current list of 2016 presidential candidates		31	current list of 2016 presidential candidates	current list of 2016 presidential candidates	1199		3		CandidateList
+current presidential nominees		31	current presidential nominees	current presidential nominees	1200		3		CandidateList
+date of florida primary election 2016	[election.primary] florida	31	date of florida primary election 2016	date of florida primary election 2016	1201	location.state:florida|||election.primary:primary	3	location.state=E0;election.primary=C0	ElectionSchedule
+date of next presidential election	[election.next] [election.when]	31	date of next presidential election	date of next presidential election	1202	election.when:date of|||election.next:next	3		CandidateList
+date of next presidential primary election	[election.next] [election.primary] [election.when]	31	date of next presidential primary election	date of next presidential primary election	1203	election.when:date of|||election.next:next|||election.primary:primary	3	election.primary=C0	CandidateList
+dates of primary elections 2016	[election.primary]	31	dates of primary elections 2016	dates of primary elections 2016	1204	election.primary:primary	3	election.primary=C0	ElectionSchedule
+deadline for presidential candidates 2016	[election.when]	31	deadline for presidential candidates 2016	deadline for presidential candidates 2016	1205	election.when:deadline	3		CandidateList
+declared republican canidates	republican	31	declared republican canidates	declared republican canidates	1206	election.party:republican	3	election.party=E0	CandidateList
+dem presidential candidates		31	dem presidential candidates	dem presidential candidates	1207		3		CandidateList
+demo pres candidates		31	demo pres candidates	demo pres candidates	1208		3		CandidateList
+democrat candidates 2016	democratic	31	democrat candidates 2016	democrat candidates 2016	1209	election.party:democratic	3	election.party=E0	CandidateList
+democrat nominee 2016	democratic	31	democrat nominee 2016	democrat nominee 2016	1210	election.party:democratic	3	election.party=E0	CandidateList
+democrat nominees for president 2016	democratic	31	democrat nominees for president 2016	democrat nominees for president 2016	1211	election.party:democratic	3	election.party=E0	CandidateList
+democrat president candidate	democratic	31	democrat president candidate	democrat president candidate	1212	election.party:democratic	3	election.party=E0	CandidateList
+democrat president contenders	democratic	31	democrat president contenders	democrat president contenders	1213	election.party:democratic	3	election.party=E0	CandidateList
+democrat running for president	democratic	31	democrat running for president	democrat running for president	1214	election.party:democratic	3	election.party=E0	CandidateList
+democrat running for president 2016	democratic	31	democrat running for president 2016	democrat running for president 2016	1215	election.party:democratic	3	election.party=E0	CandidateList
+democrate presidential candidates 2016	democratic	31	democrate presidential candidates 2016	democrate presidential candidates 2016	1216	election.party:democratic	3	election.party=E0	CandidateList
+democratic candidates in 2016	democratic	31	democratic candidates in 2016	democratic candidates in 2016	1217	election.party:democratic	3	election.party=E0	CandidateList
+democratic front runners	democratic	31	democratic front runners	democratic front runners	1218	election.party:democratic	3	election.party=E0	CandidateList
+democratic front runners 2016	democratic	31	democratic front runners 2016	democratic front runners 2016	1219	election.party:democratic	3	election.party=E0	CandidateList
+democratic hopefuls	democratic	31	democratic hopefuls	democratic hopefuls	1220	election.party:democratic	3	election.party=E0	CandidateList
+democratic party running for president	democratic	31	democratic party running for president	democratic party running for president	1221	election.party:democratic	3	election.party=E0	CandidateList
+democratic people running for president	democratic	31	democratic people running for president	democratic people running for president	1222	election.party:democratic	3	election.party=E0	CandidateList
+democratic presidential candidates 2016	democratic	31	democratic presidential candidates 2016	democratic presidential candidates 2016	1223	election.party:democratic	3	election.party=E0	CandidateList
+democratic presidential frontrunners	democratic	31	democratic presidential frontrunners	democratic presidential frontrunners	1224	election.party:democratic	3	election.party=E0	CandidateList
+democratic primary schedule 2016	[election.primary] democratic	31	democratic primary schedule 2016	democratic primary schedule 2016	1225	election.party:democratic|||election.primary:primary	3	election.party=E0;election.primary=C0	ElectionSchedule
+dinald trump twitter	donald trump	31	dinald trump twitter	dinald trump twitter	1226	election.candidate.highconf:donald trump	3	election.candidate.highconf=E0	CandidateNavigational
+dobald trump twitter	donald trump	31	dobald trump twitter	dobald trump twitter	1227	election.candidate.highconf:donald trump	3	election.candidate.highconf=E0	CandidateNavigational
+doland trump	donald trump	31	doland trump	doland trump	1228	election.candidate.highconf:donald trump	3	election.candidate.highconf=E0	CandidateGeneral
+don trump campaign	don trump	31	don trump campaign	don trump campaign	1229	election.candidate.highconf:don trump	3	election.candidate.highconf=E0	CandidateCampain
+donadl trump twitter	donald trump	31	donadl trump twitter	donadl trump twitter	1230	election.candidate.highconf:donald trump	3	election.candidate.highconf=E0	CandidateNavigational
+donakd trump	donald trump	31	donakd trump	donakd trump	1231	election.candidate.highconf:donald trump	3	election.candidate.highconf=E0	CandidateGeneral
+donald dtrump	donald trump	31	donald dtrump	donald dtrump	1232	election.candidate.highconf:donald trump	3	election.candidate.highconf=E0	Candidate
+donald jtrump	donald trump	31	donald jtrump	donald jtrump	1233	election.candidate.highconf:donald trump	3	election.candidate.highconf=E0	CandidateGeneral
+donald teump twitter	donald trump	31	donald teump twitter	donald teump twitter	1234	election.candidate.highconf:donald trump	3	election.candidate.highconf=E0	CandidateNavigational
+donald trump	donald trump	31	donald trump	donald trump	1235	election.candidate.highconf:donald trump	3	election.candidate.highconf=E0	CandidateGeneral
+donald trump background info	[election.infoword] donald trump	31	donald trump background info	donald trump background info	1236	election.candidate.highconf:donald trump|||election.infoword:background info	3	election.candidate.highconf=E0	Candidate
+donald trump background information	[election.infoword] donald trump	31	donald trump background information	donald trump background information	1237	election.candidate.highconf:donald trump|||election.infoword:background information	3	election.candidate.highconf=E0	Candidate
+donald trump bio	[election.candidatehistory] donald trump	31	donald trump bio	donald trump bio	1238	election.candidate.highconf:donald trump|||election.candidatehistory:bio	3	election.candidate.highconf=E0	CandidateBio
+donald trump campaign phone number	[election.campaign] donald trump	31	donald trump campaign phone number	donald trump campaign phone number	1239	election.candidate.highconf:donald trump|||election.campaign:campaign	3	election.candidate.highconf=E0;election.campaign=C0	CandidateCampain
+donald trump campaign platform	[election.Campaign.platform] [election.campaign] donald trump	31	donald trump campaign platform	donald trump campaign platform	1240	election.candidate.highconf:donald trump|||election.campaign:campaign|||election.Campaign.platform:platform	3	election.candidate.highconf=E0;election.campaign=C0	CandidateCampain
+donald trump campaign speech	[election.campaign] donald trump	31	donald trump campaign speech	donald trump campaign speech	1241	election.candidate.highconf:donald trump|||election.campaign:campaign	3	election.candidate.highconf=E0;election.campaign=C0	CandidateCampain
+donald trump democrat	democratic donald trump	31	donald trump democrat	donald trump democrat	1242	election.candidate:donald trump|||election.party:democratic	3	election.party=E0	Candidate
+donald trump environmental	donald trump	31	donald trump environmental	donald trump environmental	1243	election.candidate:donald trump	3		Candidate
+donald trump is running for president	donald trump	31	donald trump is running for president	donald trump is running for president	1244	election.candidate:donald trump	3		CandidateList
+donald trump on gun control	donald trump gun control	31	donald trump on gun control	donald trump on gun control	1245	election.candidate:donald trump|||election.bpiissue:gun control	3		CandidateView
+donald trump running for president speech	donald trump	31	donald trump running for president speech	donald trump running for president speech	1246	election.candidate:donald trump	3		CandidateList
+donald trump s campaign	donald trump	31	donald trump s campaign	donald trump s campaign	1247	election.candidate.highconf:donald trump	3	election.candidate.highconf=E0	CandidateCampain
+donald trump s campaign schedule	donald trump	31	donald trump s campaign schedule	donald trump s campaign schedule	1248	election.candidate.highconf:donald trump	3	election.candidate.highconf=E0	ElectionSchedule
+donald trump s life	donald trump	31	donald trump s life	donald trump s life	1249	election.candidate.highconf:donald trump	3	election.candidate.highconf=E0	Candidate
+donald trump s stance on gun control	donald trump gun control	31	donald trump s stance on gun control	donald trump s stance on gun control	1250	election.candidate:donald trump|||election.bpiissue:gun control	3		CandidateView
+donald trump s view on gun control	donald trump gun control	31	donald trump s view on gun control	donald trump s view on gun control	1251	election.candidate:donald trump|||election.bpiissue:gun control	3		CandidateView
+donald trump stand on gun control	donald trump gun control	31	donald trump stand on gun control	donald trump stand on gun control	1252	election.candidate:donald trump|||election.bpiissue:gun control	3		CandidateView
+donald trump tax reform plan for 2016	donald trump tax reform	31	donald trump tax reform plan for 2016	donald trump tax reform plan for 2016	1253	election.candidate:donald trump|||election.bpiissue:tax reform	3		CandidateView
+donald trump tweets	donald trump	31	donald trump tweets	donald trump tweets	1254	election.candidate.highconf:donald trump	3	election.candidate.highconf=E0	CandidateNavigational
+donald trump tweets megyn kelly	donald trump	31	donald trump tweets megyn kelly	donald trump tweets megyn kelly	1255	election.candidate.highconf:donald trump	3	election.candidate.highconf=E0	CandidateNavigational
+donald trump twitter	donald trump	31	donald trump twitter	donald trump twitter	1256	election.candidate.highconf:donald trump	3	election.candidate.highconf=E0	CandidateNavigational
+donald trump twitter feed	donald trump	31	donald trump twitter feed	donald trump twitter feed	1257	election.candidate.highconf:donald trump	3	election.candidate.highconf=E0	CandidateNavigational
+donald trump vs ben carson	ben carson donald trump	31	donald trump vs ben carson	donald trump vs ben carson	1258	election.candidate:donald trump|||election.candidate.highconf:ben carson	3	election.candidate.highconf=E0	CandidateCompare
+donald trump wedding	donald trump	31	donald trump wedding	donald trump wedding	1259	election.candidate.highconf:donald trump	3	election.candidate.highconf=E0	CandidateMarriage
+donald trumph	donald trump	31	donald trumph	donald trumph	1260	election.candidate.highconf:donald trump	3	election.candidate.highconf=E0	CandidateGeneral
+donald trumps biography	[election.candidatehistory] donald trump	31	donald trumps biography	donald trumps biography	1261	election.candidate.highconf:donald trump|||election.candidatehistory:biography	3	election.candidate.highconf=E0	CandidateBio
+donald trumps history	[election.candidatehistory] donald trump	31	donald trumps history	donald trumps history	1262	election.candidate.highconf:donald trump|||election.candidatehistory:history	3	election.candidate.highconf=E0	Candidate
+donald trumps speech to run for president	donald trump	31	donald trumps speech to run for president	donald trumps speech to run for president	1263	election.candidate:donald trump	3		CandidateList
+donate to bernie sanders campaign	[election.campaign] bernie sanders	31	donate to bernie sanders campaign	donate to bernie sanders campaign	1264	election.candidate.highconf:bernie sanders|||election.campaign:campaign	3	election.candidate.highconf=E0;election.campaign=C0	CandidateCampain
+dr ben carson	ben carson	31	dr ben carson	dr ben carson	1265	election.candidate.highconf:ben carson	3	election.candidate.highconf=E0	CandidateGeneral
+dr ben carson campaign	ben carson	31	dr ben carson campaign	dr ben carson campaign	1266	election.candidate.highconf:ben carson	3	election.candidate.highconf=E0	CandidateCampain
+dr ben carson childhood story	[election.candidatehistory] ben carson story	31	dr ben carson childhood story	dr ben carson childhood story	1267	election.candidate.highconf:ben carson|||election.candidatehistory:childhood|||StayWords:story	3	StayWords=E0;election.candidate.highconf=E1	Candidate
+dr ben carson gun control	ben carson gun control	31	dr ben carson gun control	dr ben carson gun control	1268	election.candidate:ben carson|||election.bpiissue:gun control	3		CandidateView
+dr ben carson running for president	ben carson	31	dr ben carson running for president	dr ben carson running for president	1269	election.candidate:ben carson	3		CandidateList
+dr carson bio	[election.candidatehistory] ben carson	31	dr carson bio	dr carson bio	1270	election.candidate.highconf:ben carson|||election.candidatehistory:bio	3	election.candidate.highconf=E0	CandidateBio
+election 2016		31	election 2016	election 2016	1271		3		ElectionGeneral
+election 2016 issues		31	election 2016 issues	election 2016 issues	1272		3		ElectionGeneral
+election 2016 presidential candidates		31	election 2016 presidential candidates	election 2016 presidential candidates	1273		3		CandidateList
+election day		31	election day	election day	1274		3		ElectionSchedule
+election day usa		31	election day usa	election day usa	1275		3		ElectionSchedule
+election days for 2016		31	election days for 2016	election days for 2016	1276		3		ElectionSchedule
+election of 2016 candidates		31	election of 2016 candidates	election of 2016 candidates	1277		3		CandidateList
+election usa		31	election usa	election usa	1278		3		ElectionGeneral
+elections 2016 timeline		31	elections 2016 timeline	elections 2016 timeline	1279		3		ElectionSchedule
+elections in usa 2016		31	elections in usa 2016	elections in usa 2016	1280		3		ElectionGeneral
+everyone running for president in 2016		31	everyone running for president in 2016	everyone running for president in 2016	1281		3		CandidateList
+female ceo running for president	female ceo running for president	31	female ceo running for president	female ceo running for president	1282	election.candidate.highconf:female ceo running for president	3	election.candidate.highconf=E0	CandidateList
+female republican candidate for president	[election.Gender.Female] republican	31	female republican candidate for president	female republican candidate for president	1283	election.Gender.Female:female|||election.party:republican	3	election.party=E0	CandidateList
+female republican running for president	[election.Gender.Female] republican	31	female republican running for president	female republican running for president	1284	election.Gender.Female:female|||election.party:republican	3	election.party=E0	CandidateList
+fiona hp	fiona hp	31	fiona hp	fiona hp	1285	election.candidate.highconf:fiona hp	3	election.candidate.highconf=E0	CandidateGeneral
+fiorina carly	carly fiorina	31	fiorina carly	fiorina carly	1286	election.candidate.highconf:carly fiorina	3	election.candidate.highconf=E0	CandidateGeneral
+fiorina hewlett packard	fiorina hewlett packard	31	fiorina hewlett packard	fiorina hewlett packard	1287	election.candidate.highconf:fiorina hewlett packard	3	election.candidate.highconf=E0	CandidateGeneral
+follow trump on twitter	donald trump	31	follow trump on twitter	follow trump on twitter	1288	election.candidate.highconf:donald trump	3	election.candidate.highconf=E0	CandidateNavigational
+front running republicans for 2016	republican	31	front running republicans for 2016	front running republicans for 2016	1289	election.party:republican	3	election.party=E0	CandidateList
+future presidential election dates		31	future presidential election dates	future presidential election dates	1290		3		ElectionGeneral
+gallup us presidential election center		31	gallup us presidential election center	gallup us presidential election center	1291		3		ElectionGeneral
+georgia elections	georgia	31	georgia elections	georgia elections	1292	location.state:georgia	3	location.state=E0	ElectionGeneral
+gilmore presidential candidate	gilmore	31	gilmore presidential candidate	gilmore presidential candidate	1293	election.candidate:gilmore	3		CandidateList
+gop 2016 candidates	republican	31	gop 2016 candidates	gop 2016 candidates	1294	election.party:republican	3	election.party=E0	CandidateList
+gop candidate comparison	republican	31	gop candidate comparison	gop candidate comparison	1295	election.party:republican	3	election.party=E0	CandidateCompare
+gop candidates for 2016 president	republican	31	gop candidates for 2016 president	gop candidates for 2016 president	1296	election.party:republican	3	election.party=E0	CandidateList
+gop candidates for president	republican	31	gop candidates for president	gop candidates for president	1297	election.party:republican	3	election.party=E0	CandidateList
+gop declared candidates	republican	31	gop declared candidates	gop declared candidates	1298	election.party:republican	3	election.party=E0	CandidateList
+gop nominee 2016	republican	31	gop nominee 2016	gop nominee 2016	1299	election.party:republican	3	election.party=E0	CandidateList
+gop potential presidential candidates	republican	31	gop potential presidential candidates	gop potential presidential candidates	1300	election.party:republican	3	election.party=E0	CandidateList
+gop primary 2016 schedule	[election.primary] republican	31	gop primary 2016 schedule	gop primary 2016 schedule	1301	election.party:republican|||election.primary:primary 2016	3	election.party=E0;election.primary=C0	ElectionSchedule
+gop running for president	republican	31	gop running for president	gop running for president	1302	election.party:republican	3	election.party=E0	CandidateList
+gop top runners	republican top	31	gop top runners	gop top runners	1303	election.party:republican|||StayWords:top	3	StayWords=E0;election.party=E1	CandidateList
+graham president	graham	31	graham president	graham president	1304	election.candidate:graham	3		ElectionGeneral
+green party presidential candidate		31	green party presidential candidate	green party presidential candidate	1305		3		CandidateList
+green party usa presidential candidates	[election.national]	31	green party usa presidential candidates	green party usa presidential candidates	1306	election.national:usa	3	election.national=E0	CandidateList
+hilarry clinton	hillary clinton	31	hilarry clinton	hilarry clinton	1307	election.candidate.highconf:hillary clinton	3	election.candidate.highconf=E0	CandidateGeneral
+hilary clinton s campaign	hilary clinton	31	hilary clinton s campaign	hilary clinton s campaign	1308	election.candidate.highconf:hilary clinton	3	election.candidate.highconf=E0	CandidateCampain
+hilary clonton	hillary clinton	31	hilary clonton	hilary clonton	1309	election.candidate.highconf:hillary clinton	3	election.candidate.highconf=E0	CandidateGeneral
+hilary president	hillary clinton	31	hilary president	hilary president	1310	election.candidate:hillary clinton	3		CandidateGeneral
+hiliary clinton twitter	hillary clinton	31	hiliary clinton twitter	hiliary clinton twitter	1311	election.candidate.highconf:hillary clinton	3	election.candidate.highconf=E0	CandidateNavigational
+hillary campaign logo	[election.campaign] hillary clinton	31	hillary campaign logo	hillary campaign logo	1312	election.candidate.highconf:hillary clinton|||election.campaign:campaign	3	election.candidate.highconf=E0;election.campaign=C0	CandidateCampain
+hillary clintom	hillary clinton	31	hillary clintom	hillary clintom	1313	election.candidate.highconf:hillary clinton	3	election.candidate.highconf=E0	CandidateGeneral
+hillary clinton 2016 campaign team	[election.Campaign.Team] [election.campaign] hillary clinton	31	hillary clinton 2016 campaign team	hillary clinton 2016 campaign team	1314	election.candidate.highconf:hillary clinton|||election.campaign:campaign|||election.Campaign.Team:team	3	election.candidate.highconf=E0;election.campaign=C0	CandidateCampain
+hillary clinton 2016 election		31	hillary clinton 2016 election	hillary clinton 2016 election	1315		3		Candidate
+hillary clinton biography	[election.candidatehistory] hillary clinton	31	hillary clinton biography	hillary clinton biography	1316	election.candidate.highconf:hillary clinton|||election.candidatehistory:biography	3	election.candidate.highconf=E0	CandidateBio
+hillary clinton campaign 2016 website	[election.campaign] [election.Site] hillary clinton	31	hillary clinton campaign 2016 website	hillary clinton campaign 2016 website	1317	election.candidate.highconf:hillary clinton|||election.campaign:campaign|||election.Site:website	3	election.candidate.highconf=E0;election.campaign=C0	CandidateCampain
+hillary clinton campaign jobs	[election.campaign] hillary clinton	31	hillary clinton campaign jobs	hillary clinton campaign jobs	1318	election.candidate.highconf:hillary clinton|||election.campaign:campaign	3	election.candidate.highconf=E0;election.campaign=C0	CandidateCampain
+hillary clinton campaign stops	[election.campaign] hillary clinton	31	hillary clinton campaign stops	hillary clinton campaign stops	1319	election.candidate.highconf:hillary clinton|||election.campaign:campaign	3	election.candidate.highconf=E0;election.campaign=C0	CandidateCampain
+hillary clinton for president 2016 california	california hillary clinton	31	hillary clinton for president 2016 california	hillary clinton for president 2016 california	1320	election.candidate:hillary clinton|||location.state:california	3	location.state=E0	CandidateList
+hillary clinton gun control	gun control hillary clinton	31	hillary clinton gun control	hillary clinton gun control	1321	election.candidate:hillary clinton|||election.bpiissue:gun control	3		CandidateView
+hillary clinton gun control plan	gun control hillary clinton	31	hillary clinton gun control plan	hillary clinton gun control plan	1322	election.candidate:hillary clinton|||election.bpiissue:gun control	3		CandidateView
+hillary clinton life	hillary clinton life	31	hillary clinton life	hillary clinton life	1323	election.candidate.highconf:hillary clinton|||StayWords:life	3	StayWords=E0;election.candidate.highconf=E1	Candidate
+hillary clinton on health care	health care hillary clinton	31	hillary clinton on health care	hillary clinton on health care	1324	election.candidate:hillary clinton|||election.bpiissue:on health care	3		CandidateView
+hillary clinton on immigration	hillary clinton immigration	31	hillary clinton on immigration	hillary clinton on immigration	1325	election.candidate:hillary clinton|||election.bpiissue:on immigration	3		CandidateView
+hillary clinton opinion on immigration	hillary clinton immigration	31	hillary clinton opinion on immigration	hillary clinton opinion on immigration	1326	election.candidate:hillary clinton|||election.bpiissue:on immigration	3		CandidateView
+hillary clinton presidential candidate 2016	hillary clinton	31	hillary clinton presidential candidate 2016	hillary clinton presidential candidate 2016	1327	election.candidate:hillary clinton	3		CandidateList
+hillary clinton republican	hillary clinton republican	31	hillary clinton republican	hillary clinton republican	1328	election.candidate:hillary clinton|||election.party:republican	3	election.party=E0	CandidateGeneral
+hillary clinton running for president 2016	hillary clinton	31	hillary clinton running for president 2016	hillary clinton running for president 2016	1329	election.candidate:hillary clinton	3		CandidateList
+hillary clinton twitter	hillary clinton	31	hillary clinton twitter	hillary clinton twitter	1330	election.candidate.highconf:hillary clinton	3	election.candidate.highconf=E0	CandidateNavigational
+hillary clinton when she was young	hillary clinton	31	hillary clinton when she was young	hillary clinton when she was young	1331	election.candidate.highconf:hillary clinton	3	election.candidate.highconf=E0	ElectionSchedule
+hillary clinton young republican	[election.candidatehistory] hillary clinton republican	31	hillary clinton young republican	hillary clinton young republican	1332	election.candidate:hillary clinton|||election.candidatehistory:young|||election.party:republican	3	election.party=E0	Candidate
+hillary clintons	hillary clinton	31	hillary clintons	hillary clintons	1333	election.candidate.highconf:hillary clinton	3	election.candidate.highconf=E0	CandidateGeneral
+hillary clnton	hillary clinton	31	hillary clnton	hillary clnton	1334	election.candidate.highconf:hillary clinton	3	election.candidate.highconf=E0	CandidateGeneral
+hillary rodham	hillary clinton	31	hillary rodham	hillary rodham	1335	election.candidate.highconf:hillary clinton	3	election.candidate.highconf=E0	CandidateGeneral
+hillary rodham clinton young	hillary clinton	31	hillary rodham clinton young	hillary rodham clinton young	1336	election.candidate.highconf:hillary clinton	3	election.candidate.highconf=E0	CandidateGeneral
+hillary rodman clinton	hillary clinton	31	hillary rodman clinton	hillary rodman clinton	1337	election.candidate.highconf:hillary clinton	3	election.candidate.highconf=E0	CandidateGeneral
+hillery clinton bio	[election.candidatehistory] hillary clinton	31	hillery clinton bio	hillery clinton bio	1338	election.candidate.highconf:hillary clinton|||election.candidatehistory:bio	3	election.candidate.highconf=E0	CandidateBio
+hillery clinton twitter	hillary clinton	31	hillery clinton twitter	hillery clinton twitter	1339	election.candidate.highconf:hillary clinton	3	election.candidate.highconf=E0	CandidateNavigational
+hispanic presidential candidates		31	hispanic presidential candidates	hispanic presidential candidates	1340		3		CandidateList
+hispanic republican presidential candidate	republican	31	hispanic republican presidential candidate	hispanic republican presidential candidate	1341	election.party:republican	3	election.party=E0	CandidateList
+how many are running for president	[election.howmany]	31	how many are running for president	how many are running for president	1342	election.howmany:how many	3		CandidateList
+how many democrats are running for president in 2016	[election.howmany] democratic	31	how many democrats are running for president in 2016	how many democrats are running for president in 2016	1343	election.howmany:how many|||election.party:democratic	3	election.party=E0	CandidateList
+how many gop candidates are there 2016	[election.howmany] republican	31	how many gop candidates are there 2016	how many gop candidates are there 2016	1344	election.howmany:how many|||election.party:republican	3	election.party=E0	CandidateList
+how many republican candidates are running for president	[election.howmany] republican	31	how many republican candidates are running for president	how many republican candidates are running for president	1345	election.howmany:how many|||election.party:republican	3	election.party=E0	CandidateList
+how many republican candidates are there for 2016	[election.howmany] republican	31	how many republican candidates are there for 2016	how many republican candidates are there for 2016	1346	election.howmany:how many|||election.party:republican	3	election.party=E0	CandidateList
+how many republican candidates are there for president	[election.howmany] republican	31	how many republican candidates are there for president	how many republican candidates are there for president	1347	election.howmany:how many|||election.party:republican	3	election.party=E0	CandidateList
+how many republican presidential candidates are there now	[election.howmany] republican	31	how many republican presidential candidates are there now	how many republican presidential candidates are there now	1348	election.howmany:how many|||election.party:republican	3	election.party=E0	CandidateList
+how many republicans running for president	[election.howmany] republican	31	how many republicans running for president	how many republicans running for president	1349	election.howmany:how many|||election.party:republican	3	election.party=E0	CandidateList
+how many times trump married	[election.howmany] donald trump	31	how many times trump married	how many times trump married	1350	election.howmany:how many|||election.candidate.highconf:donald trump	3	election.candidate.highconf=E0	CandidateMarriage
+how many times was donald trump married	[election.howmany] donald trump	31	how many times was donald trump married	how many times was donald trump married	1351	election.howmany:how many|||election.candidate.highconf:donald trump	3	election.candidate.highconf=E0	CandidateMarriage
+how the presidential election process works		31	how the presidential election process works	how the presidential election process works	1352		3		ElectionGeneral
+how to contact ben carson campaign	[election.campaign] ben carson	31	how to contact ben carson campaign	how to contact ben carson campaign	1353	election.candidate.highconf:ben carson|||election.campaign:campaign	3	election.candidate.highconf=E0;election.campaign=C0	CandidateCampain
+how to vote for president	[election.voting]	31	how to vote for president	how to vote for president	1354	election.voting:vote	3	election.voting=I0	CandidateList
+hucabee for president	huckabee	31	hucabee for president	hucabee for president	1355	election.candidate:huckabee	3		CandidateList
+huckabee biography	[election.candidatehistory] huckabee	31	huckabee biography	huckabee biography	1356	election.candidate.highconf:huckabee|||election.candidatehistory:biography	3	election.candidate.highconf=E0	CandidateBio
+info on bernie sanders	[election.infoword] bernie sanders	31	info on bernie sanders	info on bernie sanders	1357	election.infoword:info|||election.candidate.highconf:bernie sanders	3	election.candidate.highconf=E0	Candidate
+info on hillary clinton	[election.infoword] hillary clinton	31	info on hillary clinton	info on hillary clinton	1358	election.infoword:info|||election.candidate.highconf:hillary clinton	3	election.candidate.highconf=E0	Candidate
+information on marco rubio	[election.infoword] marco rubio	31	information on marco rubio	information on marco rubio	1359	election.infoword:information|||election.candidate.highconf:marco rubio	3	election.candidate.highconf=E0	Candidate
+is ben carson married		31	is ben carson married	is ben carson married	1360		3		CandidateMarriage
+is chris christie running for president	chris christie	31	is chris christie running for president	is chris christie running for president	1361	election.candidate:chris christie	3		CandidateList
+is donald trump running for president	donald trump	31	is donald trump running for president	is donald trump running for president	1362	election.candidate:donald trump	3		CandidateList
+is huckabee running for president in 2016	huckabee	31	is huckabee running for president in 2016	is huckabee running for president in 2016	1363	election.candidate:huckabee	3		CandidateList
+is marco rubio republican	marco rubio republican	31	is marco rubio republican	is marco rubio republican	1364	election.candidate:marco rubio|||election.party:republican	3	election.party=E0	Candidate
+is marco rubio running for president	marco rubio	31	is marco rubio running for president	is marco rubio running for president	1365	election.candidate:marco rubio	3		CandidateList
+is ted cruz on obama care	ted cruz	31	is ted cruz on obama care	is ted cruz on obama care	1366	election.candidate:ted cruz	3		Candidate
+issues in 2016 election		31	issues in 2016 election	issues in 2016 election	1367		3		ElectionGeneral
+issues in the 2016 election		31	issues in the 2016 election	issues in the 2016 election	1368		3		ElectionGeneral
+jeb bush	jeb bush	31	jeb bush	jeb bush	1369	election.candidate.highconf:jeb bush	3	election.candidate.highconf=E0	CandidateGeneral
+jeb bush abortion	abortion jeb bush	31	jeb bush abortion	jeb bush abortion	1370	election.candidate:jeb bush|||election.bpiissue:on abortion	3		CandidateView
+jeb bush and gun control	gun control jeb bush	31	jeb bush and gun control	jeb bush and gun control	1371	election.candidate:jeb bush|||election.bpiissue:gun control	3		CandidateView
+jeb bush campaign staff	[election.Campaign.Team] [election.campaign] jeb bush	31	jeb bush campaign staff	jeb bush campaign staff	1372	election.candidate.highconf:jeb bush|||election.campaign:campaign|||election.Campaign.Team:staff	3	election.candidate.highconf=E0;election.campaign=C0	CandidateCampain
+jeb bush campaign website	[election.campaign] [election.Site] jeb bush	31	jeb bush campaign website	jeb bush campaign website	1373	election.candidate.highconf:jeb bush|||election.campaign:campaign|||election.Site:website	3	election.candidate.highconf=E0;election.campaign=C0	CandidateCampain
+jeb bush employment history	[election.candidatehistory] jeb bush	31	jeb bush employment history	jeb bush employment history	1374	election.candidate.highconf:jeb bush|||election.candidatehistory:employment history	3	election.candidate.highconf=E0	Candidate
+jeb bush gun control	gun control jeb bush	31	jeb bush gun control	jeb bush gun control	1375	election.candidate:jeb bush|||election.bpiissue:gun control	3		CandidateView
+jeb bush immigration plan	immigration jeb bush	31	jeb bush immigration plan	jeb bush immigration plan	1376	election.candidate:jeb bush|||election.bpiissue:on immigration	3		CandidateView
+jeb bush immigration policy	immigration jeb bush	31	jeb bush immigration policy	jeb bush immigration policy	1377	election.candidate:jeb bush|||election.bpiissue:on immigration	3		CandidateView
+jeb bush on obama care	jeb bush	31	jeb bush on obama care	jeb bush on obama care	1378	election.candidate:jeb bush	3		Candidate
+jeb bush on twitter	jeb bush	31	jeb bush on twitter	jeb bush on twitter	1379	election.candidate.highconf:jeb bush	3	election.candidate.highconf=E0	CandidateNavigational
+jeb bush stance on abortion	abortion jeb bush	31	jeb bush stance on abortion	jeb bush stance on abortion	1380	election.candidate:jeb bush|||election.bpiissue:on abortion	3		CandidateView
+jeb bush stand on gun control	gun control jeb bush	31	jeb bush stand on gun control	jeb bush stand on gun control	1381	election.candidate:jeb bush|||election.bpiissue:gun control	3		CandidateView
+jebb bush	jeb bush	31	jebb bush	jebb bush	1382	election.candidate.highconf:jeb bush	3	election.candidate.highconf=E0	CandidateGeneral
+jed bush candidate for president	jeb bush	31	jed bush candidate for president	jed bush candidate for president	1383	election.candidate:jeb bush	3		CandidateList
+jen bush twitter	jeb bush	31	jen bush twitter	jen bush twitter	1384	election.candidate.highconf:jeb bush	3	election.candidate.highconf=E0	CandidateNavigational
+jobs with hillary clinton campaign	[election.campaign] hillary clinton	31	jobs with hillary clinton campaign	jobs with hillary clinton campaign	1385	election.candidate.highconf:hillary clinton|||election.campaign:campaign	3	election.candidate.highconf=E0;election.campaign=C0	CandidateCampain
+john kasich	john kasich	31	john kasich	john kasich	1386	election.candidate.highconf:john kasich	3	election.candidate.highconf=E0	CandidateGeneral
+john kasich background	[election.infoword] john kasich	31	john kasich background	john kasich background	1387	election.candidate.highconf:john kasich|||election.infoword:background	3	election.candidate.highconf=E0	Candidate
+john kasich s	john kasich	31	john kasich s	john kasich s	1388	election.candidate.highconf:john kasich	3	election.candidate.highconf=E0	CandidateGeneral
+johnkasich	john kasich	31	johnkasich	johnkasich	1389	election.candidate.highconf:john kasich	3	election.candidate.highconf=E0	CandidateGeneral
+kasich	john kasich	31	kasich	kasich	1390	election.candidate.highconf:john kasich	3	election.candidate.highconf=E0	CandidateGeneral
+kasich president	john kasich	31	kasich president	kasich president	1391	election.candidate:john kasich	3		Candidate
+key issues for 2016 election		31	key issues for 2016 election	key issues for 2016 election	1392		3		ElectionGeneral
+latest republican presidential candidates	republican	31	latest republican presidential candidates	latest republican presidential candidates	1393	election.party:republican	3	election.party=E0	CandidateList
+leaders in presidential race		31	leaders in presidential race	leaders in presidential race	1394		3		CandidateList
+leaders in the presidential race		31	leaders in the presidential race	leaders in the presidential race	1395		3		CandidateList
+leading 2016 presidential candidates	[election.winlose]	31	leading 2016 presidential candidates	leading 2016 presidential candidates	1396	election.winlose:leading	3	election.winlose=E0	CandidateList
+leading candidates for president 2016	[election.winlose]	31	leading candidates for president 2016	leading candidates for president 2016	1397	election.winlose:leading	3	election.winlose=E0	CandidateList
+leading presidential candidates	[election.winlose]	31	leading presidential candidates	leading presidential candidates	1398	election.winlose:leading	3	election.winlose=E0	CandidateList
+life history of donald trump	[election.candidatehistory] donald trump life	31	life history of donald trump	life history of donald trump	1399	StayWords:life|||election.candidatehistory:history|||election.candidate.highconf:donald trump	3	StayWords=E0;election.candidate.highconf=E1	Candidate
+likely 2016 candidates		31	likely 2016 candidates	likely 2016 candidates	1400		3		CandidateList
+lindsey graham history	[election.candidatehistory] lindsey graham	31	lindsey graham history	lindsey graham history	1401	election.candidate.highconf:lindsey graham|||election.candidatehistory:history	3	election.candidate.highconf=E0	Candidate
+list of 2016 democrat candidates	democratic	31	list of 2016 democrat candidates	list of 2016 democrat candidates	1402	election.party:democratic	3	election.party=E0	CandidateList
+list of 2016 democratic candidates	democratic	31	list of 2016 democratic candidates	list of 2016 democratic candidates	1403	election.party:democratic	3	election.party=E0	CandidateList
+list of 2016 republican presidential candidates	republican	31	list of 2016 republican presidential candidates	list of 2016 republican presidential candidates	1404	election.party:republican	3	election.party=E0	CandidateList
+list of current republican presidential candidates	republican	31	list of current republican presidential candidates	list of current republican presidential candidates	1405	election.party:republican	3	election.party=E0	CandidateList
+list of people running for president		31	list of people running for president	list of people running for president	1406		3		CandidateList
+list of republican presidential candidate	republican	31	list of republican presidential candidate	list of republican presidential candidate	1407	election.party:republican	3	election.party=E0	CandidateList
+list of us presidential candidates	[election.national]	31	list of us presidential candidates	list of us presidential candidates	1408	election.national:us	3	election.national=E0	CandidateList
+list of websites of the presidential candidates		31	list of websites of the presidential candidates	list of websites of the presidential candidates	1409		3		CandidateList
+list of who s running for president in 2016		31	list of who s running for president in 2016	list of who s running for president in 2016	1410		3		CandidateList
+louisiana election	louisiana	31	louisiana election	louisiana election	1411	location.state:louisiana	3	location.state=E0	CandidateGeneral
+louisiana primary date	[election.primary] louisiana	31	louisiana primary date	louisiana primary date	1412	location.state:louisiana|||election.primary:primary	3	location.state=E0;election.primary=C0	CandidateList
+ma elections	ma	31	ma elections	ma elections	1413	location.state:ma	3	location.state=E0	CandidateGeneral
+major presidential candidates		31	major presidential candidates	major presidential candidates	1414		3		CandidateList
+marco rubio	marco rubio	31	marco rubio	marco rubio	1415	election.candidate.highconf:marco rubio	3	election.candidate.highconf=E0	CandidateGeneral
+marco rubio campaign headquarters	[election.Campaign.Manager] [election.campaign] marco rubio	31	marco rubio campaign headquarters	marco rubio campaign headquarters	1416	election.candidate.highconf:marco rubio|||election.campaign:campaign|||election.Campaign.Manager:headquarters	3	election.candidate.highconf=E0;election.campaign=C0	CandidateCampain
+marco rubio illegal immigration	immigration marco rubio	31	marco rubio illegal immigration	marco rubio illegal immigration	1417	election.candidate:marco rubio|||election.bpiissue:on immigration	3		CandidateView
+marco rubio on environment	environment marco rubio	31	marco rubio on environment	marco rubio on environment	1418	election.candidate:marco rubio|||election.bpiissue:on environment	3		CandidateView
+marco rubio on illegal immigration	immigration marco rubio	31	marco rubio on illegal immigration	marco rubio on illegal immigration	1419	election.candidate:marco rubio|||election.bpiissue:on immigration	3		CandidateView
+marco rubio on immigration reform	immigration marco rubio	31	marco rubio on immigration reform	marco rubio on immigration reform	1420	election.candidate:marco rubio|||election.bpiissue:on immigration	3		CandidateView
+marco rubo	marco rubio	31	marco rubo	marco rubo	1421	election.candidate.highconf:marco rubio	3	election.candidate.highconf=E0	CandidateGeneral
+marco runio	marco rubio	31	marco runio	marco runio	1422	election.candidate.highconf:marco rubio	3	election.candidate.highconf=E0	CandidateGeneral
+maryland election day	maryland	31	maryland election day	maryland election day	1423	location.state:maryland	3	location.state=E0	ElectionSchedule
+massachusetts primary election	[election.primary] massachusetts	31	massachusetts primary election	massachusetts primary election	1424	location.state:massachusetts|||election.primary:primary	3	location.state=E0;election.primary=C0	CandidateList
+massachusetts primary elections	[election.primary] massachusetts	31	massachusetts primary elections	massachusetts primary elections	1425	location.state:massachusetts|||election.primary:primary	3	location.state=E0;election.primary=C0	CandidateList
+md election	md	31	md election	md election	1426	location.state:md	3	location.state=E0	CandidateGeneral
+michigan state election	michigan state	31	michigan state election	michigan state election	1427	location.state:michigan state	3	location.state=E0	ElectionGeneral
+mike huckabee political views	mike huckabee	31	mike huckabee political views	mike huckabee political views	1428	election.candidate.highconf:mike huckabee	3	election.candidate.highconf=E0	CandidateView
+mike huckabee tax plan	mike huckabee	31	mike huckabee tax plan	mike huckabee tax plan	1429	election.candidate:mike huckabee	3		Candidate
+missouri election	missouri	31	missouri election	missouri election	1430	location.state:missouri	3	location.state=E0	ElectionGeneral
+most likely gop candidate for 2016	republican	31	most likely gop candidate for 2016	most likely gop candidate for 2016	1431	election.party:republican	3	election.party=E0	CandidateList
+most moderate gop candidate	republican	31	most moderate gop candidate	most moderate gop candidate	1432	election.party:republican	3	election.party=E0	CandidateList
+most popular presidential candidates		31	most popular presidential candidates	most popular presidential candidates	1433		3		CandidateList
+mrco rubio	marco rubio	31	mrco rubio	mrco rubio	1434	election.candidate.highconf:marco rubio	3	election.candidate.highconf=E0	CandidateGeneral
+nc 2016 primary election date	[election.primary] nc	31	nc 2016 primary election date	nc 2016 primary election date	1435	location.state:nc|||election.primary:primary	3	location.state=E0;election.primary=C0	CandidateList
+nc primary elections	[election.primary] nc	31	nc primary elections	nc primary elections	1436	location.state:nc|||election.primary:primary	3	location.state=E0;election.primary=C0	CandidateList
+new democratic candidate	democratic	31	new democratic candidate	new democratic candidate	1437	election.party:democratic	3	election.party=E0	CandidateList
+next american presidential election		31	next american presidential election	next american presidential election	1438		3		ElectionGeneral
+next presidential election year	[election.next]	31	next presidential election year	next presidential election year	1439	election.next:next	3		CandidateList
+next presidential vote	[election.next] [election.voting]	31	next presidential vote	next presidential vote	1440	election.next:next|||election.voting:vote	3	election.voting=I0	CandidateList
+next usa election		31	next usa election	next usa election	1441		3		ElectionSchedule
+ny state primary date	[election.primary] ny	31	ny state primary date	ny state primary date	1442	location.state:ny|||election.primary:primary	3	location.state=E0;election.primary=C0	CandidateList
+ohio general election	ohio	31	ohio general election	ohio general election	1443	location.state:ohio	3	location.state=E0	CandidateGeneral
+ohio primary elections	[election.primary] ohio	31	ohio primary elections	ohio primary elections	1444	location.state:ohio|||election.primary:primary	3	location.state=E0;election.primary=C0	CandidateList
+oregon elections	oregon	31	oregon elections	oregon elections	1445	location.state:oregon	3	location.state=E0	CandidateGeneral
+pennsylvania primary election date	[election.primary] pennsylvania	31	pennsylvania primary election date	pennsylvania primary election date	1446	location.state:pennsylvania|||election.primary:primary	3	location.state=E0;election.primary=C0	CandidateList
+popular presidential candidates 2016		31	popular presidential candidates 2016	popular presidential candidates 2016	1447		3		CandidateList
+positions of gop candidates	republican	31	positions of gop candidates	positions of gop candidates	1448	election.party:republican	3	election.party=E0	CandidateList
+possible candidates for president 2016		31	possible candidates for president 2016	possible candidates for president 2016	1449		3		CandidateList
+possible democratic presidential nominees	democratic	31	possible democratic presidential nominees	possible democratic presidential nominees	1450	election.party:democratic	3	election.party=E0	CandidateList
+possible republican candidates for president	republican	31	possible republican candidates for president	possible republican candidates for president	1451	election.party:republican	3	election.party=E0	CandidateList
+possible republican nominees	republican	31	possible republican nominees	possible republican nominees	1452	election.party:republican	3	election.party=E0	CandidateList
+potential 2016 republican candidates	republican	31	potential 2016 republican candidates	potential 2016 republican candidates	1453	election.party:republican	3	election.party=E0	CandidateList
+potential female presidential candidates	[election.Gender.Female]	31	potential female presidential candidates	potential female presidential candidates	1454	election.Gender.Female:female	3		CandidateList
+preliminary presidential race 2016		31	preliminary presidential race 2016	preliminary presidential race 2016	1455		3		CandidateList
+presdential election		31	presdential election	presdential election	1456		3		ElectionGeneral
+presidency race		31	presidency race	presidency race	1457		3		CandidateList
+president 2016 election		31	president 2016 election	president 2016 election	1458		3		CandidateList
+president campaign	[election.campaign]	31	president campaign	president campaign	1459	election.campaign:campaign	3	election.campaign=C0	CandidateCampain
+president election years		31	president election years	president election years	1460		3		ElectionSchedule
+president vote 2016	[election.voting]	31	president vote 2016	president vote 2016	1461	election.voting:vote	3	election.voting=I0	ElectionSchedule
+presidental candidates for 2016		31	presidental candidates for 2016	presidental candidates for 2016	1462		3		CandidateList
+presidential campaign runners	[election.campaign]	31	presidential campaign runners	presidential campaign runners	1463	election.campaign:campaign	3	election.campaign=C0	CandidateCampain
+presidential candidate test		31	presidential candidate test	presidential candidate test	1464		3		CandidateList
+presidential candidates 2016 democrat	democratic	31	presidential candidates 2016 democrat	presidential candidates 2016 democrat	1465	election.party:democratic	3	election.party=E0	CandidateList
+presidential candidates 2016 issues		31	presidential candidates 2016 issues	presidential candidates 2016 issues	1466		3		CandidateList
+presidential candidates 2016 list		31	presidential candidates 2016 list	presidential candidates 2016 list	1467		3		CandidateList
+presidential candidates 2016 us	[election.national]	31	presidential candidates 2016 us	presidential candidates 2016 us	1468	election.national:us	3	election.national=E0	CandidateList
+presidential candidates 2016 voting records	[election.voting]	31	presidential candidates 2016 voting records	presidential candidates 2016 voting records	1469	election.voting:voting	3	election.voting=I0	CandidateList
+presidential candidates for the republican party	republican	31	presidential candidates for the republican party	presidential candidates for the republican party	1470	election.party:republican	3	election.party=E0	CandidateList
+presidential candidates immigration	immigration	31	presidential candidates immigration	presidential candidates immigration	1471	election.bpiissue:immigration	3		CandidateView
+presidential candidates platform		31	presidential candidates platform	presidential candidates platform	1472		3		CandidateList
+presidential candidates republican party 2016	republican	31	presidential candidates republican party 2016	presidential candidates republican party 2016	1473	election.party:republican	3	election.party=E0	CandidateList
+presidential candidates republicans	republican	31	presidential candidates republicans	presidential candidates republicans	1474	election.party:republican	3	election.party=E0	CandidateList
+presidential candidates views 2016		31	presidential candidates views 2016	presidential candidates views 2016	1475		3		CandidateView
+presidential election		31	presidential election	presidential election	1476		3		ElectionGeneral
+presidential election 2016 timeline		31	presidential election 2016 timeline	presidential election 2016 timeline	1477		3		ElectionSchedule
+presidential election list		31	presidential election list	presidential election list	1478		3		ElectionGeneral
+presidential election of 2016 candidates		31	presidential election of 2016 candidates	presidential election of 2016 candidates	1479		3		CandidateList
+presidential election timeline		31	presidential election timeline	presidential election timeline	1480		3		ElectionSchedule
+presidential election united states		31	presidential election united states	presidential election united states	1481		3		ElectionGeneral
+presidential gop candidates 2016	republican	31	presidential gop candidates 2016	presidential gop candidates 2016	1482	election.party:republican	3	election.party=E0	CandidateList
+presidential republican candidates 2016	republican	31	presidential republican candidates 2016	presidential republican candidates 2016	1483	election.party:republican	3	election.party=E0	CandidateList
+presidential runner ups for 2016		31	presidential runner ups for 2016	presidential runner ups for 2016	1484		3		CandidateList
+presidential voting date	[election.voting]	31	presidential voting date	presidential voting date	1485	election.voting:voting	3	election.voting=I0	ElectionSchedule
+presidents 2016 candidates		31	presidents 2016 candidates	presidents 2016 candidates	1486		3		CandidateList
+presidents running 2016		31	presidents running 2016	presidents running 2016	1487		3		CandidateList
+primary election day pennsylvania	[election.primary] pennsylvania	31	primary election day pennsylvania	primary election day pennsylvania	1488	election.primary:primary|||location.state:pennsylvania	3	location.state=E0;election.primary=C0	CandidateList
+primary election in ohio	[election.primary] in ohio	31	primary election in ohio	primary election in ohio	1489	election.primary:primary|||location.state:in ohio	3	location.state=E0;election.primary=C0	CandidateList
+primary elections in texas are	[election.primary] in texas	31	primary elections in texas are	primary elections in texas are	1490	election.primary:primary|||location.state:in texas	3	location.state=E0;election.primary=C0	CandidateList
+primary elections were introduced by the	[election.primary]	31	primary elections were introduced by the	primary elections were introduced by the	1491	election.primary:primary	3	election.primary=C0	CandidateList
+primary voting in va	[election.primary] [election.voting] in va	31	primary voting in va	primary voting in va	1492	election.primary:primary|||election.voting:voting|||location.state:in va	3	location.state=E0;election.voting=I0;election.primary=C0	CandidateList
+rand pail	rand paul	31	rand pail	rand pail	1493	election.candidate.highconf:rand paul	3	election.candidate.highconf=E0	
+rand pau	rand paul	31	rand pau	rand pau	1494	election.candidate.highconf:rand paul	3	election.candidate.highconf=E0	CandidateGeneral
+rand paul democrat or republican	democratic democratic or rand paul	31	rand paul democrat or republican	rand paul democrat or republican	1495	election.candidate:rand paul|||election.party:democratic|||StayWords:or|||election.party:republican	3	StayWords=E0;election.party=E1	Candidate
+rand paul election	rand paul	31	rand paul election	rand paul election	1496	election.candidate.highconf:rand paul	3	election.candidate.highconf=E0	Candidate
+rand paul environmental issues	environmental issues rand paul	31	rand paul environmental issues	rand paul environmental issues	1497	election.candidate:rand paul|||election.bpiissue:environmental issues	3		CandidateView
+rand paul presidential campaign jobs	[election.campaign]	31	rand paul presidential campaign jobs	rand paul presidential campaign jobs	1498	election.campaign:campaign	3	election.campaign=C0	CandidateCampain
+rand paul presidential platform	rand paul	31	rand paul presidential platform	rand paul presidential platform	1499	election.candidate:rand paul	3		Candidate
+rand paul s views	rand paul	31	rand paul s views	rand paul s views	1500	election.candidate.highconf:rand paul	3	election.candidate.highconf=E0	CandidateView
+rand paul view on abortion	abortion rand paul	31	rand paul view on abortion	rand paul view on abortion	1501	election.candidate:rand paul|||election.bpiissue:on abortion	3		CandidateView
+rand paul views	rand paul	31	rand paul views	rand paul views	1502	election.candidate.highconf:rand paul	3	election.candidate.highconf=E0	CandidateView
+randall paul	rand paul	31	randall paul	randall paul	1503	election.candidate.highconf:rand paul	3	election.candidate.highconf=E0	CandidateGeneral
+real clear politics 2016 election		31	real clear politics 2016 election	real clear politics 2016 election	1504		3		ElectionGeneral
+real clear politics republican presidential candidates 2016	[election.newsword] republican	31	real clear politics republican presidential candidates 2016	real clear politics republican presidential candidates 2016	1505	election.newsword:real clear politics|||election.party:republican	3	election.party=E0;election.newsword=I0	CandidateList
+real donald trump twitter	donald trump	31	real donald trump twitter	real donald trump twitter	1506	election.candidate.highconf:donald trump	3	election.candidate.highconf=E0	CandidateNavigational
+realdonaldtrump	donald trump	31	realdonaldtrump	realdonaldtrump	1507	election.candidate.highconf:donald trump	3	election.candidate.highconf=E0	CandiateGeneral
+rebublican canidates	republican	31	rebublican canidates	rebublican canidates	1508	election.party:republican	3	election.party=E0	CandidateList
+rep candidates for president		31	rep candidates for president	rep candidates for president	1509		3		CandidateList
+rep candidates president 2016 on immigration	immigration	31	rep candidates president 2016 on immigration	rep candidates president 2016 on immigration	1510	election.bpiissue:on immigration	3		CandidateView
+republic canidate	republican	31	republic canidate	republic canidate	1511	election.party:republican	3	election.party=E0	CandidateList
+republican 2016 election	republican	31	republican 2016 election	republican 2016 election	1512	election.party:republican	3	election.party=E0	CandidateGeneral
+republican and democrat candidates 2016	republican republican	31	republican and democrat candidates 2016	republican and democrat candidates 2016	1513	election.party:republican|||election.party:democratic	3	election.party=E0	CandidateList
+republican black presidential candidate	black republican	31	republican black presidential candidate	republican black presidential candidate	1514	election.party:republican|||StayWords:black	3	StayWords=E0;election.party=E1	CandidateList
+republican candidate forum	republican	31	republican candidate forum	republican candidate forum	1515	election.party:republican	3	election.party=E0	CandidateList
+republican candidate summary	republican	31	republican candidate summary	republican candidate summary	1516	election.party:republican	3	election.party=E0	CandidateList
+republican candidates 2016 president	republican	31	republican candidates 2016 president	republican candidates 2016 president	1517	election.party:republican	3	election.party=E0	CandidateList
+republican candidates running for 2016	republican	31	republican candidates running for 2016	republican candidates running for 2016	1518	election.party:republican	3	election.party=E0	CandidateList
+republican canidates	republican	31	republican canidates	republican canidates	1519	election.party:republican	3	election.party=E0	CandidateList
+republican canidates 2016	republican	31	republican canidates 2016	republican canidates 2016	1520	election.party:republican	3	election.party=E0	CandidateList
+republican canidates for pres	republican	31	republican canidates for pres	republican canidates for pres	1521	election.party:republican	3	election.party=E0	CandidateList
+republican gop candidates 2016 standing	republican republican	31	republican gop candidates 2016 standing	republican gop candidates 2016 standing	1522	election.party:republican|||election.party:republican	3	election.party=E0	CandidateList
+republican hopefuls	republican	31	republican hopefuls	republican hopefuls	1523	election.party:republican	3	election.party=E0	CandidateList
+republican hopefuls for 2016	republican	31	republican hopefuls for 2016	republican hopefuls for 2016	1524	election.party:republican	3	election.party=E0	CandidateList
+republican nominees for 2016	republican	31	republican nominees for 2016	republican nominees for 2016	1525	election.party:republican	3	election.party=E0	CandidateList
+republican party 2016 candidates	republican	31	republican party 2016 candidates	republican party 2016 candidates	1526	election.party:republican	3	election.party=E0	CandidateList
+republican party nominees 2016	republican	31	republican party nominees 2016	republican party nominees 2016	1527	election.party:republican	3	election.party=E0	CandidateList
+republican party running	[election.race] republican	31	republican party running	republican party running	1528	election.party:republican|||election.race:running	3	election.party=E0;election.race=C0	ElectionSchedule
+republican presidentail nominees	republican	31	republican presidentail nominees	republican presidentail nominees	1529	election.party:republican	3	election.party=E0	CandidateList
+republican presidental hopeful	republican	31	republican presidental hopeful	republican presidental hopeful	1530	election.party:republican	3	election.party=E0	CandidateList
+republican presidential candidate	republican	31	republican presidential candidate	republican presidential candidate	1531	election.party:republican	3	election.party=E0	CandidateList
+republican presidential candidate leaders	republican	31	republican presidential candidate leaders	republican presidential candidate leaders	1532	election.party:republican	3	election.party=E0	CandidateList
+republican presidential candidates	republican	31	republican presidential candidates	republican presidential candidates	1533	election.party:republican	3	election.party=E0	CandidateList
+republican presidential candidates 2016 compared	republican	31	republican presidential candidates 2016 compared	republican presidential candidates 2016 compared	1534	election.party:republican	3	election.party=E0	CandidateCompare
+republican presidential candidates 2016 race	republican	31	republican presidential candidates 2016 race	republican presidential candidates 2016 race	1535	election.party:republican	3	election.party=E0	CandidateList
+republican presidential candidates 2016 what channel	republican	31	republican presidential candidates 2016 what channel	republican presidential candidates 2016 what channel	1536	election.party:republican	3	election.party=E0	CandidateList
+republican presidential contenders 2016	republican	31	republican presidential contenders 2016	republican presidential contenders 2016	1537	election.party:republican	3	election.party=E0	CandidateList
+republican presidential hopefuls	republican	31	republican presidential hopefuls	republican presidential hopefuls	1538	election.party:republican	3	election.party=E0	CandidateList
+republican presidential primary dates	[election.primary] republican	31	republican presidential primary dates	republican presidential primary dates	1539	election.party:republican|||election.primary:primary	3	election.party=E0;election.primary=C0	CandidateList
+republican primaries schedule	[election.primary] republican	31	republican primaries schedule	republican primaries schedule	1540	election.party:republican|||election.primary:primaries	3	election.party=E0;election.primary=C0	ElectionSchedule
+republican primary dates 2016	[election.primary] republican	31	republican primary dates 2016	republican primary dates 2016	1541	election.party:republican|||election.primary:primary	3	election.party=E0;election.primary=C0	CandidateList
+republican primary election schedule	[election.primary] republican	31	republican primary election schedule	republican primary election schedule	1542	election.party:republican|||election.primary:primary	3	election.party=E0;election.primary=C0	ElectionSchedule
+republican primary election schedule 2016	[election.primary] republican	31	republican primary election schedule 2016	republican primary election schedule 2016	1543	election.party:republican|||election.primary:primary	3	election.party=E0;election.primary=C0	ElectionSchedule
+republican runners 2016	republican	31	republican runners 2016	republican runners 2016	1544	election.party:republican	3	election.party=E0	CandidateList
+republican women presidential candidate	[election.Gender.Female] republican	31	republican women presidential candidate	republican women presidential candidate	1545	election.party:republican|||election.Gender.Female:women	3	election.party=E0	CandidateList
+republicans for president 2016	republican	31	republicans for president 2016	republicans for president 2016	1546	election.party:republican	3	election.party=E0	CandidateList
+republicans in presidential race	republican	31	republicans in presidential race	republicans in presidential race	1547	election.party:republican	3	election.party=E0	CandidateList
+republicans running fir president	republican	31	republicans running fir president	republicans running fir president	1548	election.party:republican	3	election.party=E0	CandidateList
+republicans running for the 2016 presidency	republican	31	republicans running for the 2016 presidency	republicans running for the 2016 presidency	1549	election.party:republican	3	election.party=E0	CandidateList
+repulican candidates for president	republican	31	repulican candidates for president	repulican candidates for president	1550	election.party:republican	3	election.party=E0	CandidateList
+repulican presidential candidates	republican	31	repulican presidential candidates	repulican presidential candidates	1551	election.party:republican	3	election.party=E0	CandidateList
+residential candidates 2016		31	residential candidates 2016	residential candidates 2016	1552		3		CandidateList
+rick santorum campaign	rick santorum	31	rick santorum campaign	rick santorum campaign	1553	election.candidate.highconf:rick santorum	3	election.candidate.highconf=E0	CandidateCampain
+rick santorum gun control	gun control rick santorum	31	rick santorum gun control	rick santorum gun control	1554	election.candidate:rick santorum|||election.bpiissue:gun control	3		CandidateView
+rick santorum immigration	immigration rick santorum	31	rick santorum immigration	rick santorum immigration	1555	election.candidate:rick santorum|||election.bpiissue:immigration	3		CandidateView
+rick santorum on immigration	immigration rick santorum	31	rick santorum on immigration	rick santorum on immigration	1556	election.candidate:rick santorum|||election.bpiissue:on immigration	3		CandidateView
+rubio and immigration reform	immigration marco rubio	31	rubio and immigration reform	rubio and immigration reform	1557	election.candidate:marco rubio|||election.bpiissue:on immigration	3		CandidateView
+rubio for president 2016	marco rubio	31	rubio for president 2016	rubio for president 2016	1558	election.candidate:marco rubio	3		CandidateGeneral
+rubio political views	marco rubio	31	rubio political views	rubio political views	1559	election.candidate.highconf:marco rubio	3	election.candidate.highconf=E0	CandidateView
+rubio running for president	marco rubio	31	rubio running for president	rubio running for president	1560	election.candidate:marco rubio	3		CandidateList
+rubio s tax plan	marco rubio	31	rubio s tax plan	rubio s tax plan	1561	election.candidate:marco rubio	3		Candidate
+runners up for president 2016		31	runners up for president 2016	runners up for president 2016	1562		3		CandidateList
+running for the 2016 presidency		31	running for the 2016 presidency	running for the 2016 presidency	1563		3		CandidateList
+running president for 2016		31	running president for 2016	running president for 2016	1564		3		CandidateList
+sanders for pres	bernie sanders	31	sanders for pres	sanders for pres	1565	election.candidate:bernie sanders	3		CandidateList
+sanders on abortion	abortion bernie sanders	31	sanders on abortion	sanders on abortion	1566	election.candidate:bernie sanders|||election.bpiissue:on abortion	3		CandidateView
+santorum campaign	rick santorum	31	santorum campaign	santorum campaign	1567	election.candidate.highconf:rick santorum	3	election.candidate.highconf=E0	CandidateCampain
+santorum twitter	rick santorum	31	santorum twitter	santorum twitter	1568	election.candidate.highconf:rick santorum	3	election.candidate.highconf=E0	CandidateNavigational
+sd elections	sd	31	sd elections	sd elections	1569	location.state:sd	3	location.state=E0	ElectionGeneral
+summary of 2016 presidential candidates		31	summary of 2016 presidential candidates	summary of 2016 presidential candidates	1570		3		CandidateList
+ted cruise		31	ted cruise	ted cruise	1571		3		CandidateGeneral
+ted cruiz	ted cruz	31	ted cruiz	ted cruiz	1572	election.candidate.highconf:ted cruz	3	election.candidate.highconf=E0	CandidateGeneral
+ted cruz	ted cruz	31	ted cruz	ted cruz	1573	election.candidate.highconf:ted cruz	3	election.candidate.highconf=E0	CandidateGeneral
+ted cruz and gun control	gun control ted cruz	31	ted cruz and gun control	ted cruz and gun control	1574	election.candidate:ted cruz|||election.bpiissue:gun control	3		CandidateView
+ted cruz campaign jobs	[election.campaign] ted cruz	31	ted cruz campaign jobs	ted cruz campaign jobs	1575	election.candidate.highconf:ted cruz|||election.campaign:campaign	3	election.candidate.highconf=E0;election.campaign=C0	CandidateCampain
+ted cruz campaign site	[election.campaign] [election.Site] ted cruz	31	ted cruz campaign site	ted cruz campaign site	1576	election.candidate.highconf:ted cruz|||election.campaign:campaign|||election.Site:site	3	election.candidate.highconf=E0;election.campaign=C0	CandidateCampain
+ted cruz life	life ted cruz	31	ted cruz life	ted cruz life	1577	election.candidate.highconf:ted cruz|||StayWords:life	3	StayWords=E0;election.candidate.highconf=E1	Candidate
+ted cruz on health care	health care ted cruz	31	ted cruz on health care	ted cruz on health care	1578	election.candidate:ted cruz|||election.bpiissue:on health care	3		CandidateView
+ted cruz presidential candidate	ted cruz	31	ted cruz presidential candidate	ted cruz presidential candidate	1579	election.candidate:ted cruz	3		CandidateList
+ted cruz presidential run	[election.race] ted cruz	31	ted cruz presidential run	ted cruz presidential run	1580	election.candidate:ted cruz|||election.race:run	3	election.race=C0	Candidate
+ted cruz s stance on immigration	immigration ted cruz	31	ted cruz s stance on immigration	ted cruz s stance on immigration	1581	election.candidate:ted cruz|||election.bpiissue:immigration	3		CandidateView
+ted cruz schedule of events	ted cruz	31	ted cruz schedule of events	ted cruz schedule of events	1582	election.candidate.highconf:ted cruz	3	election.candidate.highconf=E0	ElectionSchedule
+ted cruzz	ted cruz	31	ted cruzz	ted cruzz	1583	election.candidate.highconf:ted cruz	3	election.candidate.highconf=E0	CandidateGeneral
+texas presidential primary date	[election.primary] texas	31	texas presidential primary date	texas presidential primary date	1584	location.state:texas|||election.primary:primary	3	location.state=E0;election.primary=C0	CandidateList
+texas primary elections	[election.primary] texas	31	texas primary elections	texas primary elections	1585	location.state:texas|||election.primary:primary	3	location.state=E0;election.primary=C0	CandidateList
+the candidates for 2016		31	the candidates for 2016	the candidates for 2016	1586		3		CandidateList
+the five plausible gop candidates	republican	31	the five plausible gop candidates	the five plausible gop candidates	1587	election.party:republican	3	election.party=E0	CandidateList
+the next presidential election	[election.next]	31	the next presidential election	the next presidential election	1588	election.next:next	3		CandidateList
+the presidential candidates for 2016		31	the presidential candidates for 2016	the presidential candidates for 2016	1589		3		CandidateList
+the republican presidential candidates	republican	31	the republican presidential candidates	the republican presidential candidates	1590	election.party:republican	3	election.party=E0	CandidateList
+top 10 candidates for president	top	31	top 10 candidates for president	top 10 candidates for president	1591	StayWords:top	3	StayWords=E0	CandidateList
+top 10 gop presidential candidates 2016	republican top	31	top 10 gop presidential candidates 2016	top 10 gop presidential candidates 2016	1592	StayWords:top|||election.party:republican	3	StayWords=E0;election.party=E1	CandidateList
+top 2016 democratic candidates	democratic top	31	top 2016 democratic candidates	top 2016 democratic candidates	1593	StayWords:top|||election.party:democratic	3	StayWords=E0;election.party=E1	CandidateList
+top 2016 gop candidates	republican top	31	top 2016 gop candidates	top 2016 gop candidates	1594	StayWords:top|||election.party:republican	3	StayWords=E0;election.party=E1	CandidateList
+top 3 presidential candidates for 2016	top	31	top 3 presidential candidates for 2016	top 3 presidential candidates for 2016	1595	StayWords:top	3	StayWords=E0	CandidateList
+top democratic hopefuls	democratic top	31	top democratic hopefuls	top democratic hopefuls	1596	StayWords:top|||election.party:democratic	3	StayWords=E0;election.party=E1	CandidateList
+top five republican candidates	republican top	31	top five republican candidates	top five republican candidates	1597	StayWords:top|||election.party:republican	3	StayWords=E0;election.party=E1	CandidateList
+top republican candidate	republican top	31	top republican candidate	top republican candidate	1598	StayWords:top|||election.party:republican	3	StayWords=E0;election.party=E1	CandidateList
+top republican candidates for president	republican top	31	top republican candidates for president	top republican candidates for president	1599	StayWords:top|||election.party:republican	3	StayWords=E0;election.party=E1	CandidateList
+top republican presidential candidates 2016	republican top	31	top republican presidential candidates 2016	top republican presidential candidates 2016	1600	StayWords:top|||election.party:republican	3	StayWords=E0;election.party=E1	CandidateList
+trump a democrat	democratic donald trump	31	trump a democrat	trump a democrat	1601	election.candidate:donald trump|||election.party:democratic	3	election.party=E0	Candidate
+trump campaign platform	[election.Campaign.platform] [election.campaign] donald trump	31	trump campaign platform	trump campaign platform	1602	election.candidate.highconf:donald trump|||election.campaign:campaign|||election.Campaign.platform:platform	3	election.candidate.highconf=E0;election.campaign=C0	CandidateCampain
+trump childhood	[election.candidatehistory] donald trump	31	trump childhood	trump childhood	1603	election.candidate.highconf:donald trump|||election.candidatehistory:childhood	3	election.candidate.highconf=E0	Candidate
+trump donald president	donald trump	31	trump donald president	trump donald president	1604	election.candidate:donald trump	3		Candidate
+trump fopr president	donald trump	31	trump fopr president	trump fopr president	1605	election.candidate:donald trump	3		Candidate
+trump on immigration plan	donald trump immigration	31	trump on immigration plan	trump on immigration plan	1606	election.candidate:donald trump|||election.bpiissue:on immigration	3		CandidateView
+trump on legal immigration	donald trump immigration	31	trump on legal immigration	trump on legal immigration	1607	election.candidate:donald trump|||election.bpiissue:on immigration	3		CandidateView
+trump policy on illegal immigration	donald trump illegal immigration	31	trump policy on illegal immigration	trump policy on illegal immigration	1608	election.candidate:donald trump|||election.bpiissue:on illegal immigration	3		CandidateView
+trump presidential candidate	donald trump	31	trump presidential candidate	trump presidential candidate	1609	election.candidate:donald trump	3		CandidateList
+trump running for president	donald trump	31	trump running for president	trump running for president	1610	election.candidate:donald trump	3		CandidateList
+trump runs for president	donald trump	31	trump runs for president	trump runs for president	1611	election.candidate:donald trump	3		CandidateList
+trump to run for president	donald trump	31	trump to run for president	trump to run for president	1612	election.candidate:donald trump	3		CandidateList
+trump tweets megan kelly	donald trump	31	trump tweets megan kelly	trump tweets megan kelly	1613	election.candidate.highconf:donald trump	3	election.candidate.highconf=E0	CandidateNavigational
+trump twitte	donald trump	31	trump twitte	trump twitte	1614	election.candidate.highconf:donald trump	3	election.candidate.highconf=E0	CandidateNavigational
+trump twitter	donald trump	31	trump twitter	trump twitter	1615	election.candidate.highconf:donald trump	3	election.candidate.highconf=E0	CandidateNavigational
+trumps campaign	donald trump	31	trumps campaign	trumps campaign	1616	election.candidate.highconf:donald trump	3	election.candidate.highconf=E0	CandidateCampain
+trumps stand on abortion	abortion trump	31	trumps stand on abortion	trumps stand on abortion	1617	election.candidate:trump|||election.bpiissue:on abortion	3		CandidateView
+tweets about donald trump	donald trump	31	tweets about donald trump	tweets about donald trump	1618	election.candidate:donald trump	3		CandidateNavigational
+twitter bernie	bernie sanders	31	twitter bernie	twitter bernie	1619	election.candidate:bernie sanders	3		CandidateNavigational
+twitter donald	donald trump	31	twitter donald	twitter donald	1620	election.candidate:donald trump	3		CandidateNavigational
+twitter donald trumo	donald trump	31	twitter donald trumo	twitter donald trumo	1621	election.candidate:donald trump	3		CandidateNavigational
+twitter john kasich	john kasich	31	twitter john kasich	twitter john kasich	1622	election.candidate:john kasich	3		CandidateNavigational
+twitter realdonaldtrump	donald trump	31	twitter realdonaldtrump	twitter realdonaldtrump	1623	election.candidate:donald trump	3		CandidateNavigational
+twitter trump	donald trump	31	twitter trump	twitter trump	1624	election.candidate:donald trump	3		CandidateNavigational
+u s presidential elections		31	u s presidential elections	u s presidential elections	1625		3		ElectionGeneral
+upcoming presidential election		31	upcoming presidential election	upcoming presidential election	1626		3		ElectionGeneral
+upcoming presidential election candidates	[election.next]	31	upcoming presidential election candidates	upcoming presidential election candidates	1627	election.next:upcoming	3		CandidateList
+us election dates		31	us election dates	us election dates	1628		3		ElectionSchedule
+us primary elections 2016	[election.national] [election.primary]	31	us primary elections 2016	us primary elections 2016	1629	election.national:us|||election.primary:primary	3	election.national=E0;election.primary=C0	CandidateList
+usa 2016 elections		31	usa 2016 elections	usa 2016 elections	1630		3		CandidateGeneral
+usa candidates 2016	[election.national]	31	usa candidates 2016	usa candidates 2016	1631	election.national:usa	3	election.national=E0	CandidateList
+usa elections		31	usa elections	usa elections	1632		3		CandidateGeneral
+volunteer clinton campaign	[election.Campaign.Volunteer] [election.campaign] hillary clinton	31	volunteer clinton campaign	volunteer clinton campaign	1633	election.Campaign.Volunteer:volunteer|||election.candidate.highconf:hillary clinton|||election.campaign:campaign	3	election.candidate.highconf=E0;election.campaign=C0	CandidateCampain
+vote 2016 united states		31	vote 2016 united states	vote 2016 united states	1634		3		ElectionGeneral
+vote for 2016 president		31	vote for 2016 president	vote for 2016 president	1635		3		CandidateGeneral
+what date is the presidential election		31	what date is the presidential election	what date is the presidential election	1636		3		ElectionSchedule
+what democrats are running in 2016	democratic	31	what democrats are running in 2016	what democrats are running in 2016	1637	election.party:democratic	3	election.party=E0	CandidateList
+what democrats will run in 2016	democratic	31	what democrats will run in 2016	what democrats will run in 2016	1638	election.party:democratic	3	election.party=E0	CandidateList
+what each presidential candidate stands for		31	what each presidential candidate stands for	what each presidential candidate stands for	1639		3		CandidateView
+what is donald trump s religious background	[election.infoword] donald trump religious	31	what is donald trump s religious background	what is donald trump s religious background	1640	election.candidate.highconf:donald trump|||StayWords:religious|||election.infoword:background	3	StayWords=E0;election.candidate.highconf=E1	Candidate
+what is donald trump s stand on health care	donald trump health care	31	what is donald trump s stand on health care	what is donald trump s stand on health care	1641	election.candidate:donald trump|||election.bpiissue:health care	3		CandidateView
+what is donald trumps views on gun control	donald trump gun control	31	what is donald trumps views on gun control	what is donald trumps views on gun control	1642	election.candidate:donald trump|||election.bpiissue:gun control	3		CandidateView
+what month is presidential election		31	what month is presidential election	what month is presidential election	1643		3		ElectionGeneral
+when are 2016 primaries	[election.primary]	31	when are 2016 primaries	when are 2016 primaries	1644	election.primary:primaries	3	election.primary=C0	ElectionSchedule
+when are presidential elections		31	when are presidential elections	when are presidential elections	1645		3		ElectionSchedule
+when are the 2016 democratic primaries	[election.primary] democratic	31	when are the 2016 democratic primaries	when are the 2016 democratic primaries	1646	election.party:democratic|||election.primary:primaries	3	election.party=E0;election.primary=C0	ElectionSchedule
+when are the 2016 presidential elections		31	when are the 2016 presidential elections	when are the 2016 presidential elections	1647		3		ElectionSchedule
+when are the democratic primary elections	[election.primary] democratic	31	when are the democratic primary elections	when are the democratic primary elections	1648	election.party:democratic|||election.primary:primary	3	election.party=E0;election.primary=C0	ElectionSchedule
+when are the primary elections for 2016	[election.primary]	31	when are the primary elections for 2016	when are the primary elections for 2016	1649	election.primary:primary	3	election.primary=C0	ElectionSchedule
+when are the primary elections held	[election.primary]	31	when are the primary elections held	when are the primary elections held	1650	election.primary:primary	3	election.primary=C0	ElectionSchedule
+when are the republican primaries 2016	[election.primary] republican	31	when are the republican primaries 2016	when are the republican primaries 2016	1651	election.party:republican|||election.primary:primaries 2016	3	election.party=E0;election.primary=C0	ElectionSchedule
+when are the us primaries	[election.primary]	31	when are the us primaries	when are the us primaries	1652	election.primary:primaries	3	election.primary=C0	ElectionSchedule
+when do we elect a new president	[election.voting]	31	when do we elect a new president	when do we elect a new president	1653	election.voting:elect	3	election.voting=I0	ElectionSchedule
+when do we vote for a new president 2016	[election.voting]	31	when do we vote for a new president 2016	when do we vote for a new president 2016	1654	election.voting:vote	3	election.voting=I0	ElectionSchedule
+when do we vote for next president	[election.voting]	31	when do we vote for next president	when do we vote for next president	1655	election.voting:vote	3	election.voting=I0	ElectionSchedule
+when do we vote for president again	[election.voting]	31	when do we vote for president again	when do we vote for president again	1656	election.voting:vote	3	election.voting=I0	ElectionSchedule
+when do we vote for the presidential primary	[election.primary] [election.voting]	31	when do we vote for the presidential primary	when do we vote for the presidential primary	1657	election.voting:vote|||election.primary:primary	3	election.voting=I0;election.primary=C0	ElectionSchedule
+when in the presidential election		31	when in the presidential election	when in the presidential election	1658		3		ElectionSchedule
+when is democrat primary	[election.primary] democratic	31	when is democrat primary	when is democrat primary	1659	election.party:democratic|||election.primary:primary	3	election.party=E0;election.primary=C0	ElectionSchedule
+when is democratic primary 2016	[election.primary] [election.when] democratic	31	when is democratic primary 2016	when is democratic primary 2016	1660	election.when:when|||election.party:democratic|||election.primary:primary 2016	3	election.party=E0;election.primary=C0	CandidateList
+when is election day for new president		31	when is election day for new president	when is election day for new president	1661		3		ElectionSchedule
+when is election day in usa		31	when is election day in usa	when is election day in usa	1662		3		ElectionSchedule
+when is new presidential election		31	when is new presidential election	when is new presidential election	1663		3		ElectionSchedule
+when is next primary election	[election.primary]	31	when is next primary election	when is next primary election	1664	election.primary:primary	3	election.primary=C0	ElectionSchedule
+when is nh primary election	[election.primary] nh	31	when is nh primary election	when is nh primary election	1665	location.state:nh|||election.primary:primary	3	location.state=E0;election.primary=C0	ElectionSchedule
+when is texas primary	[election.primary] texas	31	when is texas primary	when is texas primary	1666	location.state:texas|||election.primary:primary	3	location.state=E0;election.primary=C0	ElectionSchedule
+when is the democratic primary	[election.primary] [election.when] democratic	31	when is the democratic primary	when is the democratic primary	1667	election.when:when|||election.party:democratic|||election.primary:primary	3	election.party=E0;election.primary=C0	CandidateList
+when is the nc primary	[election.primary] nc	31	when is the nc primary	when is the nc primary	1668	location.state:nc|||election.primary:primary	3	location.state=E0;election.primary=C0	ElectionSchedule
+when is the new election for president		31	when is the new election for president	when is the new election for president	1669		3		ElectionSchedule
+when is the next election		31	when is the next election	when is the next election	1670		3		ElectionSchedule
+when is the next presidential elections		31	when is the next presidential elections	when is the next presidential elections	1671		3		ElectionSchedule
+when is the next primary	[election.primary]	31	when is the next primary	when is the next primary	1672	election.primary:primary	3	election.primary=C0	ElectionSchedule
+when is the next republican primary election	[election.primary] republican	31	when is the next republican primary election	when is the next republican primary election	1673	election.party:republican|||election.primary:primary	3	election.party=E0;election.primary=C0	ElectionSchedule
+when is the presidential election of 2016		31	when is the presidential election of 2016	when is the presidential election of 2016	1674		3		ElectionSchedule
+when is the presidential nomination election		31	when is the presidential nomination election	when is the presidential nomination election	1675		3		ElectionSchedule
+when is the presidential primary election	[election.primary] [election.when]	31	when is the presidential primary election	when is the presidential primary election	1676	election.when:when is|||election.primary:primary	3	election.primary=C0	CandidateList
+when is the primary election for 2016	[election.primary]	31	when is the primary election for 2016	when is the primary election for 2016	1677	election.primary:primary	3	election.primary=C0	ElectionSchedule
+when is the primary election in pennsylvania	[election.primary] pennsylvania	31	when is the primary election in pennsylvania	when is the primary election in pennsylvania	1678	election.primary:the primary|||location.state:pennsylvania	3	location.state=E0;election.primary=C0	ElectionSchedule
+when is the texas primary election	[election.primary] texas	31	when is the texas primary election	when is the texas primary election	1679	location.state:texas|||election.primary:primary	3	location.state=E0;election.primary=C0	ElectionSchedule
+when will presidential candidates announce	[election.when]	31	when will presidential candidates announce	when will presidential candidates announce	1680	election.when:when will	3		CandidateSchedule
+where are the presidential candidates today	[election.next]	31	where are the presidential candidates today	where are the presidential candidates today	1681	election.next:today	3		CandidateList
+where does hillary clinton stand on gun control	gun control hillary clinton	31	where does hillary clinton stand on gun control	where does hillary clinton stand on gun control	1682	election.candidate:hillary clinton|||election.bpiissue:gun control	3		CandidateView
+where was rubio born	marco rubio	31	where was rubio born	where was rubio born	1683	election.candidate.highconf:marco rubio	3	election.candidate.highconf=E0	CandidateGeneral
+which republican candidate is most moderate	republican	31	which republican candidate is most moderate	which republican candidate is most moderate	1684	election.party:republican	3	election.party=E0	CandidateList
+who all are the gop canidates for 2016	republican	31	who all are the gop canidates for 2016	who all are the gop canidates for 2016	1685	election.party:republican	3	election.party=E0	CandidateList
+who are all the candidates for president 2016		31	who are all the candidates for president 2016	who are all the candidates for president 2016	1686		3		CandidateList
+who are gop candidates	republican	31	who are gop candidates	who are gop candidates	1687	election.party:republican	3	election.party=E0	CandidateList
+who are potential candidates for president		31	who are potential candidates for president	who are potential candidates for president	1688		3		CandidateList
+who are the 2016 gop candidates	republican	31	who are the 2016 gop candidates	who are the 2016 gop candidates	1689	election.party:republican	3	election.party=E0	CandidateList
+who are the 2016 presidential canidates		31	who are the 2016 presidential canidates	who are the 2016 presidential canidates	1690		3		CandidateList
+who are the canidates for president		31	who are the canidates for president	who are the canidates for president	1691		3		CandidateList
+who are the current democratic candidates for president	democratic	31	who are the current democratic candidates for president	who are the current democratic candidates for president	1692	election.party:democratic	3	election.party=E0	CandidateList
+who are the current presidential candidates		31	who are the current presidential candidates	who are the current presidential candidates	1693		3		CandidateList
+who are the democratic candidates	democratic	31	who are the democratic candidates	who are the democratic candidates	1694	election.party:democratic	3	election.party=E0	CandidateList
+who are the frontrunners for president		31	who are the frontrunners for president	who are the frontrunners for president	1695		3		CandidateList
+who are the gop candidates for 2016	republican	31	who are the gop candidates for 2016	who are the gop candidates for 2016	1696	election.party:republican	3	election.party=E0	CandidateList
+who are the people running for president		31	who are the people running for president	who are the people running for president	1697		3		CandidateList
+who are the presidential candidates 2016		31	who are the presidential candidates 2016	who are the presidential candidates 2016	1698		3		CandidateList
+who are the presidential nominees		31	who are the presidential nominees	who are the presidential nominees	1699		3		CandidateList
+who are the republican candidates running for president in 2016	republican	31	who are the republican candidates running for president in 2016	who are the republican candidates running for president in 2016	1700	election.party:republican	3	election.party=E0	CandidateList
+who are the republican nominees for president	republican	31	who are the republican nominees for president	who are the republican nominees for president	1701	election.party:republican	3	election.party=E0	CandidateList
+who are the us presidential candidates	[election.national]	31	who are the us presidential candidates	who are the us presidential candidates	1702	election.national:us	3	election.national=E0	CandidateList
+who going to run for president in 2016		31	who going to run for president in 2016	who going to run for president in 2016	1703		3		CandidateList
+who has announced running for president		31	who has announced running for president	who has announced running for president	1704		3		CandidateList
+who is ahead in the presidential race		31	who is ahead in the presidential race	who is ahead in the presidential race	1705		3		CandidateList
+who is ben carson married to		31	who is ben carson married to	who is ben carson married to	1706		3		CandidateMarriage
+who is carly fiorina	carly fiorina	31	who is carly fiorina	who is carly fiorina	1707	election.candidate.highconf:carly fiorina	3	election.candidate.highconf=E0	CandidateGeneral
+who is donald trump	donald trump	31	who is donald trump	who is donald trump	1708	election.candidate.highconf:donald trump	3	election.candidate.highconf=E0	CandidateGeneral
+who is in the run for president	in	31	who is in the run for president	who is in the run for president	1709	location.state:in	3	location.state=E0	CandidateList
+who is jill stein	jill stein	31	who is jill stein	who is jill stein	1710	election.candidate.highconf:jill stein	3	election.candidate.highconf=E0	CandidateGeneral
+who is kasich	john kasich	31	who is kasich	who is kasich	1711	election.candidate.highconf:john kasich	3	election.candidate.highconf=E0	CandidateGeneral
+who is leading the presidential elections		31	who is leading the presidential elections	who is leading the presidential elections	1712		3		ElectionGeneral
+who is lindsey graham	lindsey graham	31	who is lindsey graham	who is lindsey graham	1713	election.candidate.highconf:lindsey graham	3	election.candidate.highconf=E0	CandidateGeneral
+who is marco rubio	marco rubio	31	who is marco rubio	who is marco rubio	1714	election.candidate.highconf:marco rubio	3	election.candidate.highconf=E0	CandidateGeneral
+who is running democratic party	democratic	31	who is running democratic party	who is running democratic party	1715	election.party:democratic	3	election.party=E0	CandidateList
+who is running for democratic party 2016	democratic	31	who is running for democratic party 2016	who is running for democratic party 2016	1716	election.party:democratic	3	election.party=E0	CandidateList
+who is running for election 2016		31	who is running for election 2016	who is running for election 2016	1717		3		ElectionGeneral
+who is running for president for republican	republican	31	who is running for president for republican	who is running for president for republican	1718	election.party:republican	3	election.party=E0	CandidateList
+who is running for president for the democrats	democratic	31	who is running for president for the democrats	who is running for president for the democrats	1719	election.party:democratic	3	election.party=E0	CandidateList
+who is running for president in 2016		31	who is running for president in 2016	who is running for president in 2016	1720		3		CandidateList
+who is running for president in 2016 republican	republican	31	who is running for president in 2016 republican	who is running for president in 2016 republican	1721	election.party:republican	3	election.party=E0	CandidateList
+who is running for president of the united states	[election.national]	31	who is running for president of the united states	who is running for president of the united states	1722	election.national:united states	3	election.national=E0	CandidateList
+who is running for presidential election 2016		31	who is running for presidential election 2016	who is running for presidential election 2016	1723		3		CandidateList
+who is the best candidate for president		31	who is the best candidate for president	who is the best candidate for president	1724		3		CandidateList
+who is the best presidential candidate 2016		31	who is the best presidential candidate 2016	who is the best presidential candidate 2016	1725		3		CandidateList
+who is the top democratic candidate	democratic top	31	who is the top democratic candidate	who is the top democratic candidate	1726	StayWords:top|||election.party:democratic	3	StayWords=E0;election.party=E1	CandidateList
+who is the woman republican candidate	[election.Gender.Female] republican	31	who is the woman republican candidate	who is the woman republican candidate	1727	election.Gender.Female:woman|||election.party:republican	3	election.party=E0	CandidateList
+who is winning the republican race	[election.winlose] republican	31	who is winning the republican race	who is winning the republican race	1728	election.winlose:winning|||election.party:republican	3	election.party=E0;election.winlose=E1	CandidateList
+who s leading the presidential campaign	[election.campaign]	31	who s leading the presidential campaign	who s leading the presidential campaign	1729	election.campaign:campaign	3	election.campaign=C0	CandidateCampain
+who s running for president		31	who s running for president	who s running for president	1730		3		CandidateList
+who s running for president 2016		31	who s running for president 2016	who s running for president 2016	1731		3		CandidateList
+who s running for president new york times	[election.newsword]	31	who s running for president new york times	who s running for president new york times	1732	election.newsword:new york times	3	election.newsword=I0	CandidateList
+who s running for president next	[election.next]	31	who s running for president next	who s running for president next	1733	election.next:next	3		CandidateList
+who s running for president next election	[election.next]	31	who s running for president next election	who s running for president next election	1734	election.next:next	3		CandidateList
+who s running for us president	[election.national]	31	who s running for us president	who s running for us president	1735	election.national:us	3	election.national=E0	CandidateList
+who s running for us president in 2016	[election.national]	31	who s running for us president in 2016	who s running for us president in 2016	1736	election.national:us	3	election.national=E0	CandidateList
+who s running in the 2016 election		31	who s running in the 2016 election	who s running in the 2016 election	1737		3		CandidateList
+who s winning the 2016 election	[election.winlose]	31	who s winning the 2016 election	who s winning the 2016 election	1738	election.winlose:winning	3	election.winlose=E0	CandidateList
+who will be the next president 2016	[election.next]	31	who will be the next president 2016	who will be the next president 2016	1739	election.next:next	3		CandidateList
+who will the next president be	[election.next]	31	who will the next president be	who will the next president be	1740	election.next:next	3		CandidateList
+who will win the presidential election in 2016		31	who will win the presidential election in 2016	who will win the presidential election in 2016	1741		3		ElectionGeneral
+who would you vote for president 2016	[election.voting]	31	who would you vote for president 2016	who would you vote for president 2016	1742	election.voting:vote	3	election.voting=I0	CandidateList
+whos running for pres		31	whos running for pres	whos running for pres	1743		3		CandidateList
+whos running for presidency in 2016		31	whos running for presidency in 2016	whos running for presidency in 2016	1744		3		CandidateList
+whos running for president		31	whos running for president	whos running for president	1745		3		CandidateList
+whos running for prez		31	whos running for prez	whos running for prez	1746		3		CandidateList
+whos running for republican president 2016	republican	31	whos running for republican president 2016	whos running for republican president 2016	1747	election.party:republican	3	election.party=E0	CandidateList
+whos running for the republican party	republican	31	whos running for the republican party	whos running for the republican party	1748	election.party:republican	3	election.party=E0	CandidateList
+why ted cruz can run for president	ted cruz	31	why ted cruz can run for president	why ted cruz can run for president	1749	election.candidate:ted cruz	3		CandidateList
+wi election	wi	31	wi election	wi election	1750	location.state:wi	3	location.state=E0	ElectionGeneral
+will donald trump be a good president	donald trump	31	will donald trump be a good president	will donald trump be a good president	1751	election.candidate:donald trump	3		Candidate
+woman republican candidate for president	[election.Gender.Female] republican	31	woman republican candidate for president	woman republican candidate for president	1752	election.Gender.Female:woman|||election.party:republican	3	election.party=E0	CandidateList
+woman republican presidential candidate	woman republican presidential candidate	31	woman republican presidential candidate	woman republican presidential candidate	1753	election.candidate.highconf:woman republican presidential candidate	3	election.candidate.highconf=E0	CandidateList
+women candidates for president	[election.Gender.Female]	31	women candidates for president	women candidates for president	1754	election.Gender.Female:women	3		CandidateList
+women presidential candidates	[election.Gender.Female]	31	women presidential candidates	women presidential candidates	1755	election.Gender.Female:women	3		CandidateList
