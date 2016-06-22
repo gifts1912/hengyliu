@@ -1,0 +1,385 @@
+//
+//Similar Query Pipeline: 
+//    Mine Similar Query from Click Through
+//
+REFERENCE @"SimilarQuery.dll";
+USING SimilarQuery;
+// ##############################################################################
+//// Get raw click-through graph from click log
+// ##############################################################################
+SELECT url, query, double.Parse(clicks) AS clicks
+FROM 
+#IF(LOCAL)
+@"D:\src\scratch\HardQuery-STCA\Projects\SimilarQuery\SampleData\Step2.txt"
+USING SimilarQuery.Common.SmartTextExtractor("--fail-on-missing=true", "3", "1", "5");
+#ELSE
+@@input@@
+USING SimilarQuery.Common.SmartTextExtractor("--fail-on-missing=@@isFailOnMissing@@", "@@colIdxUrl@@", "@@colIdxQuery@@", "@@colIdxClicks@@");
+#ENDIF
+
+ClickTable_0 =
+SELECT url, query, SUM(clicks) AS clicks
+GROUP BY url, query;
+
+// ##############################################################################
+//// prune Url and queries
+//// if Url is clicked by too many (i.e.1000) queries, remove the tail queries with less clicks
+//// if one query clicked too many urls, remove the tail urls with less clicks
+// ##############################################################################
+
+#IF(LOCAL)
+ClickTable = SELECT * FROM ClickTable_0;
+#ELSE
+    #IF(@@prune@@)
+        ClickTable_1 = 
+        REDUCE ClickTable_0
+        ON url
+        PRESORT clicks DESC
+        PRODUCE url,query,clicks
+        USING UrlPruneReducer("@@maxQueryPerUrl@@");  // same url, sort by clicks DESC, get the top maxQueryPerUrl rows. that is: remove the tail queries with less clickes.
+
+        ClickTable = 
+        REDUCE ClickTable_1
+        ON query
+        PRESORT clicks DESC
+        PRODUCE url,query,clicks
+        USING QueryPruneReducer("@@maxUrlPerQuery@@"); //same , sort by clicks DESC, get top maxUrlPerQuery rows. That is: remove the tail urls with less clicks.
+
+    #ELSE
+        ClickTable = SELECT * FROM ClickTable_0; 
+    #ENDIF
+#ENDIF
+
+// ##############################################################################
+//// adjust the edge weight between query and url.
+//// raw click frequency is used as the weight in previous version.
+//// new weight:URL entropy-based weight.
+// ##############################################################################
+//// Approximate Entropy: obtain the entropy of url: the number of queries which clicked this url.
+//// entropy(url)=log|Q|-log n(url)
+//// |Q| is the total number of queries, n(url) is the number of queries which clicked url. 
+// ##############################################################################
+#IF(LOCAL)
+	QueryTable =
+	SELECT query, SUM(clicks) AS clickSum, COUNT() AS clickUrlSum
+	FROM ClickTable
+	GROUP BY query;
+
+	ClickGraphForSimlarity =
+	SELECT 
+		ClickTable.url AS url,
+		ClickTable.query AS query,
+        ClickTable.clicks AS clicks,
+		ClickTable.clicks / QueryTable.clickSum AS clickProb, 
+		QueryTable.clickSum AS clickSum,
+		QueryTable.clickUrlSum AS clickUrlSum
+	FROM ClickTable, QueryTable
+	WHERE QueryTable.query == ClickTable.query;
+#ELSE
+	#IF(@@adjustWeight@@)
+    // #########################################################################
+    //// compute the approximate entropy using original click-through log
+    // #########################################################################
+    //	UrlTable_1 =
+    //	SELECT url, COUNT() AS queryNumPerUrl
+    //	FROM ClickTable_0
+    //	GROUP BY url;
+    //
+    //	QueryCount_1 =
+    //	SELECT DISTINCT query
+    //	FROM ClickTable_0;
+    //
+    //	QueryCount = 
+    //	SELECT COUNT() AS totalQueryNum
+    //	FROM QueryCount_1;
+    //
+    //	UrlTable =
+    //	SELECT 
+    //	UrlTable_1.url AS url, 
+    //	(Math.Log(totalQueryNum)-Math.Log(queryNumPerUrl)) AS UrlEntropy
+    //	FROM UrlTable_1 CROSS JOIN QueryCount;
+    // #########################################################################
+    //// compute the exact entropy using original click-through log
+    // #########################################################################
+    UrlTable_1 =
+    SELECT url, SUM(clicks) AS clickSum // aggregate the clicks of same url.
+    FROM ClickTable_0
+    GROUP BY url;
+
+    UrlTable_2 = // get the url clickProb = n(Url_1_clicks_in_thisQuery)/ n(Sum(Url_1_clicks)); 
+    SELECT 
+    ClickTable_0.url AS url, 
+    query, 
+    ClickTable_0.clicks/UrlTable_1.clickSum AS clickProb 
+    FROM ClickTable_0,UrlTable_1
+    WHERE ClickTable_0.url == UrlTable_1.url;
+
+    UrlTable_3 =  // url, UrlEntropy =  SUM_SameUrl(-clickProb * Log(clickProb))
+    REDUCE UrlTable_2
+    ON url
+    PRODUCE url,UrlEntropy
+    USING UrlEntropyReducer;
+
+    QueryCount_1 =
+    SELECT DISTINCT query
+    FROM ClickTable_0;
+    
+    QueryCount =  //Number Of Query Uniq
+    SELECT COUNT() AS totalQueryNum
+    FROM QueryCount_1;
+
+    UrlTable = //url, Log(totalQueryNum) - UrlEntropy
+    SELECT
+    UrlTable_3.url AS url,
+    (Math.Log(totalQueryNum)-UrlEntropy) AS UrlEntropy
+    FROM UrlTable_3 CROSS JOIN QueryCount;
+    // #########################################################################
+
+	// adjust the click frequency
+	adjustClickTable =
+	SELECT ClickTable.url AS url, query,clicks*UrlEntropy AS adjustClick 
+	FROM ClickTable,UrlTable  // clickTable is original table remove tail query and tail url.
+	WHERE ClickTable.url == UrlTable.url;
+
+	QueryTable =
+	SELECT query, SUM(adjustClick) AS clickSum, COUNT() AS clickUrlSum 
+	FROM adjustClickTable
+	GROUP BY query;
+
+	ClickGraphForSimlarity =
+	SELECT
+		adjustClickTable.url AS url,
+		adjustClickTable.query AS query,
+        adjustClickTable.adjustClick AS clicks,
+		(double)adjustClickTable.adjustClick / QueryTable.clickSum AS clickProb, //adjustClick/Sum(adjustClick)
+		QueryTable.clickSum AS clickSum, //clickSum
+		QueryTable.clickUrlSum AS clickUrlSum
+	FROM adjustClickTable,QueryTable
+	WHERE adjustClickTable.query == QueryTable.query;
+
+	#ELSE
+	//// without adjusting weight
+	QueryTable =
+	SELECT query, SUM(clicks) AS clickSum, COUNT() AS clickUrlSum
+	FROM ClickTable
+	GROUP BY query;
+
+	ClickGraphForSimlarity =
+	SELECT 
+		ClickTable.url AS url,
+		ClickTable.query AS query,
+        ClickTable.clicks AS clicks,
+		(double)ClickTable.clicks / QueryTable.clickSum AS clickProb, 
+		QueryTable.clickSum AS clickSum,
+		QueryTable.clickUrlSum AS clickUrlSum
+	FROM ClickTable, QueryTable
+	WHERE QueryTable.query == ClickTable.query;
+
+	#ENDIF
+
+#ENDIF
+
+OUTPUT ClickGraphForSimlarity TO
+@@ClickGraphForSimlarity@@;
+
+#IF(LOCAL)
+OUTPUT TO @"D:\src\scratch\HardQuery-STCA\Projects\SimilarQuery\SampleData\LocalTempFiles\ClickGraphForSimlarity.txt";
+#ENDIF
+
+// ##############################################################################
+// ##############################################################################
+//// compute the similarity between queries
+// ##############################################################################
+// ##############################################################################
+//// similarity with KL-divergence
+/* 
+	JSDiv: Jensen-Shannon Divergence
+	JSDiv(P||Q) = 0.5 * (KLDiv(P||M) + KLDiv(Q||M))
+	M = 0.5 * (P + Q)
+	
+	KLDiv(P||Q) means Kullback-Leibler Divergence 
+	KLDiv(P||Q) = sum(p(i) * log(p(i)/q(i)))
+*/
+// ##############################################################################
+SimByJSDiv_1 =
+REDUCE  ClickGraphForSimlarity
+ON url
+PRODUCE leftQuery, rightQuery, JSDivPartial,KLDivLeft2Right,KLDivRight2Left,diffProb,diffClick
+#IF(LOCAL)
+USING JSDivReducer("1000","1","2");
+#ELSE
+USING JSDivReducer("@@maxQueryPerUrl@@","@@numOfUrl@@","@@numOfUrlSum@@");
+#ENDIF
+
+#IF(LOCAL)
+OUTPUT TO @"D:\src\scratch\HardQuery-STCA\Projects\SimilarQuery\SampleData\LocalTempFiles\SimByJSDiv_1.txt";
+#ENDIF
+
+SimByJSDiv_2 =
+SELECT 
+leftQuery, 
+rightQuery, 
+SUM(JSDivPartial)/2+Math.Log(2) AS JSDiv, 
+SUM (KLDivLeft2Right) AS KLDivL2R, 
+SUM(KLDivRight2Left) AS KLDivR2L, 
+SUM(diffProb) AS DiffProb,
+SUM(diffClick) AS DiffClick,
+COUNT() AS overlappedUrls
+FROM SimByJSDiv_1
+GROUP BY leftQuery, rightQuery
+#IF(LOCAL)
+HAVING JSDiv < 1.0 AND overlappedUrls >= 1;
+#ELSE
+HAVING JSDiv < @@maxJSDiv@@ AND overlappedUrls >= @@numOverlappedUrls@@;
+#ENDIF
+
+// remove the spurious query
+SimByJSDiv_3 =
+SELECT 
+leftQuery,
+rightQuery,
+JSDiv,
+KLDivL2R,
+KLDivR2L,
+DiffProb,
+DiffClick,
+overlappedUrls,
+PostProcess.ContainSpuriousLongDigits(leftQuery,rightQuery,10) AS FINE
+FROM SimByJSDiv_2;
+
+SimByJSDiv = SELECT leftQuery,rightQuery,JSDiv,KLDivL2R,KLDivR2L,DiffProb,DiffClick,overlappedUrls
+WHERE FINE==false;
+
+#IF(LOCAL)
+OUTPUT TO @"D:\src\scratch\HardQuery-STCA\Projects\SimilarQuery\SampleData\LocalTempFiles\SimByJSDiv.txt";
+#ENDIF
+
+// ##############################################################################
+//// normalize click probability using length of query vector, for computing cosine
+QueryVecLength =
+REDUCE ClickGraphForSimlarity
+ON query
+PRODUCE query,queryVecLen
+USING queryLengthReducer;
+
+NormClickGraphForSimlarity =
+SELECT 
+url,
+ClickGraphForSimlarity.query AS query,
+ClickGraphForSimlarity.clickProb / QueryVecLength.queryVecLen AS normClickProb,
+clickSum,
+clickUrlSum
+FROM ClickGraphForSimlarity,QueryVecLength
+WHERE ClickGraphForSimlarity.query == QueryVecLength.query;
+
+//// similarity with Cosine value
+SimByCosine_1 =
+REDUCE NormClickGraphForSimlarity
+ON url
+PRODUCE leftQuery, rightQuery,cosineValue
+#IF(LOCAL)
+USING CosineReducer("1000","1","1");
+#ELSE
+USING CosineReducer("@@maxQueryPerUrl@@","@@numOfUrl@@","@@numOfUrlSum@@");
+#ENDIF
+
+SimByCosine_2 =
+SELECT leftQuery,rightQuery,SUM(cosineValue) AS CosValue, COUNT() AS numOverlappedUrls
+FROM SimByCosine_1
+GROUP BY leftQuery,rightQuery
+#IF(LOCAL)
+HAVING CosValue > 0  AND numOverlappedUrls >= 1;
+#ELSE
+HAVING CosValue > @@minCosine@@  AND numOverlappedUrls >= @@numOverlappedUrls@@;
+#ENDIF
+
+// postProcess: remove the spurious query
+SimByCosine_3 =
+SELECT 
+leftQuery,
+rightQuery,
+CosValue,
+PostProcess.ContainSpuriousLongDigits(leftQuery,rightQuery,10) AS FINE
+FROM SimByCosine_2;
+
+SimByCosine = SELECT leftQuery,rightQuery,CosValue
+WHERE FINE == false;
+
+
+SimQueryCombined =
+SELECT 
+SimByCosine.leftQuery, 
+SimByCosine.rightQuery,
+SimByJSDiv.JSDiv,
+SimByJSDiv.KLDivL2R,
+SimByJSDiv.KLDivR2L,
+SimByCosine.CosValue,
+SimByJSDiv.DiffProb,
+SimByJSDiv.DiffClick,
+SimByJSDiv.overlappedUrls
+FROM SimByJSDiv,SimByCosine
+WHERE SimByJSDiv.leftQuery == SimByCosine.leftQuery AND SimByJSDiv.rightQuery == SimByCosine.rightQuery;
+
+
+OUTPUT SimQueryCombined TO
+#IF(LOCAL)
+@"D:\src\scratch\HardQuery-STCA\Projects\SimilarQuery\SampleData\SimilarQueries.txt";
+#ELSE
+@@SimilarQueryFeatures@@;
+#ENDIF
+
+#CS
+
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Text;
+using ScopeRuntime;
+
+
+
+/// <summary>
+///  
+/// </summary>
+public class queryLengthReducer : Reducer
+{
+	/// <summary>
+	///
+	/// </summary>
+	/// <param name="columns"></param>
+	/// <param name="args"></param>
+	/// <param name="input"></param>
+	/// <returns></returns>
+	public override Schema Produces(string[] columns, string[] args, Schema input)
+	{
+		return new Schema("query,queryVecLen:double");
+	}
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <param name="input"></param>
+	/// <param name="output"></param>
+	/// <param name="args"></param>
+	/// <returns></returns>
+	public override IEnumerable<Row> Reduce(RowSet input, Row output, string[] args)
+	{
+		
+		int count = 0;
+		double probSquareSum = 0.0;
+		double prob = 0.0;
+		foreach (Row row in input.Rows)
+		{
+			if (++count == 1)
+			{
+				output[0].UnsafeSet(row[1].String); // query
+			}
+			prob = row[3].Double;
+			probSquareSum += prob * prob;
+		}
+		output[1].UnsafeSet(Math.Sqrt(probSquareSum));
+		yield return output;
+	}
+}
+
+
+#ENDCS
