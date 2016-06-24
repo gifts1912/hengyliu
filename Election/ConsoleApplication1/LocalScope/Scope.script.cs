@@ -5,23 +5,62 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using ScopeRuntime;
-public class SplitProcessor : Processor
-{
-    public override Schema Produces(string[] columns, string[] args, Schema input)
-    {
-        return input.Clone();
-    }
 
-    public override IEnumerable<Row> Process(RowSet input, Row output, string[] args)
+public class ScoreNormalReducer : Reducer
+{
+    public override Schema Produces(string[] requestedColumns, string[] args, Schema input)
     {
-        foreach (Row row in input.Rows)
+        //return input.Clone();
+        return new Schema("peId:string, url:string, score:int");
+    }
+    
+    public override IEnumerable<Row> Reduce(RowSet input, Row outputRow, string [] args)
+    {
+        Dictionary<string, double> urlScore = new Dictionary<string, double>();
+        Dictionary<string, int> urlScoreNorm = new Dictionary<string, int>();
+        double scoreThread = double.Parse(args[0]);
+        bool first = true;
+        string peId = "";
+        foreach(Row row in input.Rows)
         {
-            output[0].Set(row[0].String);
-            foreach (var s in row[1].String.Split(','))
+            if(first)
             {
-                output[1].Set(s.Split(':')[0]);
-                yield return output;
+                peId = row["peId"].String;
+                first = false;
             }
+            string url = row["url"].String;
+            double score = row["score"].Double;
+            if (score < scoreThread)
+                continue;
+            urlScore[url] = score;
         }
+        if (urlScore.Count == 0)
+            continue;
+        urlScoreNorm = NormalizeScore(urlScore);
+        foreach(KeyValuePair<string, int> pair in urlScoreNorm)
+        {
+            outputRow["peId"].Set(peId);
+            outputRow["url"].Set(pair.Key);
+            outputRow["score"].Set(pair.Value);
+            yield return outputRow;
+        }
+    } 
+
+    public static Dictionary<string, int> NormalizeScore(Dictionary<string, double> urlScore)
+    {
+        Dictionary<string, int> urlScoreRes = new Dictionary<string, int>();
+        foreach(string key in urlScore.Keys)
+        {
+            double score = urlScore[key];
+            urlScoreRes[key] = (int)SigmodNormalize(score);
+        }
+        return urlScoreRes;
+    }
+    
+    public static double SigmodNormalize(double score)
+    {
+        double res = 1 + Math.Exp(-1.0 * score);
+        res = 1.0 / res;
+        return res * 20;
     }
 }

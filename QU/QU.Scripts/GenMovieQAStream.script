@@ -1,0 +1,177 @@
+﻿//Script GUID:e2fdc272-e1e7-41fe-91e4-b555ebc43712
+//Used for tracking history
+
+
+#IF(LOCAL)
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\btclaD386.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\btjlaD386.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\btklaD433.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\btutilsD230.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\btutilsD430.dll";
+    REFERENCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\FrontEndUtil.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\GetHashUtil.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\WordBreaker.zip";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\ParseQueryUtil.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\autopilot-trick.ini";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\wbDefaultConfig.ini";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\unzip.exe";
+    #DECLARE NGram int = 5;
+#ELSE
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/btclaD386.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/btjlaD386.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/btklaD433.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/btutilsD230.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/btutilsD430.dll";
+    REFERENCE @"/shares/searchDM/distrib/released/FrontEndUtil/FrontEndUtil.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/GetHashUtil.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/WordBreaker.zip";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/ParseQueryUtil.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/autopilot-trick.ini";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/wbDefaultConfig.ini";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/unzip.exe";
+    #DECLARE NGram int = @@NGram@@;
+#ENDIF
+
+RESOURCE "stopword.txt";
+REFERENCE "Utility.dll";
+
+// Generate NGram candidates from wrapstar model
+movieWrapstar = 
+    EXTRACT url, question, detail, answers, ratings
+    FROM 
+#IF(LOCAL)
+    @"D:\Temp\MagicQ\wikianswer.qa.movie.txt"
+#ELSE
+    @@movieWrapstar@@
+#ENDIF
+    USING DefaultTextExtractor
+    HAVING NOT string.IsNullOrEmpty(question) AND NOT string.IsNullOrEmpty(answers);
+
+detailWrapstar = 
+    PROCESS movieWrapstar
+    USING ExtendDetailsProcessor;
+
+movieWrapstar = 
+    SELECT url, question, answers, ratings FROM movieWrapstar
+    UNION ALL
+    SELECT url, detail AS question, answers, ratings FROM detailWrapstar;
+
+movieWrapstar =
+    SELECT DISTINCT url, question, answers, ratings
+    FROM movieWrapstar;
+
+
+candidates =
+    PROCESS movieWrapstar
+    USING CanGenProcessor(@NGram);
+
+candidates =
+    SELECT url,
+           question,
+           candidate,
+           SUM(score) AS score
+    FROM candidates;
+
+// Satori facts
+entities = 
+    EXTRACT satoriId, name, confidence:double, repUrl
+    FROM 
+#IF(LOCAL)
+    @"D:\Temp\MagicQ\movieSatoriInfo.txt"
+#ELSE
+    @@movieEntities@@
+#ENDIF
+    USING DefaultTextExtractor
+    HAVING NOT string.IsNullOrEmpty(name);
+
+entities =
+    SELECT satoriId,
+           Utility.Normalizer.NormalizeQuery(name) AS name,
+           confidence,
+           repUrl
+    FROM entities;
+
+entities =
+    PROCESS entities
+    USING SplitNameProcessor(@NGram);
+
+final = 
+    SELECT 
+        candidates.url, candidates.question, candidates.candidate, candidates.score,
+        entities.name, entities.satoriId, entities.repUrl
+    FROM candidates, entities
+    WHERE candidates.candidate == entities.part;
+
+final = 
+    REDUCE final ON url, question, candidate, score, satoriId, name
+    USING Utility.CollapseReducer("10", "url,question,candidate,score,satoriId,name", "repUrl", "{0}|||");
+
+final = 
+    SELECT url, question, candidate, score, satoriId, name, info AS repUrls
+    FROM final;
+
+// Only longest span for name
+postWebCandidates = 
+    SELECT DISTINCT url, candidate
+    FROM final;
+
+postWebCandidates = 
+    SELECT url, candidate, candidate.Split(' ').Length AS canLen
+    FROM postWebCandidates;
+
+postWebCandidates = 
+    REDUCE postWebCandidates
+    ON url
+    PRESORT canLen DESC
+    USING LongestCandReducer;
+
+longestFinal = 
+    SELECT final.*, postWebCandidates.canLen
+    FROM final, postWebCandidates
+    WHERE final.url == postWebCandidates.url AND final.candidate == postWebCandidates.candidate;
+
+longestFinal = 
+    SELECT url, question, name, SUM(long.Parse(score)) AS score, satoriId, repUrls, MAX(canLen) AS canLen
+    FROM longestFinal;
+
+IDFCal = SELECT DISTINCT name, url FROM longestFinal;
+IDFCal = SELECT name, COUNT(url) AS docCnt FROM IDFCal;
+urls = SELECT DISTINCT url FROM longestFinal;
+TotalDocs = SELECT COUNT(url) AS allDocCnt FROM urls;
+IDFCal = SELECT name, docCnt, allDocCnt FROM IDFCal CROSS JOIN TotalDocs;
+IDFCal = SELECT name, Math.Log(((double)allDocCnt + 1.0) / ((double)docCnt + 1.0)) AS idf FROM IDFCal;
+
+
+longestFinal = 
+    SELECT longestFinal.*, idf 
+    FROM longestFinal, IDFCal
+    WHERE longestFinal.name == IDFCal.name
+;
+
+stream = 
+    PROCESS longestFinal
+    USING StreamGenProcessor;
+
+stream = 
+    SELECT url, query, MAX(score) AS score, MAX(rawScore) AS rawScore, FIRST(satoriId) AS satoriId
+    FROM stream;
+
+rawStream = SELECT url, query, score FROM stream;
+
+OUTPUT rawStream TO 
+#IF(LOCAL)
+@"D:\Temp\MagicQ\wikianswer.qa.movie.candidates.longest.stream.txt"
+#ELSE
+@@stream@@
+#ENDIF
+;
+
+OUTPUT stream TO 
+#IF(LOCAL)
+@"D:\Temp\MagicQ\wikianswer.qa.movie.candidates.longest.stream.debug.txt"
+#ELSE
+@@streamDebug@@
+#ENDIF
+;
+
+

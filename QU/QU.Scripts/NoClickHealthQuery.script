@@ -1,0 +1,85 @@
+﻿//Script GUID:78703b0b-0abb-46bf-91cd-287fe60c4b80
+//Used for tracking history
+
+clicks = 
+    EXTRACT query, urlHash, url, impressionCnt:long, clickCnt:long, superQBCnt:long, QBCnt:long, satCnt:long
+    FROM @"/projects/aether/binxjia/bf428002-dd44-4035-b4aa-5aac29db4718@@@-QU-_Get_In_Domain_Coclicked_query_pairs@@@830388bf@@@12-3-2014_04-05-08_PM/94075e05-0b8d-48b7-9f42-84ee55c6aa4a"
+    USING DefaultTextExtractor("-silent");
+
+noClickQU = 
+    SELECT query, url, impressionCnt
+    FROM clicks
+    WHERE clickCnt == 0;
+
+OUTPUT
+TO @"/my/Temp/health.noclick.qu.txt";
+
+QStat =
+    SELECT query,
+           MAX(impressionCnt) AS impressionCnt,
+           SUM(clickCnt) AS clickCnt
+    FROM clicks;
+
+noClickQ =
+    SELECT query,
+           impressionCnt
+    FROM QStat
+    WHERE clickCnt == 0;
+OUTPUT
+TO @"/my/Temp/health.noclick.q.txt";
+
+allQUStat =
+    SELECT query,
+           url,
+           COUNT() AS distinctCount,
+           SUM(impressionCnt) AS impressionCnt
+    FROM clicks;
+allQUStat = SELECT SUM(distinctCount) AS distinctCount, SUM(impressionCnt) AS impressionCnt FROM allQUStat;
+
+noClickQUStat =
+    SELECT query,
+           url,
+           COUNT() AS distinctCount,
+           SUM(impressionCnt) AS impressionCnt
+    FROM noClickQU;
+noClickQUStat = SELECT SUM(distinctCount) AS distinctCount, SUM(impressionCnt) AS impressionCnt FROM noClickQUStat;
+
+allQStat =
+    SELECT query,
+           COUNT() AS distinctCount,
+           SUM(impressionCnt) AS impressionCnt
+    FROM QStat;
+allQStat = SELECT SUM(distinctCount) AS distinctCount, SUM(impressionCnt) AS impressionCnt FROM allQStat;
+
+noClickQStat =
+    SELECT query,
+           COUNT() AS distinctCount,
+           SUM(impressionCnt) AS impressionCnt
+    FROM noClickQ;
+noClickQStat = SELECT SUM(distinctCount) AS distinctCount, SUM(impressionCnt) AS impressionCnt FROM noClickQStat;
+
+Stat =
+    SELECT "AllQU" AS description,
+           distinctCount,
+           impressionCnt
+    FROM allQUStat
+    UNION ALL
+    SELECT "noClickQU" AS description,
+           distinctCount,
+           impressionCnt
+    FROM noClickQUStat
+    UNION ALL
+    SELECT "AllQ" AS description,
+           distinctCount,
+           impressionCnt
+    FROM allQStat
+    UNION ALL
+    SELECT "noClickQ" AS description,
+           distinctCount,
+           impressionCnt
+    FROM noClickQStat;
+
+OUTPUT
+TO @"/my/Temp/health.noclick.stat.txt";
+
+

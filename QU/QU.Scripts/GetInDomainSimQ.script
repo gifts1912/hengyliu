@@ -1,0 +1,84 @@
+﻿//Script GUID:83c014f7-d398-4832-8090-6c88dd313438
+//Used for tracking history
+
+#IF(LOCAL)
+    #DECLARE OutputSimQ String = @"d:\Temp\domainSimQ.txt";
+    #DECLARE MatchBothQueries Boolean = true;
+#ELSE
+    #DECLARE OutputSimQ String = @@OutputSimQ@@;
+    #DECLARE MatchBothQueries Boolean = @@MatchBothQueries@@;
+#ENDIF
+
+#IF(LOCAL)
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\btclaD386.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\btjlaD386.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\btklaD433.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\btutilsD230.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\btutilsD430.dll";
+    REFERENCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\FrontEndUtil.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\GetHashUtil.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\WordBreaker.zip";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\ParseQueryUtil.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\autopilot-trick.ini";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\wbDefaultConfig.ini";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\unzip.exe";
+#ELSE
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/btclaD386.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/btjlaD386.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/btklaD433.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/btutilsD230.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/btutilsD430.dll";
+    REFERENCE @"/shares/searchDM/distrib/released/FrontEndUtil/FrontEndUtil.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/GetHashUtil.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/WordBreaker.zip";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/ParseQueryUtil.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/autopilot-trick.ini";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/wbDefaultConfig.ini";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/unzip.exe";
+#ENDIF
+
+REFERENCE "Utility.dll";
+
+simQ = 
+    EXTRACT leftQ, rightQ, sim
+#IF(LOCAL)
+    FROM @"d:\Temp\simQ.txt"
+    USING Utility.SmartDataExtractor("0", "1", "2")
+#ELSE
+    FROM @@SimQ@@
+    USING Utility.SmartDataExtractor("@@leftQCol@@", "@@rightQCol@@", "@@simCol@@")
+#ENDIF
+;
+
+simQ = SELECT Normalizer.NormalizeQuery(leftQ) AS leftQ, 
+                Normalizer.NormalizeQuery(rightQ) AS rightQ,
+                sim
+        FROM simQ;
+
+domainQ = EXTRACT q, cnt1, cnt2
+#IF(LOCAL)
+    FROM @"d:\Temp\domainQ.txt"
+#ELSE
+    FROM @@DomainQ@@
+#ENDIF
+    USING DefaultTextExtractor;
+
+domainQ = SELECT Normalizer.NormalizeQuery(q) AS q
+            FROM domainQ;
+
+domainQ = SELECT DISTINCT q FROM domainQ;
+
+T0 = 
+    SELECT leftQ, rightQ, sim
+    FROM simQ, domainQ
+    WHERE simQ.leftQ == domainQ.q;
+
+#IF(@MatchBothQueries)
+T0 = 
+    SELECT leftQ, rightQ, sim
+    FROM T0, domainQ
+    WHERE T0.rightQ == domainQ.q;
+#ENDIF;
+
+OUTPUT T0 TO @OutputSimQ;
+

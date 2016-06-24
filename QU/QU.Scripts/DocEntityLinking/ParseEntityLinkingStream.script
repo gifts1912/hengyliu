@@ -1,0 +1,58 @@
+﻿//Script GUID:d82f3bb9-8778-40f1-9f55-fbd4ca49926b
+//Used for tracking history
+
+#IF(LOCAL)
+
+REFERENCE @"D:\shares\DocumentUnderstanding.Prod\local\DocEntityLinking\Distrib\RC\Graph\DocEntityLinkingJsonUtils.dll";
+REFERENCE @"D:\shares\DocumentUnderstanding.Prod\local\DocEntityLinking\Distrib\RC\Graph\Newtonsoft.Json.dll";
+RESOURCE @"D:\shares\DocumentUnderstanding.Prod\local\DocEntityLinking\Distrib\RC\Graph\typelist.latest.txt";
+#DECLARE types string = "statistics.population_group;film.film";
+
+#ELSE
+REFERENCE "/local/DocEntityLinking/Distrib/RC/Graph/DocEntityLinkingJsonUtils.dll";
+REFERENCE "/local/DocEntityLinking/Distrib/RC/Graph/Newtonsoft.Json.dll";
+RESOURCE "/local/DocEntityLinking/Distrib/RC/Graph/typelist.latest.txt";
+
+#DECLARE stream string = @"/local/EntityLinkingStream/Prod/" + @@date@@ + "/%n.dat?serialnum=0...255";
+#DECLARE types string = "@@types@@";
+#ENDIF
+
+USING DocEntityLinkingJsonUtils;
+
+data = 
+    EXTRACT Url, 
+            FileTime, 
+            EntityIdJson 
+#IF(LOCAL)
+    FROM @"SampleEntityLinkingStream.txt"
+#ELSE
+    FROM @stream
+#ENDIF
+    USING DefaultTextExtractor;
+
+data = 
+    PROCESS data 
+    USING GraphLinkerCEntityIdJsonProcessor("typelist.latest.txt", "--JsonColName=EntityIdJson");
+
+data = 
+    SELECT Url, EntityId, Types, Role, Score, Mention 
+    FROM data;
+
+#IF(LOCAL)
+OUTPUT TO @"SampleEntityLinkingStreamParsed.txt";
+#ENDIF
+
+data = 
+    PROCESS data
+    USING SegmentFilter(@types);
+
+OUTPUT TO SSTREAM
+#IF(LOCAL)
+    @"SampleEntityLinkingStreamParsed.ss"
+#ELSE
+    @@Output@@ 
+#ENDIF
+CLUSTERED BY Url 
+SORTED BY Score DESC, EntityId, Mention;
+
+

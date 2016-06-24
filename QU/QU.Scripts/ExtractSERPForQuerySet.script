@@ -1,0 +1,139 @@
+﻿//Script GUID:bd098dee-d6ec-4a06-ac9b-2d9aa8a4630c
+//Used for tracking history
+
+
+
+#IF(LOCAL)
+    #DECLARE Queries string = "testq.txt";
+    #DECLARE StartDate string = @"2013-01-02";
+    #DECLARE EndDate string = @"2013-01-02";
+    #DECLARE MarketCode string = @"en-US";
+    #DECLARE Vertical string = "web";
+    REFERENCE @"D:\SLAPI\SearchLogApi.dll";
+    REFERENCE @"D:\SLAPI\Microsoft.Live.Json.dll";
+    REFERENCE @"D:\SLAPI\Serializer.exe";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\btclaD386.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\btjlaD386.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\btklaD433.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\btutilsD230.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\btutilsD430.dll";
+    REFERENCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\FrontEndUtil.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\GetHashUtil.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\WordBreaker.zip";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\ParseQueryUtil.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\autopilot-trick.ini";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\wbDefaultConfig.ini";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\unzip.exe";
+#ELSE
+    #DECLARE Queries string = @@Queries@@;
+    #DECLARE StartDate string = "@@StartDate@@";
+    #DECLARE EndDate string = "@@EndDate@@";
+    #DECLARE MarketCode string = "@@MarketCode@@";
+    #DECLARE Vertical string = "@@Vertical@@";
+    REFERENCE @"/shares/searchDM/distrib/released/SLAPI/SearchLogApi.dll";
+    REFERENCE @"/shares/searchDM/distrib/released/SLAPI/Microsoft.Live.Json.dll";
+    REFERENCE @"/shares/searchDM/distrib/released/SLAPI/Serializer.exe";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/btclaD386.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/btjlaD386.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/btklaD433.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/btutilsD230.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/btutilsD430.dll";
+    REFERENCE @"/shares/searchDM/distrib/released/FrontEndUtil/FrontEndUtil.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/GetHashUtil.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/WordBreaker.zip";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/ParseQueryUtil.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/autopilot-trick.ini";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/wbDefaultConfig.ini";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/unzip.exe";
+#ENDIF
+
+REFERENCE "Utility.dll";
+
+// Read logs
+SlapiPageView =
+#IF (LOCAL)
+    VIEW @"D:\SLAPI\SearchLogPageView.view"
+    PARAMS (CustomInputStream=@"D:\SLAPI\MergedLog_2014_10_10.ss");
+#ELSE
+    VIEW "/shares/searchDM/distrib/released/SLAPI/SearchLogPageView.view"
+    PARAMS (Start = @StartDate, End = @EndDate, UseSample = false, Dataset = "Bing.com");
+#ENDIF
+
+Slapi = 
+SELECT
+  Utility.Normalizer.NormalizeQuery(Query_RawQuery) AS Query,
+  Result.Position AS Position,
+  Result.Item.Clicks.Count AS Clicks,
+  Result.Item.TitleUrl AS Url,
+  Request_ImpressionGuid AS ImpressionGuid
+FROM   
+   SlapiPageView
+CROSS APPLY AddPosition(Page_Entities_WebResults) AS Result
+WHERE Market == @MarketCode AND Vertical == @Vertical
+;
+
+Queries = 
+    EXTRACT 
+#IF(LOCAL)
+Query 
+#ELSE
+@@QuerySchema@@
+#ENDIF
+    FROM @Queries USING DefaultTextExtractor;
+
+Queries = SELECT DISTINCT Utility.Normalizer.NormalizeQuery(Query) AS Query FROM Queries;
+
+Slapi = SELECT Query, Position, Clicks, Url, ImpressionGuid FROM Slapi, Queries WHERE Slapi.Query == Queries.Query;
+
+Slapi = SELECT Query, Utility.Normalizer.NormalizeUrl(Url) AS Url, COUNT(ImpressionGuid) AS Impressions, SUM(Clicks) AS Clicks, AVG(Position) AS Position FROM Slapi;
+
+OUTPUT TO 
+#IF(LOCAL)
+@"testq.out.txt"
+#ELSE
+@@output@@
+#ENDIF
+;
+
+#CS
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Text;
+using ScopeRuntime;
+
+// Pointless class to get around Scope issues with KeyValuePair
+public sealed class ItemWithPosition
+{
+    public static ItemWithPosition Create(WebResult item, int position)
+    {
+        return new ItemWithPosition(item, position);
+    }
+
+    public ItemWithPosition(WebResult item, int position)
+    {
+        this.Item = item;
+        this.Position = position;
+        this.ClickTime = new DateTime(2000,1,1,0,0,0);
+        if (item.Clicks.Count > 0)
+        {
+            this.ClickTime = item.Clicks[0].ClickTime;
+            this.tt = item.Clicks[0].TimeInSecondsFromClickToNextSeenClickOrImpressionLog;
+        }
+    }
+
+    public WebResult Item { get; private set; }
+    public int Position { get; private set; }
+    public DateTime ClickTime {get; private set; }
+    public float? tt {get; private set; }
+}
+
+public static IEnumerable<ItemWithPosition> AddPosition(IEnumerable<WebResult> source)
+{
+    int i = 0;
+    foreach (var item in source)
+        yield return ItemWithPosition.Create(item, ++i); //Note: 1-based indexing
+}
+#ENDCS
+
+

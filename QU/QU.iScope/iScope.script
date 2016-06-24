@@ -1,0 +1,15 @@
+﻿//Script GUID:3b013c05-2b98-4d2e-b82a-1f2cb1ecfaa5
+//Used for tracking history
+
+EntityDocument = SSTREAM "/shares/Knowledge.proxy/prod/EntityDocuments/EntityDocuments.ss2015-12-14_07.ss";
+
+EntityDocument = 
+    SELECT _EntityDocument
+    WHERE _SatoriId == "http://knowledge.microsoft.com/0000cdbf-92ed-f7c2-964b-3a8022cbbf48";
+
+//PROCESS EntityDocument
+//USING GenXMLProcessor();
+
+OUTPUT TO CONSOLE;
+
+

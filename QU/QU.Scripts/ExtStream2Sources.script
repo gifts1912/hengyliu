@@ -1,0 +1,100 @@
+﻿//Script GUID:f6f4beaf-429c-4cc8-a670-0af240cc187a
+//Used for tracking history
+
+REFERENCE "Utility.dll";
+
+#IF(LOCAL)
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\btclaD386.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\btjlaD386.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\btklaD433.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\btutilsD230.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\btutilsD430.dll";
+    REFERENCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\FrontEndUtil.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\GetHashUtil.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\WordBreaker.zip";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\ParseQueryUtil.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\autopilot-trick.ini";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\wbDefaultConfig.ini";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\unzip.exe";
+#ELSE
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/btclaD386.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/btjlaD386.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/btklaD433.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/btutilsD230.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/btutilsD430.dll";
+    REFERENCE @"/shares/searchDM/distrib/released/FrontEndUtil/FrontEndUtil.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/GetHashUtil.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/WordBreaker.zip";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/ParseQueryUtil.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/autopilot-trick.ini";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/wbDefaultConfig.ini";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/unzip.exe";
+#ENDIF
+
+stream = 
+    EXTRACT url, query, score:int, rawScore, satoriId
+#IF(LOCAL)
+    FROM @"D:\Temp\MagicQ\wikianswer.qa.movie.candidates.longest.stream.debug.txt"
+#ELSE
+    FROM @@stream@@
+#ENDIF
+    USING DefaultTextExtractor("-silent")
+;
+
+SourceUrls = 
+    EXTRACT EntityID, SourceUrl
+    FROM
+#IF(LOCAL)
+    @"sourceurl.output.txt"
+#ELSE
+    @@SourceUrls@@
+#ENDIF
+    USING DefaultTextExtractor("-silent")
+;
+
+SourceUrls =
+    SELECT DISTINCT EntityID,
+                    Utility.Normalizer.NormalizeUrl(SourceUrl) AS SourceUrl
+    FROM SourceUrls;
+
+extStream =
+    SELECT SourceUrl AS url,
+           query,
+           score
+    FROM SourceUrls,
+         stream
+    WHERE SourceUrls.EntityID == stream.satoriId
+;
+
+stream =
+    SELECT url,
+           query,
+           score
+    FROM stream;
+
+stream = PROCESS stream
+    USING ExtMovieUrlProcessor;
+
+extStream =
+    SELECT *
+    FROM stream
+    UNION ALL
+    SELECT *
+    FROM extStream;
+
+extStream =
+    SELECT url,
+           query,
+           MAX(score) AS score
+    FROM extStream;
+
+OUTPUT TO 
+#IF(LOCAL)
+    @"D:\Temp\MagicQ\wikianswer.qa.movie.candidates.longest.stream.ext.txt"
+#ELSE
+    @@extStream@@
+#ENDIF
+;
+
+
+

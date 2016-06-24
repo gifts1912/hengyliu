@@ -1,0 +1,77 @@
+﻿//Script GUID:19be2ddc-dd7a-402d-b3e8-6a9368a9b49d
+//Used for tracking history
+
+//Script GUID:83c014f7-d398-4832-8090-6c88dd313438
+//Used for tracking history
+
+#IF(LOCAL)
+    #DECLARE OutputSimQ String = @"d:\Temp\domainSimQByHost.txt";
+    RESOURCE @"D:\Temp\healthTopHost.txt";
+#ELSE
+    RESOURCE @@TopHosts@@;
+    #DECLARE OutputSimQ String = @@OutputSimQ@@;
+#ENDIF
+
+#IF(LOCAL)
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\btclaD386.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\btjlaD386.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\btklaD433.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\btutilsD230.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\btutilsD430.dll";
+    REFERENCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\FrontEndUtil.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\GetHashUtil.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\WordBreaker.zip";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\ParseQueryUtil.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\autopilot-trick.ini";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\wbDefaultConfig.ini";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\unzip.exe";
+#ELSE
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/btclaD386.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/btjlaD386.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/btklaD433.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/btutilsD230.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/btutilsD430.dll";
+    REFERENCE @"/shares/searchDM/distrib/released/FrontEndUtil/FrontEndUtil.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/GetHashUtil.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/WordBreaker.zip";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/ParseQueryUtil.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/autopilot-trick.ini";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/wbDefaultConfig.ini";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/unzip.exe";
+#ENDIF
+
+REFERENCE "Utility.dll";
+USING Utility;
+
+simQ = 
+    EXTRACT leftQ, rightQ, sim, urls
+#IF(LOCAL)
+    FROM @"d:\Temp\coclickPairs.txt"
+    USING Utility.SmartDataExtractor("0", "1", "2", "5")
+#ELSE
+    FROM @@SimQ@@
+    USING Utility.SmartDataExtractor("@@leftQCol@@", "@@rightQCol@@", "@@simCol@@", "@@urlsCol@@")
+#ENDIF
+;
+
+simQ = SELECT Normalizer.NormalizeQuery(leftQ) AS leftQ, 
+                Normalizer.NormalizeQuery(rightQ) AS rightQ,
+                sim,
+                urls
+        FROM simQ;
+
+T0 = 
+    PROCESS simQ
+#IF(LOCAL)
+    USING FilterSimQByTopHostProcessor("healthTopHost.txt")
+#ELSE
+    USING FilterSimQByTopHostProcessor(@@TopHosts@@);
+#ENDIF
+;
+
+T0 = SELECT leftQ, rightQ, sim FROM T0;
+
+OUTPUT T0 TO @OutputSimQ;
+
+
+

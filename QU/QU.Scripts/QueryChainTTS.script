@@ -1,0 +1,263 @@
+﻿//Script GUID:7ded3eae-119f-49c2-8cf3-b8630405c5f2
+//Used for tracking history
+//REFERENCE @"c:\RandomProject\ScopeScripts\GetNoBackTTS\ScopeLibrary\bin\Debug\ScopeLibrary.dll";
+//Script GUID:6356725e-160a-4b2d-a05c-3e0f659a0dcc 
+//Used for tracking history 
+ 
+REFERENCE "ScopeLibrary.dll";
+REFERENCE "ForayUtilities.dll";
+RESOURCE "Triggered.tsv";
+REFERENCE @"/shares/searchWebLoad/RetroIndex/bin/RetroIndexProcessor.dll"; 
+REFERENCE @"/shares/searchWebLoad/RetroIndex/bin/ManagedUrlNormalizer.dll";  
+RESOURCE @"/shares/searchWebLoad/RetroIndex/bin/NativeUrlNormalizer.dll"; 
+ 
+#DECLARE START_DATE string = @"2015-01-24";  
+#DECLARE END_DATE string = @"2015-01-30";  
+#DECLARE Numberline string = @"release";
+#DECLARE FLIGHT_A string = @"rx7576"; 
+#DECLARE FLIGHT_B string = @"rx7577"; 
+#DECLARE OUT_FILE string = "/users/binxjia/analysis/OnlineMetricStudy/Triggered/QueryChain_"; 
+
+MODULE @"/shares/relevance/RMAnalysis/MetricsDevKit/MetricsComputation.module";  // aka.ms/MetricsDevKit
+MODULE @"/shares/relevance/RMAnalysis/MetricsDevKit/TrafficFilters.module"; 
+
+#DECLARE SAT_DWELL int = 1800;
+#DECLARE TTS_CAP int = 600;
+
+#DECLARE OUT_FILE_QUERY string = @OUT_FILE+"_"+@FLIGHT_A+"_"+@FLIGHT_B+"_Query";
+#DECLARE OUT_FILE_STAT string = @OUT_FILE+"_"+@FLIGHT_A+"_"+@FLIGHT_B+"_Statistics";
+#DECLARE OUT_FILE_CHAIN string = @OUT_FILE+"_"+@FLIGHT_A+"_"+@FLIGHT_B+"_fltChain";
+
+USING MS.Internal.Bing.DataMining.RSLAPI2;  
+USING MS.Internal.Bing.DataMining.RSLAPI2.Runtime;   
+ 
+SlapiPageView = 
+        VIEW "/shares/searchDM/distrib/preRelease/RSLAPI2/RSlapi2View.script"   
+        PARAMS 
+        ( 
+            Start = @START_DATE, 
+            End = @END_DATE 
+        ) 
+;
+
+flt =
+    SELECT *
+    FROM SlapiPageView
+    WHERE Vertical == "web" && Market == "en-US" &&(@FLIGHT_A == Page_Experiments[@Numberline].Level || @FLIGHT_B == Page_Experiments[@Numberline].Level);
+
+flt =
+    SELECT *,Page_Experiments[@Numberline].Level AS FlightId
+    FROM flt;
+
+flt =
+    SELECT *,
+           LiveSearch.DataMining.Foray.JsonLog.ForayUtilities.InTable("Triggered.tsv", Query_RawQuery) AS Triggered
+    FROM flt;
+
+flt =
+    REDUCE flt
+    ON ClientId, FlightId
+    PRESORT Request_RequestTime ASC
+    USING TriggeringAnalysisReducer;
+
+fltChain =
+    REDUCE flt
+    USING ReduceClientToQueryChainSession("0.33","1800")
+    PRODUCE ClientId,
+            Query,
+            ChainGuid,
+            ChainBegin,
+            DwellTime,
+            ClickTime,
+            ClickSoFar,
+            FlightId
+    ON ClientId, FlightId
+    PRESORT Request_RequestTime;
+
+Sample =
+    SELECT *,
+                                 (ClickTime-ChainBegin) .TotalSeconds AS RawTTS
+    FROM fltChain
+    WHERE ClientId.GetHashCode() %100 == 0;
+
+OUTPUT Sample
+TO @OUT_FILE_QUERY;
+
+TaskScore = 
+    REDUCE fltChain
+    ON ClientId, FlightId
+    PRESORT ClickSoFar
+    PRODUCE ClientId,
+            FlightId,
+            Metric_TaskRate
+    USING ChainScore("Metric_TaskRate");
+
+TaskScore =
+    SELECT ClientId AS UserId,
+           FlightId,
+           Metric_TaskRate
+    FROM TaskScore;
+
+ChainSatTTS =
+    SELECT ClientId AS UserId,
+           FlightId,
+           Math.Min(@TTS_CAP, FIRST((ClickTime-ChainBegin) .TotalSeconds)) AS Metric_ChainTTS
+    FROM fltChain
+    WHERE DwellTime>@SAT_DWELL OR(DwellTime<0 AND ClickSoFar>0)
+    GROUP BY FlightId,
+             UserId;
+
+_Score =
+    SELECT UserId,
+           FlightId,
+           Metric_TaskRate,
+           Metric_ChainTTS??@TTS_CAP AS Metric_ChainTTS
+    FROM TaskScore
+    LEFT OUTER JOIN ChainSatTTS
+    ON ChainSatTTS.UserId == TaskScore.UserId AND ChainSatTTS.FlightId == TaskScore.FlightId;
+
+Aggr = MetricsComputation.AggregateMetrics
+       (
+           input = _Score
+       );
+ChainSatTTS_ComparisonResults =
+MetricsComputation.CompareFlights
+(
+    input =Aggr.Statistics,
+    Control = @FLIGHT_A,
+    Treatment = @FLIGHT_B
+);
+
+
+ChainAvgDwell =
+    SELECT ClientId AS UserId,
+           FlightId,
+           AVG(IF(DwellTime<0||DwellTime>300, 300, DwellTime)) AS Metric_AvgDwellTime
+    FROM fltChain
+    WHERE ClickSoFar>0
+    GROUP BY FlightId,
+             UserId;
+Aggr = MetricsComputation.AggregateMetrics
+       (
+           input = ChainAvgDwell
+       );
+ChainAvgDwell_ComparisonResults =
+MetricsComputation.CompareFlights
+(
+    input =Aggr.Statistics,
+    Control = @FLIGHT_A,
+    Treatment = @FLIGHT_B
+);
+
+
+ChainSatStats =
+    SELECT DISTINCT 
+                    ClientId AS UserId,
+                    FlightId,
+                    1.0 AS Metric_SatChain
+    FROM fltChain
+    WHERE ClickSoFar>0
+    UNION ALL
+    SELECT DISTINCT 
+                    ClientId AS UserId,
+                    FlightId,
+                    0.0 AS Metric_SatChain
+    FROM fltChain
+    WHERE ClickSoFar == 0;
+
+Aggr = MetricsComputation.AggregateMetrics
+       (
+           input = ChainSatStats
+       );
+ChainSatStats_ComparisonResults =
+MetricsComputation.CompareFlights
+(
+    input =Aggr.Statistics,
+    Control = @FLIGHT_A,
+    Treatment = @FLIGHT_B
+);
+
+
+ChainClicks =
+    SELECT 
+           ClientId AS UserId,
+           FlightId,
+           MAX(ClickSoFar) AS Metric_ClickCount
+    FROM fltChain;
+
+
+Aggr = MetricsComputation.AggregateMetrics
+       (
+           input = ChainClicks
+       );
+ChainClicks_ComparisonResults =
+MetricsComputation.CompareFlights
+(
+    input = Aggr.Statistics,
+    Control = @FLIGHT_A,
+    Treatment = @FLIGHT_B
+);
+
+
+
+Stat =
+    SELECT @FLIGHT_A+" ChainCount" AS Key,
+           ""+COUNT(DISTINCT ChainGuid) AS Value
+    FROM fltChain
+    WHERE FlightId == @FLIGHT_A
+    UNION ALL
+    SELECT @FLIGHT_A+" Clients" AS Key,
+           ""+COUNT(DISTINCT ClientId) AS Value
+    FROM fltChain
+    WHERE FlightId == @FLIGHT_A
+    UNION ALL
+    SELECT @FLIGHT_A+" Sat Chains" AS Key,
+           ""+COUNT() AS Value
+    FROM ChainSatTTS
+    WHERE FlightId == @FLIGHT_A
+    UNION ALL
+    SELECT @FLIGHT_A+" Sat Average TTS" AS Key,
+           ""+AVG(Metric_ChainTTS) AS Value
+    FROM ChainSatTTS
+    WHERE FlightId == @FLIGHT_A
+    UNION ALL
+    SELECT @FLIGHT_B+" ChainCount" AS Key,
+           ""+COUNT(DISTINCT ChainGuid) AS Value
+    FROM fltChain
+    WHERE FlightId == @FLIGHT_B
+    UNION ALL
+    SELECT @FLIGHT_B+" Clients" AS Key,
+           ""+COUNT(DISTINCT ClientId) AS Value
+    FROM fltChain
+    WHERE FlightId == @FLIGHT_B
+    UNION ALL
+    SELECT @FLIGHT_B+" Sat Chains" AS Key,
+           ""+COUNT() AS Value
+    FROM ChainSatTTS
+    WHERE FlightId == @FLIGHT_B
+    UNION ALL
+    SELECT @FLIGHT_B+" Sat Average TTS" AS Key,
+           ""+AVG(Metric_ChainTTS) AS Value
+    FROM ChainSatTTS
+    WHERE FlightId == @FLIGHT_B
+    UNION ALL
+    PROCESS ChainSatTTS_ComparisonResults
+    USING ReduceColumnsToKeyValuePair("MetricName")
+    UNION ALL
+
+    PROCESS ChainSatStats_ComparisonResults
+    USING ReduceColumnsToKeyValuePair("MetricName")
+    UNION ALL
+    PROCESS ChainClicks_ComparisonResults
+    USING ReduceColumnsToKeyValuePair("MetricName")
+    UNION ALL
+    PROCESS ChainAvgDwell_ComparisonResults
+    USING ReduceColumnsToKeyValuePair("MetricName");
+
+
+
+
+OUTPUT Stat
+TO @OUT_FILE_STAT;
+
+// Generated by ScopeStudio, version 1.8.0000.2!

@@ -1,0 +1,37 @@
+﻿//
+//SimilarQuery Pipeline Step 2 Part 2
+//Mine query patterns from similar query candidates.
+//see paper: "Automatically Mining Question Reformulation Patterns from Search Log Data"
+//author: Binxing Jiao
+//
+
+RESOURCE @"stopword.txt";
+
+T1 = EXTRACT leftQ, rightQ, simQ FROM
+#IF(LOCAL)
+@"D:\users\v-bijia\test\SimilarQuery\T3.txt"
+#ELSE
+@@step1@@
+#ENDIF
+USING DefaultTextExtractor;
+
+T2 = PROCESS T1 PRODUCE 
+leftP, rightP, leftQ, rightQ
+USING QueryPatternMiner;
+
+T3 = SELECT leftP, rightP, COUNT() AS freq, JoinQueries(leftQ, rightQ) AS debugInfo FROM T2 
+#IF(LOCAL)
+HAVING freq >= 1
+#ELSE
+HAVING freq >= int.Parse("@@minPatternFreq@@")
+#ENDIF
+ORDER BY freq DESC;
+
+OUTPUT T3 TO 
+#IF(LOCAL)
+@"D:\users\v-bijia\test\SimilarQuery\pattern.txt"
+#ELSE
+@@pattern@@
+#ENDIF
+;
+

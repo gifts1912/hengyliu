@@ -1,0 +1,114 @@
+﻿//Script GUID:ea5ab94b-2296-45df-b31f-e18e65b96154
+//Used for tracking history
+
+
+#IF(LOCAL)
+    REFERENCE @"Microsoft.Live.Json.dll";
+    REFERENCE @"Microsoft.Scope.dll";
+    REFERENCE @"Microsoft.Knowledge.dll";
+
+    #DECLARE satoriStream string = @"SatoriTest.ss";
+    #DECLARE includeAlias string = @"false";
+    #DECLARE output string = @"test.out.txt";
+#ELSE
+    REFERENCE @"/shares/Knowledge/local/prod/Resources/Microsoft.Live.Json.dll";
+    REFERENCE @"/shares/Knowledge/local/prod/Resources/Microsoft.Scope.dll";
+    REFERENCE @"/shares/Knowledge/local/prod/Resources/Microsoft.Knowledge.dll";
+
+    #DECLARE satoriStream string = string.Format(@@SatoriGraphPath@@);
+    #DECLARE includeAlias string = "@@includeAlias@@".ToLower();
+    #DECLARE output string = @@output@@;
+#ENDIF
+
+#IF(LOCAL)
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\btclaD386.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\btjlaD386.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\btklaD433.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\btutilsD230.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\btutilsD430.dll";
+    REFERENCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\FrontEndUtil.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\GetHashUtil.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\WordBreaker.zip";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\ParseQueryUtil.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\autopilot-trick.ini";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\wbDefaultConfig.ini";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\unzip.exe";
+#ELSE
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/btclaD386.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/btjlaD386.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/btklaD433.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/btutilsD230.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/btutilsD430.dll";
+    REFERENCE @"/shares/searchDM/distrib/released/FrontEndUtil/FrontEndUtil.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/GetHashUtil.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/WordBreaker.zip";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/ParseQueryUtil.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/autopilot-trick.ini";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/wbDefaultConfig.ini";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/unzip.exe";
+#ENDIF
+
+REFERENCE "Utility.dll";
+
+USING Microsoft.Knowledge;
+
+satoriGraph = SSTREAM @satoriStream;
+
+filmEntities = 
+    SELECT _S
+    FROM satoriGraph
+    WHERE _P == "http://knowledge.microsoft.com/mso/type.object.type"
+        AND _O == "http://knowledge.microsoft.com/mso/film.film";
+
+satoriGraph = 
+    SELECT _S, _P, _O, _Conf
+    FROM satoriGraph, filmEntities
+    WHERE satoriGraph._S == filmEntities._S;
+
+//entities = 
+//SELECT DISTINCT g1._S AS Id, 
+//       Microsoft.Knowledge.RdfValue.GetValue(g2._O) AS Name
+//FROM satoriGraph AS g1 
+//INNER JOIN satoriGraph AS g2 
+//ON g1._S == g2._S
+//WHERE g1._Conf.StartsWith("en-us:")
+//#IF(@includeAlias == "true")
+//      AND (g2._P == "http://knowledge.microsoft.com/mso/type.object.name"
+//      OR g2._P == "http://knowledge.microsoft.com/mso/type.object.alias")
+//#ELSE
+//      AND g2._P == "http://knowledge.microsoft.com/mso/type.object.name"
+//#ENDIF
+//      AND g2._O.EndsWith("^^mso:text@en");
+
+entities = 
+SELECT DISTINCT g1._S AS Id, 
+        Microsoft.Knowledge.RdfValue.GetValue(g1._O) AS Name, 
+        double.Parse(g1._Conf.Remove(0, "en-us:".Length)) AS Conf
+FROM satoriGraph AS g1 
+WHERE g1._Conf.StartsWith("en-us:")
+#IF(@includeAlias == "true")
+      AND (g1._P == "http://knowledge.microsoft.com/mso/type.object.name"
+      OR g1._P == "http://knowledge.microsoft.com/mso/type.object.alias")
+#ELSE
+      AND g1._P == "http://knowledge.microsoft.com/mso/type.object.name"
+#ENDIF
+      AND g1._O.EndsWith("^^mso:text@en");
+
+entities = 
+    REDUCE entities ON Id
+    PRESORT Conf DESC
+    USING Utility.TopNReducer("2");
+
+entities = 
+    SELECT DISTINCT Id, Name, Conf, Utility.Normalizer.NormalizeUrl(Microsoft.Knowledge.RdfValue.GetValue(satoriGraph._O)) AS RepresentativeUrl
+    FROM entities
+    INNER JOIN satoriGraph
+    ON entities.Id == satoriGraph._S
+    WHERE satoriGraph._P == "http://knowledge.microsoft.com/mso/type.object.representative_source_url"
+        AND satoriGraph._O.EndsWith("^^mso:uri");
+
+entities = SELECT * FROM entities ORDER BY Id, Conf DESC;
+
+OUTPUT TO @output;
+
+

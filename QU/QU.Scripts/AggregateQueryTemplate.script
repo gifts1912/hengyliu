@@ -1,0 +1,41 @@
+﻿//Script GUID:4cf9573f-2081-428b-948e-2e40d18004de
+//Used for tracking history
+
+#IF(LOCAL)
+    #DECLARE MinCnt int = 1;
+#ELSE
+    #DECLARE MinCnt int = @@MinCnt@@;
+#ENDIF
+
+REFERENCE "Utility.dll";
+
+simQ = 
+    EXTRACT leftQ, rightQ
+#IF(LOCAL)
+    FROM @"d:\Temp\simQ.txt"
+    USING Utility.SmartDataExtractor("0", "1")
+#ELSE
+    FROM @@SimQ@@
+    USING Utility.SmartDataExtractor("@@leftQCol@@", "@@rightQCol@@")
+#ENDIF
+;
+
+queries = 
+    SELECT leftQ AS q FROM simQ
+    UNION ALL 
+    SELECT rightQ AS q FROM simQ;
+
+queries = SELECT q FROM queries;
+
+qCnt = 
+    SELECT q, COUNT() AS cnt FROM queries
+    HAVING cnt >= @MinCnt && q.Contains("Slot^")
+    ORDER BY cnt DESC;
+
+OUTPUT TO 
+#IF(LOCAL)
+    @"D:\Temp\qcnt.txt"
+#ELSE
+    @@Template@@
+#ENDIF
+;

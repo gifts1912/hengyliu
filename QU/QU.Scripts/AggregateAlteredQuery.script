@@ -1,0 +1,31 @@
+﻿//Script GUID:ec52d845-7f8b-4067-be7f-d4caee2f7397
+//Used for tracking history
+
+#IF(LOCAL)
+    #DECLARE AlteredQuery string = @"d:\data\q2aq.sort.tsv";
+
+#ELSE
+    #DECLARE AlteredQuery string = @@AlteredQuery@@;
+
+#ENDIF
+
+// Read logs
+T0 =
+    EXTRACT NormQuery, AlteredQuery, RequestTime:DateTime
+    FROM 
+#IF(LOCAL)
+    @"d:\data\q2aq.tsv"
+#ELSE
+    @@Input@@
+#ENDIF
+    USING DefaultTextExtractor("-silent");
+
+T1 = 
+    REDUCE T0 ON NormQuery
+    PRODUCE NormQuery, AlteredQuery, RequestTime
+    PRESORT RequestTime DESC
+    USING OutputFirstReducer;
+
+OUTPUT TO @AlteredQuery;
+
+

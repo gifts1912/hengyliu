@@ -1,0 +1,77 @@
+﻿//Script GUID:58d0b98c-6c03-4a26-b8e5-065c517c6bcd
+//Used for tracking history
+
+clicks = 
+    EXTRACT query, urlHash, url, impressionCnt:long, clickCnt:long, superQBCnt:long, QBCnt:long, satCnt:long
+#IF(LOCAL)
+    FROM @"d:\Temp\healthClickLogs.txt"
+#ELSE
+    FROM @@clickLog@@
+#ENDIF
+    USING DefaultTextExtractor("-silent")
+    HAVING clickCnt > 0;
+
+clicks = 
+    SELECT query, url, impressionCnt, clickCnt
+    FROM clicks;
+
+clicks = 
+    REDUCE clicks ON url
+    PRODUCE query, url, impressionCnt, clickCnt, isSymptom
+    USING SymptomQueryReducer;
+
+symptoms = 
+    SELECT query, url, impressionCnt
+    FROM clicks
+    WHERE isSymptom;
+
+OUTPUT TO 
+#IF(LOCAL)
+    @"d:\Temp\symptoms.txt"
+#ELSE
+    @@symptoms@@
+#ENDIF;
+
+symptomStat = 
+    SELECT COUNT(DISTINCT(query)) AS distQueryCnt, SUM(impressionCnt) AS impressionCnt
+    FROM symptoms;
+
+nonSymptoms = 
+    SELECT query, url, impressionCnt
+    FROM clicks
+    WHERE NOT isSymptom;
+
+OUTPUT TO 
+#IF(LOCAL)
+    @"d:\Temp\nonsymptoms.txt"
+#ELSE
+    @@nonsymptoms@@
+#ENDIF;
+
+nonSymptomStat = 
+    SELECT COUNT(DISTINCT(query)) AS distQueryCnt, SUM(impressionCnt) AS impressionCnt
+    FROM nonSymptoms;
+
+stat = 
+    SELECT * FROM symptomStat
+    UNION ALL
+    SELECT * FROM nonSymptomStat;
+
+OUTPUT TO 
+#IF(LOCAL)
+    @"d:\Temp\stat.txt"
+#ELSE
+    @@stat@@
+#ENDIF;
+
+SELECT Misc.LastLayerOfUrl(url) AS url, impressionCnt FROM symptoms;
+
+SELECT url, SUM(impressionCnt) AS urlImpressionCnt
+ORDER BY urlImpressionCnt DESC;
+OUTPUT TO 
+#IF(LOCAL)
+    @"d:\Temp\symptomUrls.txt"
+#ELSE
+    @@symptomUrls@@
+#ENDIF;
+

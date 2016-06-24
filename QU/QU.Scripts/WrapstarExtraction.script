@@ -1,0 +1,89 @@
+﻿//Script GUID:3326d722-ff4e-46b3-bf88-031c6dfa3088
+//Used for tracking history
+/*
+SCOPESCRIPT 
+PATHOUT_outputStream={out:CosmosPath:outputStream} 
+PARAM_startDate=(startDate:default,"2012_09_04") 
+PARAM_endDate=(endDate:default,"2012_09_04") 
+PARAM_valuePath=(valuePath:default,"/Automotive/Automotive.Cargo_Bed[0]/Automotive.Model.Edition;/Automotive/Automotive.Generation[0]/Automotive.Model.Make;/Automotive/Automotive.Trim_Level[0]/Automotive.Model.Year") 
+PARAM_Model_ID=(Model_ID:default,"3086") 
+PARAM_Model_Version=(Model_Version:default,"9613") 
+PARAM_Model_Ontology=(Model_Ontology:default,"Automotive") 
+PARAM_OutputColumns=(OutputColumns:default,"Make;Edition;Year") 
+VC=(VC)
+*/
+
+#IF(LOCAL)
+#DECLARE inputStream string = @"E:\data\WrapStar\2011_05_01.dat";
+#DECLARE outputStream string = @"E:\data\WrapStar\result.tsv";
+#DECLARE valuePath string = @"/Consumer_Product/Business.Offer[0]/Business.Consumer_Product.Manufacturer";
+#DECLARE Model_ID string = @"5708";
+#DECLARE Model_Version string = @"8497";
+#DECLARE Model_Ontology string = @"Consumer_Product";
+#DECLARE OutputColumns string = @"Manufacturer";
+#ELSE
+#DECLARE startDate string = @@startDate@@;
+#DECLARE endDate string = @@endDate@@;
+#DECLARE inputStream string = @"/shares/searchSTC-SVC/WrapStar/Prod/%Y_%m_%d.dat?date=" + @startDate + "..." + @endDate;
+#DECLARE outputStream string = @@outputStream@@;
+#DECLARE valuePath string = @@valuePath@@;
+#DECLARE Model_ID string = @@Model_ID@@;
+#DECLARE Model_Version string = @@Model_Version@@;
+#DECLARE Model_Ontology string = @@Model_Ontology@@;
+#DECLARE OutputColumns string = @@OutputColumns@@;
+#ENDIF
+
+REFERENCE "/shares/searchSTC-SVC/WrapStar/Distrib/Microsoft.WrapStar.Shared.dll";
+USING Microsoft.WrapStar.Shared;
+
+//
+// WrapStarJsonOutput: original Json output blob for all models
+//    When selected, only [DocumentURL, Timestamp, WrapStarJsonOutput, 
+//    HttpReturnCode, Version] are extracted and the extractor will skip model unrolling
+//    Fastest mode at about 23 MBps to filter out unneccesary extractions.
+//    To continue parsing, call WrapStarJsonParser.ParseJsonV2(WrapStarJsonOutput)
+//    like WrapStarJsonParser.Parse
+//
+// Model_Json: original Json output blob for each model [default] 
+//    Throughput at about 18 MBps. Recommended to filtering by Model_ID and Ontology.
+//
+// Model_Extraction: extracted Json output for the model
+//    Kif schema removed and all attributes flatted. 
+//    Throughput at about 13 MBps. Better avoid this in extractor directly unless 
+//    flattening is required on all inputs. Instead filter out to specified target 
+//    and then call WrapStarJsonParser.FlattenWrapStarJsonV2(Model_Json) to obtain 
+//    flatted results.
+//
+ModelData =
+EXTRACT
+    DocumentURL,
+    HttpReturnCode,
+//    Timestamp,
+//    WrapStarJsonOutput,
+//    Error,
+    ModelCount,
+    Model_ID,
+    Model_Version,
+    Model_Ontology,
+    Model_Latest,
+    Model_Timestamp,
+//    Model_Extraction
+    Model_Json
+
+FROM @inputStream
+
+// The following flags are accepted by the WrapStar extractor:
+// WrapStarExtractor("showError"): 
+//    Includes invalid Json records and outputs the error message to the Error column.
+
+USING WrapStarExtractor
+HAVING Model_ID == @Model_ID AND Model_Version == @Model_Version AND Model_Ontology == @Model_Ontology;
+
+ExtractedAttribute = 
+PROCESS ModelData
+PRODUCE *
+USING WrapStarDataProcessor(@valuePath, @OutputColumns);
+
+OUTPUT TO @outputStream;
+
+

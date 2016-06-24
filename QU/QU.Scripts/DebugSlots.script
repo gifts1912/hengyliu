@@ -1,0 +1,107 @@
+﻿//Script GUID:d2e9b56c-743d-456e-b331-732b88ece1b6
+//Used for tracking history
+
+#IF(LOCAL)
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\btclaD386.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\btjlaD386.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\btklaD433.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\btutilsD230.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\btutilsD430.dll";
+    REFERENCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\FrontEndUtil.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\GetHashUtil.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\WordBreaker.zip";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\ParseQueryUtil.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\autopilot-trick.ini";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\wbDefaultConfig.ini";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\unzip.exe";
+#ELSE
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/btclaD386.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/btjlaD386.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/btklaD433.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/btutilsD230.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/btutilsD430.dll";
+    REFERENCE @"/shares/searchDM/distrib/released/FrontEndUtil/FrontEndUtil.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/GetHashUtil.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/WordBreaker.zip";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/ParseQueryUtil.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/autopilot-trick.ini";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/wbDefaultConfig.ini";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/unzip.exe";
+#ENDIF
+
+#IF(LOCAL)
+    #DECLARE IgnoreIntent Boolean = true;
+#ELSE
+    #DECLARE IgnoreIntent Boolean = true;
+#ENDIF
+
+REFERENCE "QU.Utility.dll";
+RESOURCE "Newtonsoft.Json.dll";
+RESOURCE "Microsoft.IntentEngineApi.Interop.dll";
+REFERENCE "Utility.dll";
+
+Q2Slots = 
+    EXTRACT query, slots
+#IF(LOCAL)
+    FROM @"D:\Temp\slots.txt"
+#ELSE
+    FROM @"/users/binxjia/Temp/binxjia/b6c4d91a-fec5-43ea-8f70-d842d24b5231@@@CreateUniqueCosmosPath@@@36374e8d@@@11-7-2014_5-02-04_AM"
+#ENDIF
+    USING DefaultTextExtractor("-silent");
+
+replaced = 
+    PROCESS Q2Slots
+    PRODUCE query, slots, qWithSlots
+#IF(@IgnoreIntent)
+    USING ReplaceSlotsProcessor("-ignoreintent")
+#ELSE
+    USING ReplaceSlotsProcessor
+#ENDIF
+;
+
+replaced = SELECT query, slots, qWithSlots
+WHERE qWithSlots.Equals("Slot^Ent_desease treatment") OR qWithSlots.Equals("Slot^Ent_desease symptoms");
+
+T0 = SELECT query, slots
+FROM replaced;
+
+OUTPUT T0 TO 
+#IF(LOCAL)
+    @"d:\Temp\debugReplaced.txt"
+#ELSE
+    @"/users/binxjia/Temp/debug.desease.treatment.symptoms.2.txt"
+#ENDIF
+;
+
+replaced =
+    SELECT DISTINCT query
+    FROM replaced;
+
+clicks = 
+    EXTRACT query, urlHash, url, impressionCnt:long, clickCnt:long, superQBCnt:long, QBCnt:long, satCnt:long
+#IF(LOCAL)
+    FROM @"d:\Temp\clicksLog.txt"
+#ELSE
+    FROM @"/projects/aether/binxjia/cd7d179a-405d-4961-b6f5-8f6081c6951f@@@Combine_Bing-IE_click_signal@@@558893a4@@@11-3-2014_11-53-01_PM/e8bcbc58-b092-4a59-8c46-31c4a536baa7"
+#ENDIF
+    USING DefaultTextExtractor("-silent")
+    HAVING clickCnt > 0;
+
+clicks = 
+    SELECT Utility.Normalizer.NormalizeQuery(query) AS query,  url, impressionCnt, clickCnt, superQBCnt, QBCnt, satCnt
+    FROM clicks;
+
+clicks =
+    SELECT clicks.*
+    FROM clicks,
+         replaced
+    WHERE clicks.query == replaced.query;
+
+OUTPUT clicks TO 
+#IF(LOCAL)
+    @"d:\Temp\debugClicks.txt"
+#ELSE
+    @"/users/binxjia/Temp/debug.desease.treatment.symptoms.clicks.2.txt"
+#ENDIF
+;
+

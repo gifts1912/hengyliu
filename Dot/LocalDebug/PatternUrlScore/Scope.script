@@ -1,0 +1,126 @@
+﻿//Script GUID:a1ad5dbe-c520-41aa-8966-681aa3c5dfe2
+//Used for tracking history
+//Script GUID:17d907ee-a59a-47d0-951f-ea5c5965f360
+//Used for tracking history
+
+/*
+SCOPESCRIPT 
+PATHIN_ClickData={in:CosmosPath:ClickData} 
+PATHIN_PatternData={in:CosmosPath:PatternData} 
+PATHOUT_DAScore={out:CosmosPath:QDAScore} 
+PARAM_DropSubDomain=(DropSubDomain:default,false) 
+PARAM_TopNDAScore=(TopNDAScore:default,100) 
+PARAM_QPatternCountCut=(QPatternCountCut:default,50) 
+PARAM_UPatternCountCut=(UPatternCountCut:default,50) 
+PARAM_QUCountCut=(QUCountCut:default,1) 
+VC=vc://(VC:default,cosmos09/relevance)
+*/
+
+#IF(LOCAL)
+    //#DECLARE ClickData string = @"E:\data\PatternDA\qu_small.tsv";
+    //#DECLARE PatternData string = @"E:\data\PatternDA\qpattern_small.tsv";
+    #DECLARE ClickData string = @"D:\demo\clickData.tsv";
+    #DECLARE PatternData string = @"D:\demo\patternData.tsv";
+    #DECLARE DAScore string = @"D:\demo\DAScore.tsv";
+    //#DECLARE UrlSegKeepParts string = "1";
+    #DECLARE DropSubDomain string = "false";
+    #DECLARE TopNDAScore int = 50;
+    #DECLARE QPatternCountCut int = 10;
+    #DECLARE UPatternCountCut int = 10;
+    #DECLARE QUCountCut int = 1;
+#ELSE
+    #DECLARE ClickData string = @"@@ClickData@@";
+    #DECLARE PatternData string = @"@@PatternData@@";
+    #DECLARE DAScore string = @"@@DAScore@@";
+    //#DECLARE UrlSegKeepParts string = @"@@UrlSegKeepParts@@";
+    #DECLARE DropSubDomain string = @"@@DropSubDomain@@";
+    #DECLARE TopNDAScore int = @@TopNDAScore@@;
+    #DECLARE QPatternCountCut int = @@QPatternCountCut@@;
+    #DECLARE UPatternCountCut int = @@UPatternCountCut@@;
+    #DECLARE QUCountCut int = @@QUCountCut@@;
+#ENDIF
+
+#IF(LOCAL)
+    REFERENCE @"D:\demo\ByPatternDAScore_ScopeV0.8\FrontEndUtil.dll";
+    RESOURCE @"D:\demo\ByPatternDAScore_ScopeV0.8\GetHashUtil.dll";
+    RESOURCE @"D:\demo\ByPatternDAScore_ScopeV0.8\url_country_code.txt";
+#ELSE
+    REFERENCE "FrontEndUtil.dll";
+    RESOURCE "GetHashUtil.dll";
+    RESOURCE "url_country_code.txt";
+#ENDIF
+
+data0 = 
+EXTRACT u:string, q:string, clicks:double FROM @ClickData HAVING clicks >= @QUCountCut USING DefaultTextExtractor;
+
+qpattern =
+EXTRACT qpattern:string, q:string FROM @PatternData USING DefaultTextExtractor;
+
+data1 =
+SELECT u,q,qpattern,clicks FROM data0 INNER JOIN qpattern ON data0.q == qpattern.q;
+
+QueryPatternTable = 
+SELECT qpattern, SUM(clicks) AS ClickSum, COUNT(DISTINCT q) AS count HAVING count >= @QPatternCountCut; // qpattern, clickSum, COUNT(DISTINCT q)) based on same pattern. 
+
+//genrate url patterns
+SELECT DISTINCT u FROM data0;
+
+urlpattern =
+PROCESS
+PRODUCE u, upattern
+USING UrlPatternProcessor("2", @DropSubDomain);
+
+OUTPUT urlpattern TO @"D:\demo\urlpattern.tsv";
+
+data2 = 
+SELECT u,q,upattern,qpattern,clicks FROM data1 INNER JOIN urlpattern ON data1.u == urlpattern.u;
+
+//Don't use DISTINCT u here to handle official-site-like urls
+UrlPatternTable = 
+SELECT upattern, SUM(clicks) AS ClickSum, COUNT(u) AS count FROM data2 HAVING count >= @UPatternCountCut;
+
+t0 = 
+SELECT
+    qpattern,
+    upattern,
+    SUM(clicks) AS clicks
+FROM data2
+GROUP BY qpattern,upattern;
+
+qupattern =
+SELECT qpattern,upattern,(double)clicks/QueryPatternTable.ClickSum AS clickProb, ClickSum
+FROM t0 INNER JOIN QueryPatternTable ON t0.qpattern == QueryPatternTable.qpattern;
+
+qupattern_r =
+REDUCE qupattern
+ON qpattern
+USING UrlPatternReducer()
+PRESORT clickProb DESC, upattern;
+
+uqpattern = 
+SELECT upattern,qpattern,(double)clicks/UrlPatternTable.ClickSum AS clickProb, ClickSum
+FROM t0 INNER JOIN UrlPatternTable ON t0.upattern == UrlPatternTable.upattern;
+
+uqpattern_r =
+REDUCE uqpattern
+ON qpattern
+USING UrlPatternReducer()
+PRESORT ClickSum DESC, upattern;
+
+SELECT
+    qpattern,
+    upattern,
+    qupattern_r.clickProb AS q2uProb,
+    uqpattern_r.clickProb AS u2qProb,
+    qupattern_r.ClickSum AS qCount,
+    uqpattern_r.ClickSum AS uCount,
+    (double)qupattern_r.clickProb * uqpattern_r.clickProb * Math.Log(uqpattern_r.ClickSum) AS score
+FROM qupattern_r, uqpattern_r
+WHERE qupattern_r.qpattern == uqpattern_r.qpattern AND qupattern_r.upattern == uqpattern_r.upattern;
+
+REDUCE
+ON qpattern
+USING TopNReducer(@TopNDAScore)
+PRESORT score DESC;
+
+OUTPUT TO @DAScore;

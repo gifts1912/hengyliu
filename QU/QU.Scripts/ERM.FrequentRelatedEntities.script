@@ -1,0 +1,108 @@
+﻿//Script GUID:8b774bf0-01d9-411a-9012-3a5dbceffa0b
+//Used for tracking history
+
+REFERENCE @"Microsoft.Live.Json.dll";
+REFERENCE @"Microsoft.Scope.dll";
+REFERENCE @"Microsoft.Knowledge.dll";
+
+#IF(LOCAL)
+    #DECLARE satoriStream string = @"SatoriTest.ss";
+    #DECLARE minCnt int = 0;
+#ELSE
+    #DECLARE satoriStream string = string.Format(@@SatoriGraphPath@@);
+    #DECLARE minCnt int = @@minCnt@@;
+#ENDIF
+
+pairEntity = 
+    EXTRACT q1, q2, span1, index1, sid1, score1:double, stype1, span2, index2, sid2, score2:double, stype2
+    FROM
+#IF(LOCAL)
+    "pairEntities.txt"
+#ELSE
+    @@pairEntities@@
+#ENDIF
+    USING DefaultTextExtractor("-silent")
+    HAVING NOT string.IsNullOrEmpty(stype1) 
+            AND NOT string.IsNullOrEmpty(stype2)
+            AND stype1 != "internet.top_level_domain"
+            AND stype2 != "internet.top_level_domain" 
+            AND sid1 != sid2;
+
+pairEntity = 
+    SELECT q1, q2, span1, index1, "http://knowledge.microsoft.com/" + sid1 AS sid1, stype1, 
+            span2, index2, "http://knowledge.microsoft.com/" + sid2 AS sid2, stype2
+    FROM pairEntity;
+
+entityOfInterest = 
+    SELECT DISTINCT sid1 AS sid FROM pairEntity
+    UNION DISTINCT
+    SELECT DISTINCT sid2 AS sid FROM pairEntity;
+
+satoriGraph = SSTREAM @satoriStream;
+
+satoriGraph = 
+    SELECT _S, _P, _O
+    FROM satoriGraph, entityOfInterest
+    WHERE satoriGraph._S == entityOfInterest.sid;
+
+// only entities with names are considered.
+entityNames = 
+    SELECT _S, Microsoft.Knowledge.RdfValue.GetValue(_O) AS name
+    FROM satoriGraph
+    WHERE satoriGraph._P == "http://knowledge.microsoft.com/mso/type.object.name"
+        AND satoriGraph._O.EndsWith("^^mso:text@en");
+
+entityNames = SELECT DISTINCT _S FROM entityNames;
+
+satoriGraph = 
+    SELECT _S, _O
+    FROM satoriGraph
+    WHERE _O.StartsWith("http://knowledge.microsoft.com/") AND _S.StartsWith("http://knowledge.microsoft.com/");
+
+satoriGraph = 
+    SELECT satoriGraph._S AS e1, satoriGraph._O AS e2
+    FROM satoriGraph, entityNames
+    WHERE satoriGraph._S == entityNames._S;
+
+satoriPair = 
+    SELECT e1, e2 
+    FROM satoriGraph, entityNames
+    WHERE satoriGraph.e2 == entityNames._S;
+
+//OUTPUT TO @"satoriPair.txt";
+
+pair = 
+    SELECT q1, q2, span1, index1, sid1, stype1, span2, index2, sid2, stype2
+    FROM pairEntity, satoriPair
+    WHERE pairEntity.sid1 == satoriPair.e1 AND pairEntity.sid2 == satoriPair.e2;
+
+pair = 
+    SELECT Utility.SimpleNormalizeQuery(q1) AS q1, Utility.SimpleNormalizeQuery(q2) AS q2,
+        span1, index1, sid1, stype1, span2, index2, sid2, stype2
+    FROM pair;
+
+OUTPUT pair TO 
+#IF(LOCAL)
+    "pairRelatedEntities.txt"
+#ELSE
+    @@pairRelatedEntities@@
+#ENDIF
+;
+
+patternPair = 
+    SELECT q1.Replace(span1, stype1) AS p1, q2.Replace(span2, stype2) AS p2
+    FROM pair;
+
+patternPair = 
+    SELECT p1, p2, COUNT() AS cnt FROM patternPair
+    HAVING cnt >= @minCnt;
+
+SELECT * FROM patternPair ORDER BY cnt DESC;
+OUTPUT TO 
+#IF(LOCAL)
+    "patternRelatedEntities.txt"
+#ELSE
+    @@patternRelatedEntities@@
+#ENDIF
+;
+

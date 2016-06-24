@@ -1,0 +1,88 @@
+﻿//Script GUID:db700dc3-de6e-474a-aef5-663d053792aa
+//Used for tracking history
+
+REFERENCE "Utility.dll";
+
+#IF(LOCAL)
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\btclaD386.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\btjlaD386.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\btklaD433.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\btutilsD230.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\btutilsD430.dll";
+    REFERENCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\FrontEndUtil.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\GetHashUtil.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\WordBreaker.zip";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\ParseQueryUtil.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\autopilot-trick.ini";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\wbDefaultConfig.ini";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\unzip.exe";
+    #DECLARE MinNGram string = "4";
+    #DECLARE MaxNGram string = "8";
+#ELSE
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/btclaD386.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/btjlaD386.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/btklaD433.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/btutilsD230.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/btutilsD430.dll";
+    REFERENCE @"/shares/searchDM/distrib/released/FrontEndUtil/FrontEndUtil.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/GetHashUtil.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/WordBreaker.zip";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/ParseQueryUtil.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/autopilot-trick.ini";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/wbDefaultConfig.ini";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/unzip.exe";
+    #DECLARE MinNGram string = "@@MinNGram@@";
+    #DECLARE MaxNGram string = "@@MaxNGram@@";
+#ENDIF
+
+stream = 
+    EXTRACT url, ngram, score:int
+    FROM
+#IF(LOCAL)
+    @"D:\binxjia\temp\MIStream.txt"
+#ELSE
+    @@stream@@
+#ENDIF
+    USING DefaultTextExtractor;
+
+queries = 
+    EXTRACT query
+    FROM
+#IF(LOCAL)
+    @"D:\binxjia\temp\queries.txt"
+#ELSE
+    @@queries@@
+#ENDIF
+    USING DefaultTextExtractor;
+
+queries = 
+    SELECT Utility.Normalizer.NormalizeQuery(query) AS query 
+    FROM queries;
+
+q2ngram = 
+    PROCESS queries
+    USING SplitNGramProcessor(@MinNGram, @MaxNGram);
+
+cm =
+    SELECT url,
+           query,
+           ngram,
+           score
+    FROM stream,
+         q2ngram
+    WHERE stream.ngram == q2ngram.ngram;
+
+cm =
+    SELECT query,
+           url,
+           SUM(score) AS score
+    FROM cm;
+
+OUTPUT TO
+#IF(LOCAL)
+    @"D:\binxjia\temp\cm.txt"
+#ELSE
+    @@output@@
+#ENDIF
+;
+

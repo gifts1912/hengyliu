@@ -1,0 +1,74 @@
+﻿//Script GUID:ab1d1443-e3e5-449d-b2e8-e64f50ee0e4d
+//Used for tracking history
+
+REFERENCE "Utility.dll";
+
+#IF(LOCAL)
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\btclaD386.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\btjlaD386.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\btklaD433.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\btutilsD230.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\btutilsD430.dll";
+    REFERENCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\FrontEndUtil.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\GetHashUtil.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\WordBreaker.zip";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\ParseQueryUtil.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\autopilot-trick.ini";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\wbDefaultConfig.ini";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\unzip.exe";
+    #DECLARE Separator string = @"#R##N#";
+    #DECLARE SplitNGram bool = true;
+    #DECLARE MinNGram string = "4";
+    #DECLARE MaxNGram string = "10";
+#ELSE
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/btclaD386.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/btjlaD386.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/btklaD433.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/btutilsD230.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/btutilsD430.dll";
+    REFERENCE @"/shares/searchDM/distrib/released/FrontEndUtil/FrontEndUtil.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/GetHashUtil.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/WordBreaker.zip";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/ParseQueryUtil.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/autopilot-trick.ini";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/wbDefaultConfig.ini";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/unzip.exe";
+    #DECLARE Separator string = "@@Separator@@";
+    #DECLARE SplitNGram bool = bool.Parse("@@SplitNGram@@");
+    #DECLARE MinNGram string = "@@MinNGram@@";
+    #DECLARE MaxNGram string = "@@MaxNGram@@";
+#ENDIF
+
+SIStream = 
+    EXTRACT url, inst
+    FROM
+#IF(LOCAL)
+    @"D:\Temp\SIStream.txt"
+#ELSE
+    @@SIStream@@
+#ENDIF
+    USING DefaultTextExtractor;
+
+SIStream =
+    SELECT Utility.Normalizer.NormalizeUrl(url) AS url,
+           inst
+    FROM SIStream;
+
+MIStream =
+    PROCESS SIStream
+    USING SplitInstanceProcessor(@Separator);
+
+#IF(@SplitNGram)
+MIStream = 
+    PROCESS MIStream
+    USING SplitNGramProcessor(@MinNGram, @MaxNGram);
+#ENDIF
+
+OUTPUT TO
+#IF(LOCAL)
+    @"D:\Temp\MIStream.txt"
+#ELSE
+    @@output@@
+#ENDIF
+;
+

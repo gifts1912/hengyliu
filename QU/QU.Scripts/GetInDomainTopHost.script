@@ -1,0 +1,111 @@
+﻿//Script GUID:48b56e5e-6935-4155-83c5-7225d073842a
+//Used for tracking history
+
+#IF(LOCAL)
+    #DECLARE minSatCntPerHost int = 1;
+    #DECLARE topN int = 1000;
+    #DECLARE output string = @"d:\Temp\health.hosts.txt";
+    #DECLARE topHosts string = @"d:\Temp\health.tophosts.txt";
+#ELSE
+    #DECLARE minSatCntPerHost int = @@minSatCntPerHost@@;
+    #DECLARE topN int = @@topN@@;
+    #DECLARE output string = @@coclickedPairs@@;
+    #DECLARE topHosts string = @@topHosts@@;
+#ENDIF
+
+#IF(LOCAL)
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\btclaD386.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\btjlaD386.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\btklaD433.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\btutilsD230.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\btutilsD430.dll";
+    REFERENCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\FrontEndUtil.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\GetHashUtil.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\WordBreaker.zip";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\ParseQueryUtil.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\autopilot-trick.ini";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\wbDefaultConfig.ini";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\unzip.exe";
+#ELSE
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/btclaD386.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/btjlaD386.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/btklaD433.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/btutilsD230.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/btutilsD430.dll";
+    REFERENCE @"/shares/searchDM/distrib/released/FrontEndUtil/FrontEndUtil.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/GetHashUtil.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/WordBreaker.zip";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/ParseQueryUtil.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/autopilot-trick.ini";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/wbDefaultConfig.ini";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/unzip.exe";
+#ENDIF
+
+REFERENCE "Utility.dll";
+USING Utility;
+
+clicks = 
+    EXTRACT query, urlHash, url, impressionCnt:long, clickCnt:long, superQBCnt:long, QBCnt:long, satCnt:long
+#IF(LOCAL)
+    FROM @"d:\Temp\clicksLog.txt"
+#ELSE
+    FROM @@clickLog@@
+#ENDIF
+    USING DefaultTextExtractor("-silent")
+    HAVING satCnt > 0;
+
+clicks = 
+    SELECT 
+        Normalizer.NormalizeQuery(query) AS query, 
+        Normalizer.GetUrlHost(Normalizer.NormalizeUrl(url)) AS host, 
+        satCnt
+    FROM clicks;
+
+allHostAuthority = SELECT host, SUM(satCnt) AS satCnt FROM clicks;
+
+domainQ = EXTRACT q, cnt1, cnt2
+#IF(LOCAL)
+    FROM @"d:\Temp\domainQ.txt"
+#ELSE
+    FROM @@DomainQ@@
+#ENDIF
+    USING DefaultTextExtractor;
+
+domainQ = 
+    SELECT Normalizer.NormalizeQuery(q) AS q
+    FROM domainQ;
+
+domainQ = SELECT DISTINCT q FROM domainQ;
+
+hostAuthority = 
+    SELECT host, satCnt
+    FROM domainQ, clicks
+    WHERE domainQ.q == clicks.query;
+
+hostAuthority = 
+    SELECT host, SUM(satCnt) AS satCnt
+    FROM hostAuthority
+    HAVING satCnt >= @minSatCntPerHost;
+
+hostAuthority = 
+    SELECT host, satCnt, allHostAuthority.satCnt AS totalSatCnt
+    FROM allHostAuthority, hostAuthority
+    WHERE hostAuthority.host == allHostAuthority.host;
+
+hostAuthority = 
+    SELECT host, satCnt, totalSatCnt, (float)satCnt / (float) totalSatCnt AS percent
+    FROM hostAuthority;
+
+topHosts = SELECT host, satCnt, percent FROM hostAuthority;
+
+hostAuthority = 
+    SELECT host, satCnt, percent FROM hostAuthority
+    ORDER BY percent DESC, satCnt DESC;
+OUTPUT TO @output;
+
+topHosts = 
+    SELECT TOP @topN host, satCnt, percent
+    FROM topHosts
+    ORDER BY percent DESC, satCnt DESC;
+OUTPUT TO @topHosts;
+

@@ -1,0 +1,174 @@
+﻿#IF(LOCAL)
+    #DECLARE ClickData string = @"D:\demo\clickData.tsv";
+    #DECLARE PatternData string = @"D:\demo\patternData.tsv";
+    #DECLARE QPatternDAScore string = @"D:\demo\QPatternUPattern.tsv";
+    #DECLARE QDAScore string = @"D:\demo\QUpattern.tsv";
+    #DECLARE UrlSegKeepParts int = 0;
+    #DECLARE DropSubDomain bool = false;
+    #DECLARE TopNDAScore int = 0;
+    #DECLARE QPatterClickCountCut int = 0;
+    #DECLARE QClickCountCut int = 0;
+#ELSE
+    #DECLARE ClickData string = @"@@ClickData@@";
+    #DECLARE PatternData string = @"@@PatternData@@";
+    #DECLARE QPatternDAScore string = @"@@QPatternDAScore@@";
+    #DECLARE QDAScore string = @"@@QDAScore@@";
+    #DECLARE UrlSegKeepParts int = @@UrlSegKeepParts@@;
+    #DECLARE DropSubDomain bool = @@DropSubDomain@@;
+    #DECLARE TopNDAScore int = @@TopNDAScore@@;
+    #DECLARE QPatterClickCountCut int = @@QPatterClickCountCut@@;
+    #DECLARE QClickCountCut int = @@QClickCountCut@@;
+#ENDIF
+
+#IF(LOCAL)
+    REFERENCE @"C:\Users\hengyliu\hengyliu\Dot\LocalDebug\PatternDA0.4\bin\FrontEndUtil.dll";
+    RESOURCE @"C:\Users\hengyliu\hengyliu\Dot\LocalDebug\PatternDA0.4\bin\GetHashUtil.dll";
+#ELSE
+    REFERENCE "FrontEndUtil.dll";
+    RESOURCE "GetHashUtil.dll";
+#ENDIF
+
+data = 
+EXTRACT u:string, q:string, clicks:double, clickProb:double, clickSum:double, clickUrlSum:double
+FROM @ClickData
+USING DefaultTextExtractor;
+
+
+qu0 = 
+SELECT
+    q,
+    u,
+    clickProb,
+    (double)clickProb * clickUrlSum AS clickUrlSum  //more distinct url have more bigger clickProb; clickUrlSum: number urls of the same query; summary: when have a more distinct and less distinct query the result will be bigger.
+    //clickUrlSum
+HAVING u != "";
+
+qu = 
+SELECT
+    q,
+    u,
+    SUM(clickProb) AS clickProb,
+    SUM(clickUrlSum) AS clickUrlSum
+GROUP BY q,u;
+
+UrlTable = 
+SELECT u, SUM(clickUrlSum) AS clickQuerySum; //sum clickUrlSum of different query of the same url; summary: clickQuerySum represent the url feature.
+
+uq = 
+SELECT
+    u,
+    q,
+    //(double)qu.clickProb * clickUrlSum / UrlTable.clickQuerySum AS clickProb,
+    //(double)qu.clickProb * clickUrlSum AS clickQuerySum
+    (double)clickUrlSum / UrlTable.clickQuerySum AS clickProb, //<u, q> pair clickUrlSum prob in all the queries that click the same url.
+    clickQuerySum
+FROM qu,UrlTable
+WHERE qu.u == UrlTable.u;
+
+#IF(LOCAL)
+OUTPUT TO @"D:\demo\_uq.tsv";
+#ENDIF
+
+qu_filtered = 
+SELECT
+    q,
+    u,
+    clickProb,
+    clickUrlSum
+FROM qu
+WHERE clickUrlSum >= @QClickCountCut;
+
+SELECT
+    q,
+    u,
+    (double)qu_filtered.clickProb * uq.clickProb * Math.Sqrt(uq.clickQuerySum) * 100 AS score
+FROM qu_filtered, uq
+WHERE qu_filtered.q == uq.q AND qu_filtered.u == uq.u;
+
+REDUCE
+ON q
+USING TopNReducer(@TopNDAScore)
+PRESORT score DESC;
+
+OUTPUT TO @QDAScore;
+
+//Generate pattern DA score files
+
+qpattern =
+EXTRACT pattern:string, q:string
+FROM @PatternData
+USING DefaultTextExtractor;
+
+qu_pattern0 = 
+SELECT
+    qpattern.pattern AS q,
+    u,
+    clickProb,
+    clickUrlSum
+FROM qu, qpattern
+WHERE qu.q == qpattern.q;
+
+qu_pattern1 = 
+SELECT
+    q,
+    SUM(clickUrlSum) AS PatternClickSum
+FROM qu_pattern0
+HAVING PatternClickSum >= @QPatterClickCountCut;
+
+qu_pattern2 = 
+SELECT
+    q,
+    u,
+    SUM(clickUrlSum) AS PatternClickUrlSum
+FROM qu_pattern0
+GROUP BY q,u;
+
+qu_pattern = 
+SELECT
+    q,
+    u,
+    (double)PatternClickUrlSum/PatternClickSum AS clickProb,
+    PatternClickSum AS clickUrlSum
+FROM qu_pattern1,qu_pattern2
+WHERE qu_pattern1.q == qu_pattern2.q;
+
+#IF(LOCAL)
+OUTPUT TO @"D:\demo\_qu_pattern.tsv";
+#ENDIF
+
+uq_pattern0 = 
+SELECT
+    u,
+    qpattern.pattern AS q,
+    clickProb,
+    clickQuerySum
+FROM uq, qpattern
+WHERE uq.q == qpattern.q;
+
+uq_pattern = 
+SELECT
+    u,
+    q,
+    SUM(clickProb) AS clickProb,
+    clickQuerySum
+FROM uq_pattern0
+GROUP BY u,q,clickQuerySum;
+
+#IF(LOCAL)
+OUTPUT TO @"D:\demo\_uq_pattern.tsv";
+#ENDIF
+
+SELECT
+    q,
+    u,
+    (double)qu_pattern.clickProb * uq_pattern.clickProb * Math.Sqrt(uq_pattern.clickQuerySum) * 100 AS score
+FROM qu_pattern, uq_pattern
+WHERE qu_pattern.q == uq_pattern.q AND qu_pattern.u == uq_pattern.u;
+
+REDUCE
+ON q
+USING TopNReducer(@TopNDAScore)
+PRESORT score DESC;
+
+OUTPUT TO @QPatternDAScore;
+

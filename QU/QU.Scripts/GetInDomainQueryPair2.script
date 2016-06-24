@@ -1,0 +1,141 @@
+﻿//Script GUID:17f20fb5-5fb1-41a9-84d3-367b423498d4
+//Used for tracking history
+
+#IF(LOCAL)
+    #DECLARE goodQueryMinFreq int = 10;
+    #DECLARE output string = @"d:\Temp\coclickPairs.txt";
+#ELSE
+    #DECLARE goodQueryMinFreq int = @@goodQueryMinFreq@@;
+    #DECLARE output string = @@coclickedPairs@@;
+#ENDIF
+
+#IF(LOCAL)
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\btclaD386.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\btjlaD386.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\btklaD433.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\btutilsD230.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\btutilsD430.dll";
+    REFERENCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\FrontEndUtil.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\GetHashUtil.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\WordBreaker.zip";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\ParseQueryUtil.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\autopilot-trick.ini";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\wbDefaultConfig.ini";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\unzip.exe";
+#ELSE
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/btclaD386.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/btjlaD386.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/btklaD433.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/btutilsD230.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/btutilsD430.dll";
+    REFERENCE @"/shares/searchDM/distrib/released/FrontEndUtil/FrontEndUtil.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/GetHashUtil.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/WordBreaker.zip";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/ParseQueryUtil.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/autopilot-trick.ini";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/wbDefaultConfig.ini";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/unzip.exe";
+#ENDIF
+
+REFERENCE "Utility.dll";
+
+clicks = 
+    EXTRACT query, col1, col2, impressionCnt:long, clickCnt:long, superQBCnt:long, QBCnt:long, satCnt:long
+#IF(LOCAL)
+    FROM @"d:\Temp\clicksLog.txt"
+#ELSE
+    FROM @@clickLog@@
+#ENDIF
+    USING DefaultTextExtractor("-silent");
+
+// Deal with IETB formatted log.
+IEClicks = 
+    SELECT query, col1 AS url, impressionCnt, clickCnt, superQBCnt, QBCnt, satCnt
+    FROM clicks
+    WHERE Misc.IsDateTime(col2);
+
+BingClicks = 
+    SELECT query, col2 AS url, impressionCnt, clickCnt, superQBCnt, QBCnt, satCnt
+    FROM clicks
+    WHERE NOT Misc.IsDateTime(col2);
+
+clicks = 
+    SELECT query, url, impressionCnt, clickCnt, superQBCnt, QBCnt, satCnt FROM IEClicks
+    UNION ALL
+    SELECT query, url, impressionCnt, clickCnt, superQBCnt, QBCnt, satCnt FROM BingClicks;
+
+clicks = 
+    SELECT Utility.Normalizer.NormalizeQuery(query) AS query, 
+        Utility.Normalizer.GetUrlHash(url) AS urlHash, 
+        Utility.Normalizer.NormalizeUrl(url) AS url,
+        impressionCnt, clickCnt, superQBCnt, QBCnt, satCnt
+    FROM clicks;
+
+clicks = 
+    SELECT 
+        query, urlHash, FIRST(url) AS url, SUM(impressionCnt) AS impressionCnt, 
+        SUM(clickCnt) AS clickCnt, SUM(superQBCnt) AS superQBCnt, SUM(QBCnt) AS QBCnt, SUM(satCnt) AS satCnt
+    FROM clicks;
+
+domainQ = EXTRACT q, qsDistinctQueryCount:long, qsQueryViewCount:long
+#IF(LOCAL)
+    FROM @"d:\Temp\domainQ.txt"
+#ELSE
+    FROM @@DomainQ@@
+#ENDIF
+    USING DefaultTextExtractor("-silent");
+
+domainQ = 
+    SELECT Utility.Normalizer.NormalizeQuery(q) AS query, qsQueryViewCount AS queryFreq
+    FROM domainQ;
+
+domainQ = 
+    SELECT query, SUM(queryFreq) AS queryFreq
+    FROM domainQ;
+
+clicks = 
+    SELECT query, urlHash, url, impressionCnt, clickCnt, superQBCnt, QBCnt, satCnt, queryFreq
+    FROM clicks, domainQ
+    WHERE clicks.query == domainQ.query;
+
+output1 = 
+    SELECT query, urlHash, url, impressionCnt, clickCnt, superQBCnt, QBCnt, satCnt
+    FROM clicks;
+OUTPUT TO
+#IF(LOCAL)
+    @"d:\Temp\domainClicks2.txt"
+#ELSE
+    @@DomainClicks@@
+#ENDIF
+;
+
+clicks = 
+    SELECT query, url, impressionCnt, clickCnt, satCnt, queryFreq
+    FROM clicks
+    WHERE clickCnt > 0;
+
+T1 = 
+    REDUCE clicks ON url
+    PRODUCE leftQ, rightQ, url, leftQFreq, rightQFreq, leftQUFreq, rightQUFreq, leftQUSatCnt, rightQUSatCnt
+    PRESORT satCnt DESC, queryFreq DESC
+#IF(LOCAL)
+    USING CoclickedQueryPairReducer("10", "1000000", "50")
+#ELSE
+    USING CoclickedQueryPairReducer("@@goodQueryMinFreq@@", "@@hotQueryMinFreq@@", "@@maxQueriesPerBucket@@")
+#ENDIF
+;
+
+T2 = 
+    SELECT leftQ, rightQ, 
+        COUNT() AS urlCnt,
+        FIRST(leftQFreq) AS leftQFreq, 
+        FIRST(rightQFreq) AS rightQFreq, 
+        JoinUrl(url) AS urls, 
+        JoinFreqClick(leftQUFreq, leftQUSatCnt) AS leftFreqClick,
+        JoinFreqClick(rightQUFreq, rightQUSatCnt) AS rightFreqClick
+    FROM T1;
+
+OUTPUT TO @output;
+
+
+

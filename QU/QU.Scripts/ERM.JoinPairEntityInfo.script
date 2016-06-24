@@ -1,0 +1,57 @@
+﻿//Script GUID:adbe62f9-be94-4522-8564-2b7407db087c
+//Used for tracking history
+
+#IF(LOCAL)
+    #DECLARE geethresh double = 0.3;
+#ELSE
+    #DECLARE geethresh double = @@geethresh@@;
+#ENDIF
+
+origPair = 
+    EXTRACT q1, q2
+    FROM 
+#IF(LOCAL)
+    "pair.txt"
+#ELSE
+    @@origPair@@
+#ENDIF
+    USING DefaultTextExtractor("-silent");
+
+snPair =
+    SELECT SimpleTextNormalizer.RemoveMarketWord(SimpleTextNormalizer.Denormalize(q1)) AS q1,
+           SimpleTextNormalizer.RemoveMarketWord(SimpleTextNormalizer.Denormalize(q2)) AS q2
+    FROM origPair;
+
+entities = 
+    EXTRACT q, nq, span, index:int, name, sid, score:double, stype, type, stypeid, chunks
+    FROM 
+#IF(LOCAL)
+    "geeout.txt"
+#ELSE
+    @@geeout@@
+#ENDIF
+    USING DefaultTextExtractor("-silent")
+    HAVING score > @geethresh AND NOT string.IsNullOrEmpty(stype) AND stype != "internet.top_level_domain";
+
+snPair = 
+    SELECT q1, q2, nq AS nq1, span AS span1, index AS index1, sid AS sid1, score AS score1, stype AS stype1
+    FROM entities, snPair
+    WHERE entities.q == snPair.q1;
+
+snPair = 
+    SELECT snPair.*, nq AS nq2, span AS span2, index AS index2, sid AS sid2, score AS score2, stype AS stype2
+    FROM entities, snPair
+    WHERE entities.q == snPair.q2;
+
+pair = 
+    SELECT nq1, nq2, span1, index1, sid1, score1, stype1, span2, index2, sid2, score2, stype2
+    FROM snPair;
+
+OUTPUT TO
+#IF(LOCAL)
+    "pairEntities.txt"
+#ELSE
+    @@pairEntities@@
+#ENDIF
+;
+

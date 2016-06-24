@@ -1,0 +1,909 @@
+﻿REFERENCE "Utility.dll";
+REFERENCE "FrontEndUtil.dll";
+RESOURCE "GetHashUtil.dll";
+REFERENCE "System.Xml.dll";
+REFERENCE "System.Xml.Linq.dll";
+REFERENCE "Relevance.ScopeLib.dll";
+RESOURCE "Relevance.ScopeLib.pdb",
+         "Relevance.ScopeLib.xml";
+USING Microsoft.SegmentRelevance.ScopeLib;
+
+//In1 = EXTRACT Pattern:string, Count:int FROM @"D:\users\v-bijia\MS.TwentySeg\TwentySeg\bin\Debug\patterns.txt" USING DefaultTextExtractor;
+//In2 = EXTRACT kp:string FROM @"D:\users\v-bijia\MS.TwentySeg\TwentySeg\bin\Debug\cout2.txt" USING DefaultTextExtractor;
+//
+//Out1 = SELECT DISTINCT Regex.Replace(kp.Replace("MAGIC_E_name", "").Replace("XMAININTENT", "").Trim(), @"\s+", " ") AS kp FROM In1 HAVING !string.IsNullOrEmpty(kp);
+//Out2 = SELECT DISTINCT Regex.Replace(kp.Replace("Slot^Ent_entity", "").Replace("XMAININTENT", "").Trim(), @"\s+", " ") AS kp FROM In2 HAVING !string.IsNullOrEmpty(kp);
+//
+//Out2 = SELECT kp, "1" AS personintent FROM Out2;
+//Out2 = SELECT Out1.kp, Out2.personintent FROM Out1 OUTER JOIN Out2 ON Out1.kp == Out2.kp;
+//Out2 = SELECT * FROM Out2 ORDER BY personintent ASC;
+
+//Out1 = SELECT Misc.ReplaceIntent(Pattern) AS PatternWithX, Pattern, Count FROM In1 WHERE Count >= 10; 
+//Out2 = SELECT Regex.Replace(Misc.ReplaceStopword(PatternWithX), @"\b(wife|husband|spouse|wive)s?\b", "MAGIC_I_spouse") AS PatternWithX, Pattern, Count, PatternWithX.Contains("Cons_") ? 1 : 0 AS WithConstraint FROM Out1 WHERE (!PatternWithX.Contains("B_Entity") && !PatternWithX.Contains("IFact_") && !PatternWithX.Contains("IEvent_") && !PatternWithX.Contains("Other_")) ORDER BY Count DESC;
+//
+//Out1 = PROCESS Out2 USING SplitProcessor;
+//Out1 = SELECT Term, COUNT(Term) AS UniqCount, SUM(Count) AS Count FROM Out1 ORDER BY UniqCount DESC, Count DESC;
+//
+//OUTPUT Out2 TO @"test2.txt";
+//OUTPUT Out1 TO @"test1.txt";
+
+/* Gen p2rp.txt
+In1 = 
+    EXTRACT rp, cnt:int, misc 
+    FROM @"D:\users\v-bijia\MS.TwentySeg\TwentySeg\bin\Debug\p.txt" 
+    USING DefaultTextExtractor;
+
+In2 =
+    EXTRACT rp,
+            ps
+    FROM @"D:\users\v-bijia\MS.TwentySeg\TwentySeg\bin\Debug\rp2p.txt"
+    USING DefaultTextExtractor;
+
+In2 =
+    SELECT rp.Replace("MAGIC_E_name", "E.Person") AS rp,
+           ps.Replace("MAGIC_E_name", "E.Person") AS ps
+    FROM In2;
+
+In2 =
+    PROCESS In2
+    USING SplitProcessor;
+
+Out1 =
+    SELECT In1.rp,
+           In2.p, In2.cnt
+    FROM In1,
+         In2
+    WHERE In1.rp == In2.rp;
+
+Out1 =
+    SELECT p,
+           rp,
+           cnt
+    FROM Out1
+    ORDER BY cnt DESC;
+
+OUTPUT Out1
+TO @"D:\users\v-bijia\MS.TwentySeg\TwentySeg\bin\Debug\allp.txt";
+
+*/
+
+/*
+In1 = EXTRACT Q, c1, freq:long FROM @"D:\users\v-bijia\MS.TwentySeg\TwentySeg\bin\Debug\patterns.txt" USING DefaultTextExtractor;
+In1 = SELECT Q, SUM(freq) AS freq FROM In1;
+Out1 = SELECT SUM(freq) AS totalFreq, COUNT(Q) AS totalQ FROM In1;
+Temp1 = SELECT Q, freq FROM In1 WHERE Regex.IsMatch(Q, @"\b(wife|husband|spouse)\b");
+Out2 = SELECT SUM(freq) AS totalFreq, COUNT(Q) AS totalQ FROM Temp1;
+Out1 = SELECT 1 AS id, "All" AS txt, totalFreq, totalQ FROM Out1 UNION ALL SELECT 2 AS id, "Spouse" AS txt, totalFreq, totalQ FROM Out2;
+In2 = EXTRACT Q, P, C FROM @"D:\users\v-bijia\MS.TwentySeg\TwentySeg\bin\Debug\patterns.txt" USING DefaultTextExtractor;
+In2 = SELECT Q FROM In2;
+Temp1 = SELECT Q, freq FROM In2, In1 WHERE In2.Q == In1.Q;
+Out2 = SELECT SUM(freq) AS totalFreq, COUNT(Q) AS totalQ FROM Temp1;
+Out1 = SELECT 3 AS id, "Pattern" AS txt, totalFreq, totalQ FROM Out2 UNION SELECT * FROM Out1;
+OUT1 = SELECT Out1.*, Out2.totalFreq AS test2 FROM Out1 OUTER JOIN Out2 ON Out1.totalQ == Out2.totalQ;
+Out1 = SELECT * FROM Out1 ORDER BY id ASC;
+OUTPUT TO @"D:\users\v-bijia\MS.TwentySeg\TwentySeg\bin\Debug\test.txt";
+*/
+
+/*
+In1 = EXTRACT id, name, conf:double, married:int FROM @"D:\users\v-bijia\MS.TwentySeg\TwentySeg\bin\Debug\patterns.txt" USING DefaultTextExtractor;
+In2 = EXTRACT query FROM @"D:\users\v-bijia\MS.TwentySeg\TwentySeg\bin\Debug\patterns.txt" USING DefaultTextExtractor;
+
+In2 = SELECT DISTINCT query, 1 AS exist FROM In2;
+Out1 = SELECT query, exist, married FROM In2 OUTER JOIN In1 ON In2.query == In1.name;
+Out2 = SELECT query, exist, married??-1 AS married FROM Out1;
+Out2 = SELECT query, exist, MAX(married) AS married FROM Out2;
+Out2 = SELECT query, exist, IF(married>=0, 1, 0) AS inSatori, Math.Max(0, married) AS married FROM Out2;
+Out2 = SELECT SUM(exist) AS queries, SUM(inSatori) AS inSatori, SUM(married) AS married FROM Out2;
+
+OUTPUT TO @"D:\users\v-bijia\MS.TwentySeg\TwentySeg\bin\Debug\patterns.txt";
+*/
+
+/*
+In1 = EXTRACT person1, person2, Name1, Name2, start, end, Gender1, Gender2, Nationality1, Nationality2, Profession1, Profession2, Religion1, Religion2, Deceased1, Deceased2, StaticRank1, StaticRank2, confPerson1, confPerson2, confName1, confName2, confStart, confEnd, confNationality1, confNationality2, confProfession1, confProfession2, confReligion1, confReligion2 
+        FROM @"D:\users\v-bijia\MS.TwentySeg\TwentySegScope\test.txt"
+        USING DefaultTextExtractor;
+
+In1 =
+    SELECT DISTINCT *
+    FROM In1;
+
+OUTPUT
+TO @"D:\users\v-bijia\MS.TwentySeg\TwentySegScope\test2.txt";
+*/
+
+/*
+In1 = EXTRACT q, op, opc:int, p, target FROM @"D:\shared\QU\Data\q2p.log.spmatch.txt" USING DefaultTextExtractor;
+In1 =
+    SELECT op,
+           opc,
+           FIRST(p) AS p
+    FROM In1;
+
+Out1 =
+    SELECT p.Replace("I.NPE.Spouse.Wife", "I.NPE.Spouse")
+            .Replace("I.NPE.Spouse.Husband", "I.NPE.Spouse")
+            .Replace("I.NPE.Spouse.Spouse", "I.NPE.Spouse")
+            .Replace("Conj.Pronoun.Adj.Her", "Conj.Pronoun.Adj")
+            .Replace("Conj.Pronoun.Adj.His", "Conj.Pronoun.Adj")
+            .Replace("Conj.Prep.And", "Conj.Prep")
+            .Replace("Conj.Prep.With", "Conj.Prep")
+           AS p,
+           SUM(opc) AS pc
+    FROM In1
+    ORDER BY pc DESC;
+
+OUTPUT TO @"D:\shared\QU\Data\q2p.log.spmatch.pc.txt";
+*/
+
+/*
+In1 =
+    EXTRACT Q : string,
+            c1 : double,
+            c2 : double
+    FROM @"test.txt"
+    USING DefaultTextExtractor;
+In2 =
+    EXTRACT Q : string,
+            c1 : double,
+            c2 : double
+    FROM @"test.txt"
+    USING DefaultTextExtractor;
+Out1 = SELECT Q, SUM(c1) AS c1, SUM(c2) AS c2 FROM In2; In1 = SELECT Q, SUM(c1) AS c1, SUM(c2) AS c2 FROM In1; In2 = SELECT Q, SUM(c1) AS c1 FROM In2; Temp1 = SELECT COUNT(Q) AS TotalQ FROM In1; Temp1 = SELECT "UniqQ" AS Label, (double)TotalQ AS TotalQ FROM Temp1; Temp2 = SELECT COUNT(Q) AS TriggerQ FROM In2; Temp2 = SELECT "UniqQ" AS Label, (double)TriggerQ AS TriggerQ FROM Temp2; Out2 = SELECT Label, TriggerQ, TotalQ FROM Temp1, Temp2 WHERE Temp1.Label==Temp2.Label; Temp1 = SELECT SUM(c1) AS TotalQ FROM In1; Temp1 = SELECT "Traffic" AS Label, TotalQ FROM Temp1; Temp2 = SELECT SUM(c1) AS TriggerQ FROM In2; Temp2 = SELECT "Traffic" AS Label, TriggerQ FROM Temp2; Temp3 = SELECT Label, TriggerQ, TotalQ FROM Temp1, Temp2 WHERE Temp1.Label==Temp2.Label; Out2 = SELECT * FROM Out2 UNION ALL SELECT * FROM Temp3; Out2 = SELECT Label, TriggerQ, TotalQ, (double)TriggerQ / (double)TotalQ AS Coverage FROM Out2;
+
+OUTPUT
+TO @"test2.txt";
+*/
+
+/*
+In1 = EXTRACT Q:string, c1, c2, Start, End, Name, Conf:double FROM @"test.txt" USING DefaultTextExtractor;
+In1 = SELECT Q, Start, End, Name FROM In1 WHERE Conf >= 0.7;
+Out1 =
+    REDUCE In1
+    ON Q
+    USING LongestMatchReducer("Magic_E_Name");
+
+Out2 =
+    SELECT DISTINCT Q,
+                    RQ
+    FROM Out1;
+
+OUTPUT
+TO @"test2.txt";
+*/
+
+/*
+In1 = EXTRACT P:string, Traffic:int, UniqQ:int FROM @"test.txt" USING DefaultTextExtractor;
+
+Out1 = PROCESS In1 USING SplitProcessor;
+Out2 = SELECT P, SUM(Traffic) AS Traffic, SUM(UniqQ) AS UniqQ FROM Out1 ORDER BY UniqQ DESC;
+
+OUTPUT
+TO @"test2.txt";
+*/
+
+/*
+In1 = EXTRACT url, n1, n2 FROM @"D:\shared\QU\Data\spouse.plain.text.filter.tsv" USING DefaultTextExtractor;
+Temp = SELECT * FROM In1 UNION SELECT url, n2 AS n1, n1 AS n2 FROM In1;
+Temp = SELECT url, n1, n2, Utility.Normalizer.GetUrlDomain(url) AS domain FROM Temp;
+Temp = SELECT n1, n2, String.Join(",", LIST(url)) AS urls, COUNT(url) AS cntUrls, COUNT(DISTINCT domain) AS cntDomains FROM Temp HAVING cntUrls > 2 AND cntDomains >= 2;
+
+OUTPUT TO @"D:\shared\QU\Data\spouse.plain.text.filter.urllt2.domainlt1.tsv";
+*/
+
+
+/*
+In1 = EXTRACT n1, n2, urls, cntUrls, cntDomains FROM @"D:\shared\QU\Data\spouse.plain.text.filter.urllt2.domainlt1.confident.tsv" USING DefaultTextExtractor;
+In2 = EXTRACT n FROM @"D:\shared\QU\Data\unmarried.plaintext.txt" USING DefaultTextExtractor;
+Temp = SELECT n1, n2, urls, cntUrls, cntDomains FROM In1, In2 WHERE n1 == n UNION SELECT n1, n2, urls, cntUrls, cntDomains FROM In1, In2 WHERE n2 == n;
+OUTPUT TO @"D:\shared\QU\Data\spouse.plain.text.filter.urllt2.domainlt1.confident.unmarried.tsv";
+
+*/
+
+/*
+In1 = EXTRACT url, n1, n2 FROM @"D:\shared\QU\Data\spouse.plain.text.tsv" USING DefaultTextExtractor;
+Temp = SELECT Utility.Normalizer.GetUrlDomain(url) AS domain, url, n1, n2 FROM In1;
+In2 = EXTRACT domain, cnt FROM @"D:\shared\QU\Data\plain.text.domain.txt" USING DefaultTextExtractor;
+Temp = SELECT domain, url, n1, n2 FROM Temp, In2 WHERE Temp.domain == In2.domain;
+Temp = SELECT n1, n2, String.Join(",", LIST(url).Take(5)) AS urls, COUNT(url) AS cntUrls, COUNT(DISTINCT domain) AS cntDomains FROM Temp 
+        HAVING cntUrls > 2 AND cntDomains >= 2;
+
+OUTPUT TO @"D:\shared\QU\Data\spouse.plain.text.filter.urllt2.domainlt1.confident.tsv";
+*/
+
+/*
+In1 = EXTRACT type, cnt:int FROM @"D:\shared\QU\Structure\satoriTypes.txt" USING DefaultTextExtractor;
+Out1 =
+    SELECT Misc.GetType(type) AS type,
+           SUM(cnt) AS cnt
+    FROM In1
+    HAVING !string.IsNullOrEmpty(type)
+    ORDER BY cnt DESC;
+
+OUTPUT
+TO @"D:\shared\QU\Structure\satoriTypes.agg.txt";
+*/
+
+/*
+In1 = EXTRACT P, Q, R FROM @"test.replacement.txt" USING DefaultTextExtractor;
+//Temp1 = SELECT P, Q, C, Misc.GetPatternAndQueryToken(P, Q) AS PQTuple FROM In1;
+//Out1 = SELECT P, Q, C, PQTuple.Item1 AS PToken, PQTuple.Item2 AS QToken FROM Temp1;
+Temp1 = SELECT DISTINCT P, R FROM In1;
+Temp1 = PROCESS Temp1 USING SplitProcessor;
+Temp2 = SELECT P, PatternPart, COUNT(QueryPart) AS cntQueries, COUNT(DISTINCT QueryPart) AS cntDistQueries FROM Temp1;
+
+OUTPUT TO @"test.key.out.txt";
+*/
+
+/*
+entityDoc = SSTREAM 
+#IF(LOCAL)
+@"D:\shared\QU\EntityDocuments.ss2015-10-07_07.ss"
+#ELSE
+@@entityDoc@@
+#ENDIF
+;
+
+entityDoc =
+    SELECT _SatoriId,
+           _EntityDocument
+    FROM entityDoc
+    WHERE _SatoriId == "http://knowledge.microsoft.com/0001b0cf-a1c0-38f3-f6f7-da87671ace6d";
+
+entityDoc = SELECT _EntityDocument FROM entityDoc;
+
+PROCESS entityDoc
+USING XPathProcessor;
+
+OUTPUT
+TO @"D:\shared\QU\EntityDocuments.ss2015-10-07_07.xml.txt";
+*/
+//
+//patternPath =
+//    EXTRACT Pattern,
+//            Target,
+//            Source,
+//            SatoriPath,
+//            Occ : int
+//    FROM @"D:\shared\QU\Structure\QAPattern.Property.sort.top3.nowhenwhere.mso.txt"
+//    USING DefaultTextExtractor;
+//
+
+//patternPath =
+//    REDUCE patternPath
+//    ON Pattern, Source
+//    USING TopNReducer("3", "-presort", "Occ:desc");
+//
+//patternPath =
+//    SELECT *
+//    FROM patternPath
+//    ORDER BY Pattern,
+//             Occ DESC;
+//
+//OUTPUT
+//TO @"D:\shared\QU\Structure\QAPattern.Property.sort.top3.mso.txt";
+
+//who: people.person, book.author, celebrities.celebrity, film.actor, music.artist, fictional_universe.character, government.politician
+//     tv.character, american_football.player, tv.actor, film.character, law.inventor, basketball.player, organization.founder, 
+//     baseball.player, comic_books.character, ice_hockey.player, comic_books.fictional_universe, fictional_universe.universe
+//     royalty.noble_person, biology.organism_classification, event.agent, boxing.boxer, music.composer
+
+//temp =
+//    SELECT Pattern,
+//           Target,
+//           Occ
+//    FROM patternPath;
+//
+//temp =
+//    PROCESS temp
+//    USING SplitProcessor("0", " ")
+//    HAVING !Pattern.Contains('.');
+//
+//temp =
+//    SELECT Pattern,
+//           Target,
+//           SUM(Occ) AS Occ
+//    FROM temp
+//    ORDER BY Occ DESC;
+//
+//OUTPUT
+//TO @"D:\shared\QU\Structure\QAPattern.unig.freq.txt";
+
+/*
+path = 
+SSTREAM @"/users/binxjia/Data/Satori/PropertyPathCntWithName.Uniq.ss";
+
+temp =
+    SELECT P,
+           SName,
+           TName,
+           String.Join(".", P.Substring("mso:".Length).Split('.').Take(2)) AS SType,
+           String.Join(".", P.Substring("mso:".Length).Split('.').Reverse().Take(2).Reverse()) AS TType
+    FROM path;
+
+temp =
+    SELECT String.Join(";", P.Split(';') .Where(p => Misc.GroupId(p, 5) == 0)) AS P;
+
+pathCnt = EXTRACT P, Cnt:long FROM "/users/binxjia/Data/Satori/PropertyPathCnt.txt" USING DefaultTextExtractor HAVING Cnt >= 10;
+
+pathCnt =
+    SELECT P
+    FROM pathCnt;
+
+path =
+    SELECT P,
+           S,
+           T,
+           SName,
+           TName
+    FROM path,
+         pathCnt
+    WHERE path.P == pathCnt.P;
+
+repUrls =
+    SSTREAM @"/projects/aether/_8/migon/8d8d4dc4-e266-44b1-b5f3-0a4f563b7905@@@SStream_Select_with_Filter@@@9c71a3a5@@@11-11-2015_08-21-30_AM/Output/Output_ae71671d-87bf-4a89-97b5-8068a8d44cc3.ss";
+
+repIds =
+    SELECT Misc.GetID(Id) AS Id
+    FROM repUrls
+    WHERE Conf>100;
+
+repIds =
+    SELECT DISTINCT Id
+    FROM repIds;
+
+pathWithRepUrl =
+    SELECT P,
+           S,
+           T,
+           SName,
+           TName
+    FROM path,
+         repIds
+    WHERE path.T == repIds.Id;
+
+OUTPUT pathWithRepUrl
+TO SSTREAM @"/users/binxjia/Data/Satori/PropertyPathWithName.RepUrl.Uniq.ss" HASH CLUSTERED BY P;
+
+pathCnt =
+    SELECT P,
+           COUNT() AS Cnt
+    FROM pathWithRepUrl
+    HAVING Cnt >= 10
+    ORDER BY Cnt DESC;
+
+OUTPUT
+TO @"/users/binxjia/Data/Satori/PropertyPathCnt.RepUrl.txt";
+*/
+
+/*
+src =
+    EXTRACT S,
+            SCnt : int
+    FROM @"D:\shared\QU\Structure\session\session.src.tsv"
+    USING DefaultTextExtractor;
+
+pair =
+    EXTRACT S,
+            T,
+            PCnt : int
+    FROM @"D:\shared\QU\Structure\session\session.pair.tsv"
+    USING DefaultTextExtractor
+    HAVING PCnt >= 5;
+
+pair =
+    SELECT S,
+           T,
+           SCnt,
+           PCnt
+    FROM pair,
+         src
+    WHERE pair.S == src.S;
+
+pair =
+    SELECT S.Split(' ') .Where(s => s.Contains(".src")) .First() AS PType,
+           S,
+           T,
+           SCnt,
+           PCnt,
+           (double) PCnt /(double) SCnt AS Ratio
+    FROM pair
+    HAVING Ratio>0.3 || PCnt >= 100;
+
+
+
+pair =
+    SELECT PType.Substring(0, PType.IndexOf(".src")) AS PType,
+           S,
+           T,
+           SCnt,
+           PCnt,
+           Ratio
+    FROM pair;
+
+types =
+    SSTREAM @"D:\shared\QU\Structure\session\pid2p.ss";
+
+types =
+    SELECT *
+    FROM types
+    WHERE !P.Contains("contained_by");
+
+pair = SELECT types.P, pair.* FROM pair, types WHERE pair.PType == types.PId
+    ORDER BY PCnt DESC,
+             Ratio DESC;
+
+OUTPUT
+TO @"D:\shared\QU\Structure\session\session.ratio.txt";
+*/
+
+/*
+session =
+    EXTRACT P,
+            PId,
+            S,
+            T,
+            //SCnt,
+            PCnt:int
+            //Ratio:double
+    FROM @"D:\shared\QU\Structure\coclick\pair.tsv"
+    USING DefaultTextExtractor HAVING (!S.Contains(".tgt") && !P.Contains("contained_by"));
+
+//session =
+//    SELECT *
+//    FROM session
+//    WHERE Misc.ContainPropertyTerm(S, P)
+//    ORDER BY PCnt DESC, Ratio DESC;
+
+terms =
+    PROCESS session
+    USING SplitProcessor("2", " ")
+    HAVING !S.Contains(".");
+
+terms =
+    SELECT P,
+           S,
+           SUM(PCnt) AS SPCnt
+    FROM terms;
+
+PTotalCnt =
+    SELECT P,
+           SUM(PCnt) AS PCnt
+    FROM session;
+
+terms =
+    SELECT terms.*,
+           PTotalCnt.PCnt
+    FROM terms,
+         PTotalCnt
+    WHERE terms.P == PTotalCnt.P;
+
+terms =
+    SELECT P,
+           S,
+           IF(Misc.ContainPropertyTerm(S, P), SPCnt * 1000, SPCnt) AS SPCnt,
+           PCnt
+    FROM terms;
+
+SIdf =
+    SELECT DISTINCT S,
+                    P
+    FROM terms;
+
+SIdf =
+    SELECT S,
+           COUNT() AS SCntP
+    FROM SIdf;
+
+TotalP =
+    SELECT DISTINCT P
+    FROM terms;
+
+TotalP =
+    SELECT COUNT() AS AllP
+    FROM TotalP;
+
+SIdf =
+    SELECT S,
+           SCntP,
+           AllP
+    FROM SIdf
+    CROSS JOIN TotalP;
+
+SIdf =
+    SELECT S,
+           Math.Log(AllP /(double) SCntP) AS idf
+    FROM SIdf;
+
+terms =
+    SELECT P,
+           S,
+           SPCnt,
+           PCnt,
+           idf
+    FROM terms,
+         SIdf
+    WHERE terms.S == SIdf.S;
+
+terms =
+    SELECT P,
+           S,
+           SPCnt,
+           PCnt,
+           ((double) SPCnt) * idf AS weight
+    FROM terms;
+
+terms =
+    REDUCE terms
+    ON P
+    USING TopNReducer("10", "-presort", "weight:desc");
+
+terms = SELECT * FROM terms
+    ORDER BY PCnt DESC, SPCnt DESC, P DESC;
+
+OUTPUT
+TO @"D:\shared\QU\Structure\coclick\pair.terms.txt";
+*/
+
+/*
+SSTREAM @"D:\shared\SLAPI_Bing.com_EN_US_2015_1_6_Overall_Experiment_SIZE_5000000.ss";
+OUTPUT
+TO @"D:\shared\SLAPI_Bing.com_EN_US_2015_1_6_Overall_Experiment_SIZE_5000000.txt";
+*/
+
+/*
+EXTRACT p,
+        c : int
+FROM @"D:\shared\QU\Structure\PropertyPathCnt.NoContainedBy.txt"
+USING DefaultTextExtractor;
+
+SELECT String.Join(".", p.Substring(4) .Split('.') .Take(2)) AS stype,
+       p.Substring(4) .Split('.').Last() AS ttype,
+       p,
+       c
+ORDER BY stype, c DESC;
+
+OUTPUT
+TO @"D:\shared\QU\Structure\PropertyPathCnt.WithType.NoContainedBy.txt";
+*/
+
+/*
+patterns = 
+    EXTRACT pattern, cnt:int 
+    FROM @"D:\shared\QU\Structure\AllPattern.DomType.clear.tsv" 
+    USING DefaultTextExtractor
+    HAVING pattern.Split(' ') .Where(t => t.Contains('.')) .Count() == 1;
+
+//patterns =
+//    SELECT pattern,
+//           cnt
+//    WHERE pattern.Split(' ') .Where(t => !t.Contains('.')) .Count()>0;
+
+//OUTPUT
+//TO @"D:\shared\QU\Structure\AllPattern.DomType.clear.tsv"
+//ORDER BY cnt DESC;
+
+patterns =
+    SELECT pattern.Split(' ') .Where(t => t.Contains('.')) .First() AS src,
+           pattern AS term,
+           pattern,
+           cnt
+    FROM patterns;
+
+patterns =
+    PROCESS patterns
+    USING SplitProcessor("1", " ")
+    HAVING !term.Contains(".");
+
+origpaths =
+    EXTRACT src,
+            tgt,
+            path,
+            occ : int,
+            targeted : int
+    FROM @"D:\shared\QU\Structure\PropertyPathCnt.WithType.LT50.txt"
+    USING DefaultTextExtractor
+    HAVING targeted == 1;
+
+paths =
+    SELECT src, tgt AS term, tgt, path, occ, targeted
+    FROM origpaths;
+
+paths =
+    PROCESS paths
+    USING SplitProcessor("1", "_")
+    HAVING term != "the" AND term != "to" AND term != "from" AND term != "with";
+
+
+paths =
+    SELECT paths.*,
+           patterns.pattern,
+           patterns.cnt
+    FROM paths,
+         patterns
+    WHERE paths.src == patterns.src AND paths.term == patterns.term;
+
+termCount =
+    SELECT src,
+           tgt,
+           pattern,
+           COUNT(term) AS cntTerm
+    FROM paths;
+
+paths =
+    SELECT DISTINCT src,
+                    tgt,
+                    path,
+                    occ,
+                    targeted,
+                    pattern,
+                    cnt
+    FROM paths;
+
+paths =
+    SELECT paths.*,
+           termCount.cntTerm
+    FROM paths,
+         termCount
+    WHERE paths.src == termCount.src AND paths.tgt == termCount.tgt AND paths.pattern == termCount.pattern;
+
+paths =
+    SELECT src,
+           tgt,
+           path,
+           occ,
+           targeted,
+           pattern,
+           cnt * cntTerm AS cnt
+    FROM paths;
+
+paths =
+    REDUCE paths
+    ON src, tgt, path
+    USING TopNReducer("10", "-presort", "cnt:desc");
+
+paths =
+    SELECT src,
+           tgt,
+           path,
+           occ,
+           targeted,
+           String.Join("; ", LIST(pattern)) AS pattern
+    FROM paths;
+
+paths =
+    SELECT origpaths.*,
+           paths.pattern
+    FROM origpaths
+    OUTER JOIN paths
+    ON origpaths.src == paths.src AND origpaths.tgt == paths.tgt AND origpaths.path == paths.path;
+
+OUTPUT
+TO @"D:\shared\QU\Structure\PropertyPathCnt.WithType.LT50.withpattern.txt"
+ORDER BY src,
+         occ DESC;
+*/
+
+/*
+paths =
+    EXTRACT src,
+            tgt,
+            keywords,
+            path,
+            occ : int,
+            targeted : int,
+            patterns,
+            listIntent : int
+    FROM @"D:\shared\QU\Structure\PropertyPathCnt.WithType.LT50.withpattern.txt"
+    USING DefaultTextExtractor
+    HAVING targeted == 1;
+
+dolphin =
+    EXTRACT src,
+            path,
+            keywords
+    FROM @"D:\shared\QU\Structure\rules.dolphin.txt"
+    USING DefaultTextExtractor;
+
+dolphin =
+    SELECT src,
+           path.Replace(":", ";") .Replace("/", ":") AS path,
+           keywords AS dolphinKeywords
+    FROM dolphin;
+
+paths =
+    SELECT paths.*,
+           dolphin.dolphinKeywords
+    FROM paths
+    OUTER JOIN dolphin
+    ON paths.src == dolphin.src AND paths.path == dolphin.path;
+
+paths =
+    SELECT src,
+           tgt,
+           keywords + "; " + (String.IsNullOrEmpty(dolphinKeywords) ? "" : dolphinKeywords) AS keywords,
+           path,
+           occ,
+           targeted,
+           patterns,
+           listIntent
+    FROM paths;
+
+OUTPUT
+TO @"D:\shared\QU\Structure\PropertyPathCnt.WithType.LT50.withpatternAndDolphin.txt"
+ORDER BY src,
+         occ DESC;
+*/
+
+/*
+patterns = 
+    EXTRACT pattern, cnt:int 
+    FROM @"D:\shared\QU\Structure\AllPattern.DomType.tsv" 
+    USING DefaultTextExtractor
+    HAVING pattern.Split(' ') .Where(t => t.Contains('.')) .Count() == 2 
+            AND (new HashSet<string>(pattern.Split(' ') .Where(t => t.Contains('.')))).Count != 1
+//            AND (new HashSet<string>(pattern.Split(' ') .Where(t => t.Contains('.')).Select(t => t.Split('.')[0]))).Count == 1
+;
+
+patterns =
+    SELECT pattern, 
+           pattern.Split(' ') .Where(t => t.Contains('.')).ElementAt(0) AS first,
+           pattern.Split(' ') .Where(t => t.Contains('.')).ElementAt(1) AS second,
+           cnt
+    FROM patterns
+    HAVING (Misc.IsDualEntityType(first) OR Misc.IsDualEntityType(second)) AND Misc.ContainIntentWord(pattern, first, second);
+
+OUTPUT TO @"D:\shared\QU\Structure\AllPattern.DomType.Dual.tsv";
+
+
+patterns =
+    SELECT IF(first < second, first, second) AS first,
+           IF(first < second, second,first) AS second,
+           cnt
+    FROM patterns;
+
+patterns =
+    SELECT first,
+           second,
+           SUM(cnt) AS cnt;
+
+OUTPUT
+TO @"D:\shared\QU\Structure\AllPattern.DomType.Dual.stat.tsv"
+ORDER BY first,
+         cnt DESC;
+*/
+
+/*
+paths =
+    EXTRACT path,
+            cnt : int
+    FROM @"D:\shared\QU\Structure\PropertyPathCnt.RepUrl.NoContainedBy.SortByRelation.txt"
+    USING DefaultTextExtractor
+    HAVING path.Count(c => c==';') == 1 AND cnt >= 50;
+
+paths =
+    SELECT path.Split(';') [0]AS layer1,
+           String.Join(".", path.Split(';')[1].Substring("mso:".Length).Split('.').Take(2)) AS layer2Type,
+           path.Split(';')[0].Substring("mso:".Length).Split('.')[0] AS domain,
+           path.Split(';')[0].Substring("mso:".Length).Split('.')[1] AS src,
+           path.Split(';')[1].Substring("mso:".Length).Split('.')[2] AS layer2Tgt,
+           path,
+           cnt
+    FROM paths;
+
+CntLayer2Type =
+    SELECT layer1,
+           layer2Type,
+           COUNT(DISTINCT layer2Tgt) AS cntProperty,
+           MAX(cnt) AS maxCnt
+    FROM paths
+    HAVING cntProperty >= 2;
+
+paths =
+    SELECT paths.*, CntLayer2Type.maxCnt
+    FROM paths,
+         CntLayer2Type
+    WHERE paths.layer1 == CntLayer2Type.layer1 AND paths.layer2Type == CntLayer2Type.layer2Type;
+
+patterns = 
+    EXTRACT s, t, k, path, cnt:int, targeted:int, pattern, list:int 
+    FROM @"D:\shared\QU\Structure\PropertyPath.Pattern.Top10.Reviewed.txt"
+    USING DefaultTextExtractor;
+
+paths = SELECT paths.*, patterns.targeted FROM paths OUTER JOIN patterns ON paths.path == patterns.path;
+paths = SELECT layer1, layer2Type, domain, src, layer2Tgt, path, cnt, maxCnt, targeted??0 AS targeted FROM paths;
+
+OUTPUT
+TO @"D:\shared\QU\Structure\PropertyPathCnt.RepUrl.NoContainedBy.SortByRelation.2Layers.txt"
+ORDER BY layer1, layer2Type, cnt DESC;
+
+paths =
+    SELECT layer1,
+           layer2Type,
+           domain,
+           maxCnt,
+           src,
+           String.Join(",", new HashSet<string>(LIST(layer2Tgt).ToArray()).OrderBy(t=>t)) AS Tgts
+    FROM paths;
+
+paths =
+    SELECT DISTINCT *
+    FROM paths;
+
+OUTPUT
+TO @"D:\shared\QU\Structure\PropertyPathCnt.RepUrl.NoContainedBy.SortByRelation.2Layers.Agg.txt"
+ORDER BY domain, maxCnt DESC;
+*/
+
+/*
+paths = 
+    EXTRACT layer1, layer2Type, domain, src, layer2Tgt, path, cnt:int, maxCnt:int, targeted:int 
+    FROM @"D:\shared\QU\Structure\PropertyPathCnt.RepUrl.NoContainedBy.SortByRelation.2Layers.txt"
+    USING DefaultTextExtractor;
+
+temp = SELECT layer1, layer2Type, MAX(targeted) AS hasTarget FROM paths;
+paths = SELECT paths.*, temp.hasTarget FROM paths, temp WHERE paths.layer1 == temp.layer1 AND paths.layer2Type == temp.layer2Type;
+
+OUTPUT TO @"D:\shared\QU\Structure\PropertyPathCnt.RepUrl.NoContainedBy.SortByRelation.2Layers.more.txt"
+ORDER BY layer1, layer2Type, cnt DESC;
+*/
+
+
+/*
+paths = 
+    EXTRACT src, tgt, keywords, path, occ:int, targeted:int, patterns, listIntent:int 
+    FROM
+    @"D:\shared\QU\Structure\PropertyPath.Pattern.All.Reviewed.txt"
+    USING DefaultTextExtractor
+    HAVING targeted == 1;
+
+paths =
+    SELECT src,
+           tgt,
+            path,
+           patterns,
+           occ,
+           listIntent
+    FROM paths;
+
+paths =
+    PROCESS paths
+    USING Utility.SplitProcessor("3", ";");
+
+paths =
+    SELECT src,
+           tgt,
+            path,
+           patterns.Trim() AS pattern,
+           occ,
+           listIntent
+    FROM paths;
+
+OUTPUT
+TO @"D:\shared\QU\Structure\PropertyPath.Pattern.All.Flattened.txt"
+ORDER BY src,
+         occ DESC;
+*/
+
+patterns = EXTRACT p, c:int FROM @"D:\shared\QU\Structure\PropertyPathCnt.NoContainedBy.txt" USING DefaultTextExtractor;
+
+patterns =
+    SELECT p.Split(';') [0]AS L1,
+           p,
+           c
+    FROM patterns;
+
+patterns =
+    SELECT 
+           String.Join(".", L1.Split('.') .Take(1)) AS domain,
+           String.Join(".", L1.Split('.') .Take(2)) AS type,
+           L1,
+           p,
+           c
+    FROM patterns;
+
+
+
+OUTPUT
+TO @"D:\shared\QU\Structure\PropertyPathCnt.NoContainedBy.Sort.txt"
+ORDER BY domain, type, L1, p, c DESC;
+

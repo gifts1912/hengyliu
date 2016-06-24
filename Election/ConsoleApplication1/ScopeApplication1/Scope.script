@@ -1,0 +1,12 @@
+﻿//Script GUID:5298467d-27ca-4a63-a968-6ad17f6c9416
+//Used for tracking history
+#IF(LOCAL)
+    #DECLARE Output string = @"/users/hengyliu/popfresh/step1View/IETBClickStep1View_0610_0611.tsv";
+#ELSE
+    #DECLARE Output string = @@IETBClickStep1View@@;
+#ENDIF
+
+IEView=VIEW "/projects/popfresh/step1View/IETBClickStep1View.view" PARAMS (TimeStart="2016-05-15",TimeEnd="2016-06-15");
+T0 =SELECT * FROM IEView WHERE serp_market.ToLower()=="en-us" AND (NOT string.IsNullOrEmpty(query)); 
+
+OUTPUT T0 TO @Output;

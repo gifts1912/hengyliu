@@ -1,0 +1,31 @@
+﻿//Script GUID:954c902a-c9f2-48b6-bbdd-b8dbe9d187e8
+//Used for tracking history
+
+UrlHtml = 
+    EXTRACT url, html
+    FROM 
+#IF(LOCAL)
+    @"D:\Temp\UrlHtml.txt"
+#ELSE
+    @@UrlTHtml@@
+#ENDIF
+    USING DefaultTextExtractor("-silent")
+    HAVING url.StartsWith("http://symptomchecker.webmd.com/multiple-symptoms?");
+
+UrlHtml = 
+    SELECT url, Misc.Base64Decode(html) AS html
+    FROM UrlHtml;
+
+MultiSymptom = 
+    PROCESS UrlHtml
+    USING MultiSymptomProcessor;
+
+SELECT * ORDER BY symptoms;
+OUTPUT TO 
+#IF(LOCAL)
+    @"D:\Temp\Symptoms.txt"
+#ELSE
+    @@Symptoms@@
+#ENDIF
+;
+

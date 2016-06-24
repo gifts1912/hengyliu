@@ -1,0 +1,141 @@
+﻿//Script GUID:8ad01b95-7e7b-4446-82ed-03435500da2b
+//Used for tracking history
+
+REFERENCE "Utility.dll";
+REFERENCE @"Microsoft.Live.Json.dll";
+REFERENCE @"Microsoft.Scope.dll";
+REFERENCE @"Microsoft.Knowledge.dll";
+
+#IF(LOCAL)
+    RESOURCE "propertyAnalysis.txt";
+#ELSE
+    RESOURCE @@propertyAnalysis@@;
+#ENDIF
+
+satoriGraph = 
+#IF(LOCAL)
+    EXTRACT _S, _P, _O, _C, _Conf, _Overall
+    FROM "satoriTest.txt"
+    USING DefaultTextExtractor
+#ELSE
+    SSTREAM @@satoriStream@@
+#ENDIF
+;
+
+satoriGraph =
+    SELECT _S,
+           _P,
+           _O
+    FROM satoriGraph;
+
+repUrls = 
+    SELECT _S, Microsoft.Knowledge.RdfValue.GetValue(_O) AS RepUrl
+    FROM satoriGraph
+    WHERE satoriGraph._P == "http://knowledge.microsoft.com/mso/type.object.representative_source_url"
+        AND satoriGraph._O.EndsWith("^^mso:uri");
+
+entityWithRepUrl =
+    SELECT DISTINCT _S
+    FROM repUrls;
+
+L1 = 
+    PROCESS satoriGraph 
+#IF(LOCAL)
+    USING LayerPropertyFilter("propertyAnalysis.txt", "1")
+#ELSE
+    USING LayerPropertyFilter(@@propertyAnalysis@@, "1")
+#ENDIF
+;
+
+L2 = 
+    PROCESS satoriGraph 
+#IF(LOCAL)
+    USING LayerPropertyFilter("propertyAnalysis.txt", "2")
+#ELSE
+    USING LayerPropertyFilter(@@propertyAnalysis@@, "2")
+#ENDIF
+;
+
+L3 = 
+    PROCESS satoriGraph 
+#IF(LOCAL)
+    USING LayerPropertyFilter("propertyAnalysis.txt", "3")
+#ELSE
+    USING LayerPropertyFilter(@@propertyAnalysis@@, "3")
+#ENDIF
+;
+
+L2 =
+    SELECT L1._S,
+           L2._O,
+           L1._P AS Layer1,
+           L2._P AS Layer2
+    FROM L1,
+         L2
+    WHERE L1._O == L2._S;
+
+L3 =
+    SELECT L2._S,
+           L3._O,
+           L2.Layer1,
+           L2.Layer2,
+           L3._P AS Layer3
+    FROM L2,
+         L3
+    WHERE L2._O == L3._S;
+
+GW = 
+    SELECT _S, _O, _P AS Layer1, "" AS Layer2, "" AS Layer3 FROM L1
+    UNION ALL
+    SELECT _S, _O, Layer1, Layer2, "" AS Layer3 FROM L2
+    UNION ALL
+    SELECT * FROM L3;
+
+GW =
+    SELECT GW.*
+    FROM GW,
+         entityWithRepUrl
+    WHERE GW._O == entityWithRepUrl._S;
+
+GW = 
+    PROCESS GW
+#IF(LOCAL)
+    USING PropertyPatternFilter("propertyAnalysis.txt")
+#ELSE
+    USING PropertyPatternFilter(@@propertyAnalysis@@)
+#ENDIF
+;
+
+OUTPUT TO
+#IF(LOCAL)
+    @"GW.txt"
+#ELSE
+    @@GraphWalk@@
+#ENDIF
+;
+
+ValidRelations =
+    SELECT DISTINCT PropertyPattern
+    FROM GW;
+
+ValidRelations =
+    PROCESS ValidRelations
+    USING PropertyAnalyzer;
+
+SELECT DISTINCT EntityType,
+                Property,
+                Pattern
+FROM ValidRelations
+ORDER BY EntityType,
+         Property;
+
+OUTPUT TO
+#IF(LOCAL)
+    @"ValidRelations.txt"
+#ELSE
+    @@ValidRelations@@
+#ENDIF
+;
+
+
+

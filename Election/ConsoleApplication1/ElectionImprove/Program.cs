@@ -21,6 +21,13 @@ namespace ElectionImprove
                 args[0] = "EntityLexicon";
                 args[0] = "Sample10KQueryContainCandidat";
                 args[0] = "OtherSlotLexicon";
+                args[0] = "LossIntentAnalysis";
+                args[0] = "SubStringTest";
+                args[0] = "ElectionSBSCase";
+                args[0] = "PETriggerNoQLF";
+                args[0] = "PEReplacePatternWithPEId";
+                args[0] = "PatternToPEId";
+                args[0] = "TrimColumn";
             }
             string[] cmdArgs = args.Skip(1).ToArray();
             if(args[0].Equals("tokenvaluegenerate", StringComparison.OrdinalIgnoreCase))
@@ -55,8 +62,34 @@ namespace ElectionImprove
             {
                 NewIntent.OtherSlotLexicon.Run(cmdArgs);
             }
-
-
+            else if(args[0].Equals("LossIntentAnalysis", StringComparison.OrdinalIgnoreCase))
+            {
+                TriggerCoverageAnalysis.LossIntentAnalysis.Run(cmdArgs);
+            }
+            else if(args[0].Equals("SubStringTest", StringComparison.OrdinalIgnoreCase))
+            {
+                others.SubStringTest.Run(cmdArgs);
+            }
+            else if(args[0].Equals("ElectionSBSCase", StringComparison.OrdinalIgnoreCase))
+            {
+                others.ElectionSBSCase.Run(cmdArgs);
+            }
+            else if(args[0].Equals("PETriggerNoQLF", StringComparison.OrdinalIgnoreCase))
+            {
+                PE.PETriggerNoQLF.Run(cmdArgs);
+            }
+            else if(args[0].Equals("PatternToPEId", StringComparison.OrdinalIgnoreCase))
+            {
+                PE.PatternToPEId.Run(cmdArgs);
+            }
+            else if(args[0].Equals("PEReplacePatternWithPEId", StringComparison.OrdinalIgnoreCase))
+            {
+                PE.PEReplacePatternWithPEId.Run(cmdArgs);
+            }
+            else if(args[0].Equals("TrimColumn", StringComparison.OrdinalIgnoreCase))
+            {
+                PE.TrimColumn.Run(cmdArgs);
+            }
         }
     }
 }

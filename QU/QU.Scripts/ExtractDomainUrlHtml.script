@@ -1,0 +1,43 @@
+﻿//Script GUID:e0e7087a-7b39-44e6-800f-719e0c2ab8d9
+//Used for tracking history
+
+// SCOPESCRIPT PATHOUT_UrlTitleBodyPath={out:CosmosPath:UrlTitleBodyPath} PATHOUT_OutputCount={out:CosmosPath:OutputCount}   PARAM_TierFlag=(TierFlag 1 - Tier0 TierFlag2 - Tier1  TierFlag3 - Tier0_1) VC=(VC)  RETRIES=2
+
+#IF (LOCAL)
+    REFERENCE @"D:\users\v-bijia\Utilities\RetroIndex/RetroIndexProcessor.dll";
+    REFERENCE @"D:\users\v-bijia\Utilities\RetroIndex/ManagedUrlNormalizer.dll"; 
+    RESOURCE @"D:\users\v-bijia\Utilities\RetroIndex/NativeUrlNormalizer.dll";
+
+#ELSE
+    REFERENCE @"/shares/searchWebLoad/RetroIndex/bin/RetroIndexProcessor.dll";
+    REFERENCE @"/shares/searchWebLoad/RetroIndex/bin/ManagedUrlNormalizer.dll"; 
+    RESOURCE @"/shares/searchWebLoad/RetroIndex/bin/NativeUrlNormalizer.dll";
+
+#ENDIF
+
+USING RetroIndex;
+
+#IF (LOCAL)
+    Snapshot = VIEW @"D:\users\v-bijia\Utilities\RetroIndex/LatestSnapshot.view";
+#ELSE
+    Snapshot = VIEW @"/shares/searchWebLoad/RetroIndex/Views/LatestSnapshot.view"  PARAMS (Sample=false,TierFlag=@@TierFlag@@);
+#ENDIF
+
+content_data = SELECT Url,Body,Header,HttpHeader,CodePage FROM Snapshot;
+
+PROCESS
+PRODUCE  Url, DocHtmlBody, Language
+USING RetroIndexProcessor
+HAVING (Language != null AND Language.ToLower() == "en" 
+        AND NOT string.IsNullOrEmpty(DocHtmlBody) 
+        AND Misc.IsDesiredDomain(Url, "@@domains@@"));
+
+SELECT Url AS DocumentURL, Misc.Base64Encode(DocHtmlBody) AS EncodedDocumentHTML;
+
+OUTPUT TO
+#IF (LOCAL)
+@"D:\tmp\url_title";
+#ELSE
+@@UrlHtml@@;
+#ENDIF
+

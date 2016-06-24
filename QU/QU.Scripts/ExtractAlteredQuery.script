@@ -1,0 +1,86 @@
+﻿//Script GUID:579ea1eb-bb48-43df-ae12-dbd14c35e546
+//Used for tracking history
+
+
+#IF(LOCAL)
+    #DECLARE AlteredQuery string = @"d:\data\q2aq.tsv";
+    
+    #DECLARE StartDate string = @"2014-10-10";
+    #DECLARE EndDate string = @"2014-10-10";
+
+                                        
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\btclaD386.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\btjlaD386.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\btklaD433.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\btutilsD230.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\btutilsD430.dll";
+    REFERENCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\FrontEndUtil.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\GetHashUtil.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\WordBreaker.zip";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\ParseQueryUtil.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\autopilot-trick.ini";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\wbDefaultConfig.ini";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\unzip.exe";
+    
+    REFERENCE @"D:\SLAPI\SearchLogApi.dll";
+    REFERENCE @"D:\SLAPI\Microsoft.Live.Json.dll";
+    REFERENCE @"D:\SLAPI\Serializer.exe";
+
+#ELSE
+    #DECLARE AlteredQuery string = @@AlteredQuery@@;
+    
+    #DECLARE StartDate string = "@@StartDate@@";
+    #DECLARE EndDate string = "@@EndDate@@";
+    
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/btclaD386.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/btjlaD386.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/btklaD433.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/btutilsD230.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/btutilsD430.dll";
+    REFERENCE @"/shares/searchDM/distrib/released/FrontEndUtil/FrontEndUtil.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/GetHashUtil.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/WordBreaker.zip";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/ParseQueryUtil.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/autopilot-trick.ini";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/wbDefaultConfig.ini";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/unzip.exe";
+
+    REFERENCE @"/shares/searchDM/distrib/released/SLAPI/SearchLogApi.dll";
+    REFERENCE @"/shares/searchDM/distrib/released/SLAPI/Microsoft.Live.Json.dll";
+    REFERENCE @"/shares/searchDM/distrib/released/SLAPI/Serializer.exe";
+
+#ENDIF
+
+// Read logs
+SearchLogPageViewInput =
+#IF (LOCAL)
+    VIEW @"D:\SLAPI\SearchLogPageView.view"
+    PARAMS (CustomInputStream=@"D:\SLAPI\MergedLog_2014_10_10.ss");
+#ELSE
+    VIEW "/shares/searchDM/distrib/released/SLAPI/SearchLogPageView.view"
+    PARAMS (Start = @StartDate, End = @EndDate, UseSample = false, Dataset = "Bing.com");
+#ENDIF
+
+T0 =
+    SELECT Normalizer.NormalizeQuery(Query_RawQuery) AS NormQuery,
+           Request_RequestTime AS RequestTime,
+           Query_AlteredQuery AS AlteredQuery
+    FROM SearchLogPageViewInput
+    WHERE 
+        Vertical == @"web"
+        AND Market == @"en-US"
+        AND Page_Experiments[@"flt"].Level.ToLower() == @"d-flt"
+        AND NOT Request_IsBotVNext
+        AND Query_IsNormal
+        AND NOT String.IsNullOrWhiteSpace(Query_RawQuery)
+        AND NOT FilterHelper.IsQueryBad(Query_RawQuery, 246)
+;
+
+T1 = 
+    REDUCE T0 ON NormQuery
+    PRODUCE NormQuery, AlteredQuery, RequestTime
+    PRESORT RequestTime DESC
+    USING OutputFirstReducer;
+
+OUTPUT TO @AlteredQuery;
+

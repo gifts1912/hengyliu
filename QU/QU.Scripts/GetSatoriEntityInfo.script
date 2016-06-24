@@ -1,0 +1,66 @@
+﻿//Script GUID:8e964159-65f4-4435-9a64-1ff9aec972e4
+//Used for tracking history
+
+#IF(LOCAL)
+    REFERENCE @"Microsoft.Live.Json.dll";
+    REFERENCE @"Microsoft.Scope.dll";
+    REFERENCE @"Microsoft.Knowledge.dll";
+
+    #DECLARE satoriStream string = @"SatoriTest.ss";
+    #DECLARE scrape string = @"scrape.txt";
+    #DECLARE includeAlias string = @"false";
+    #DECLARE output string = @"test.out.txt";
+#ELSE
+    REFERENCE @"/shares/Knowledge/local/prod/Resources/Microsoft.Live.Json.dll";
+    REFERENCE @"/shares/Knowledge/local/prod/Resources/Microsoft.Scope.dll";
+    REFERENCE @"/shares/Knowledge/local/prod/Resources/Microsoft.Knowledge.dll";
+
+    #DECLARE satoriStream string = string.Format(@@SatoriGraphPath@@);
+    #DECLARE scrape string = @@Scrape@@;
+    #DECLARE includeAlias string = "@@includeAlias@@".ToLower();
+    #DECLARE output string = @@output@@;
+#ENDIF
+
+USING Microsoft.Knowledge;
+
+extraction = 
+    EXTRACT query, position:int, satori_doc, score:double
+    FROM @scrape
+    USING DefaultTextExtractor("-silent");
+
+satoriGraph = SSTREAM @satoriStream;
+
+satoriGraph = 
+    SELECT _S, _P, _O, _C, _Conf, _Overall
+    FROM satoriGraph, extraction
+    WHERE satoriGraph._S == extraction.satori_doc;
+
+entities = 
+SELECT DISTINCT g1._S AS Id, 
+       g1._O.Remove(0, "http://knowledge.microsoft.com/mso/".Length) AS EntityType,
+       double.Parse(g1._Conf.Remove(0, "en-us:".Length)) AS EntityTypeConf,
+       Microsoft.Knowledge.RdfValue.GetValue(g2._O) AS Name
+FROM satoriGraph AS g1 
+INNER JOIN satoriGraph AS g2 
+ON g1._S == g2._S
+WHERE g1._P == "http://knowledge.microsoft.com/mso/type.object.type"
+      AND g1._O.StartsWith("http://knowledge.microsoft.com/mso/")
+      AND g1._Conf.StartsWith("en-us:")
+#IF(@includeAlias == "true")
+      AND (g2._P == "http://knowledge.microsoft.com/mso/type.object.name"
+      OR g2._P == "http://knowledge.microsoft.com/mso/type.object.alias")
+#ELSE
+      AND g2._P == "http://knowledge.microsoft.com/mso/type.object.name"
+#ENDIF
+      AND g2._O.EndsWith("^^mso:text@en");
+
+entities = 
+    SELECT Id, EntityType, EntityTypeConf, Name, Microsoft.Knowledge.RdfValue.GetValue(satoriGraph._O) AS RepresentativeUrl
+    FROM entities
+    OUTER JOIN satoriGraph
+    ON entities.Id == satoriGraph._S
+    WHERE satoriGraph._P == "http://knowledge.microsoft.com/mso/type.object.representative_source_url"
+        AND satoriGraph._O.EndsWith("^^mso:uri");
+
+OUTPUT TO @output;
+

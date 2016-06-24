@@ -1,0 +1,79 @@
+﻿//Script GUID:983e870f-e9fa-4750-8073-0356ebd7e560
+//Used for tracking history
+
+
+#IF(LOCAL)
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\btclaD386.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\btjlaD386.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\btklaD433.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\btutilsD230.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\btutilsD430.dll";
+    REFERENCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\FrontEndUtil.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\GetHashUtil.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\WordBreaker.zip";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\ParseQueryUtil.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\autopilot-trick.ini";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\wbDefaultConfig.ini";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\unzip.exe";
+#ELSE
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/btclaD386.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/btjlaD386.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/btklaD433.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/btutilsD230.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/btutilsD430.dll";
+    REFERENCE @"/shares/searchDM/distrib/released/FrontEndUtil/FrontEndUtil.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/GetHashUtil.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/WordBreaker.zip";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/ParseQueryUtil.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/autopilot-trick.ini";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/wbDefaultConfig.ini";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/unzip.exe";
+#ENDIF
+
+REFERENCE "Utility.dll";
+
+
+// Generate NGram candidates from wrapstar model
+movieQA = 
+    EXTRACT url, name, score:int, satoriId, repUrls
+    FROM 
+#IF(LOCAL)
+    @"D:\Temp\MagicQ\wikianswer.qa.movie.candidates.longest.txt"
+#ELSE
+    @@movieQAFact@@
+#ENDIF
+    USING DefaultTextExtractor
+    HAVING NOT string.IsNullOrEmpty(name) AND NOT string.IsNullOrEmpty(repUrls);
+
+movieQA =
+    SELECT Utility.Normalizer.NormalizeUrl(url) AS url,
+           repUrls,
+           score
+    FROM movieQA;
+
+// url, imdbId:long, score:int
+movieQA =
+    PROCESS movieQA
+    USING QAMappingProcessor;
+
+movieQA =
+    SELECT url,
+           imdbId,
+           SUM(score) AS score
+    FROM movieQA;
+
+movieQA =
+    REDUCE movieQA
+    ON url
+    PRESORT score DESC
+    USING Utility.CollapseReducer("1000", "url", "imdbId,score", "{0}|{1},");
+
+OUTPUT movieQA TO 
+#IF(LOCAL)
+@"D:\Temp\MagicQ\wikianswer.qa.movie.candidates.longest.imdbid.txt"
+#ELSE
+@@outputLongest@@
+#ENDIF
+;
+
+

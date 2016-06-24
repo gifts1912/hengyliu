@@ -1,0 +1,261 @@
+﻿//Script GUID:4a30cb87-f873-409c-9049-66645661a91c
+//Used for tracking history
+
+#IF(LOCAL)
+    RESOURCE @"D:\shared\QU\QR\coclick\slot\slot.LT30.scope.txt";
+#ELSE
+    RESOURCE @@PatternFile@@;
+#ENDIF
+
+#IF(LOCAL)
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\btclaD386.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\btjlaD386.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\btklaD433.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\btutilsD230.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\btutilsD430.dll";
+    REFERENCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\FrontEndUtil.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\GetHashUtil.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\WordBreaker.zip";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\ParseQueryUtil.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\autopilot-trick.ini";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\wbDefaultConfig.ini";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\unzip.exe";
+#ELSE
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/btclaD386.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/btjlaD386.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/btklaD433.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/btutilsD230.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/btutilsD430.dll";
+    REFERENCE @"/shares/searchDM/distrib/released/FrontEndUtil/FrontEndUtil.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/GetHashUtil.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/WordBreaker.zip";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/ParseQueryUtil.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/autopilot-trick.ini";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/wbDefaultConfig.ini";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/unzip.exe";
+#ENDIF
+
+REFERENCE "QU.Utility.dll";
+REFERENCE "Utility.dll";
+RESOURCE "Microsoft.IntentEngineApi.Interop.dll";
+RESOURCE "Newtonsoft.Json.dll";
+
+querySlots = 
+    EXTRACT query, slots
+#IF(LOCAL)
+    FROM @"D:\shared\QU\QR\debug\debug.desease.treatment.symptoms.2.txt"
+#ELSE
+    FROM @@QSlots@@
+#ENDIF
+    USING DefaultTextExtractor("-silent")
+;
+
+reformQPairs = 
+    PROCESS querySlots
+#IF(LOCAL)
+    USING ApplyPatternProcessor(@"D:\shared\QU\QR\coclick\slot\slot.LT30.scope.txt")
+#ELSE
+    USING ApplyPatternProcessor(@@PatternFile@@)
+#ENDIF
+;
+
+//#IF(LOCAL)
+//OUTPUT TO @"d:\Temp\debug.reformQPairs.txt";
+//#ENDIF
+
+//reformQueries = 
+//    SELECT query AS q FROM reformQPairs
+//    UNION ALL
+//    SELECT alterQ AS q FROM reformQPairs;
+//
+//reformQueries = SELECT DISTINCT q FROM reformQueries;
+
+log = 
+#IF(LOCAL)
+    EXTRACT query, urlHash, impressionCnt:long, clickCnt:long, superQBCnt:long, QBCnt:long, satCnt:long
+    FROM @"D:\shared\QU\QR\debug\debug.desease.treatment.symptoms.clicks.2.txt"
+#ELSE
+    EXTRACT query, urlHash, url, impressionCnt:long, clickCnt:long, superQBCnt:long, QBCnt:long, satCnt:long
+    FROM @@clickLog@@
+#ENDIF
+    USING DefaultTextExtractor("-silent");
+
+clicks = SELECT * FROM log HAVING clickCnt > 0;
+
+clicks = 
+    SELECT Utility.Normalizer.NormalizeQuery(query) AS query, urlHash AS url, impressionCnt, clickCnt, satCnt
+    FROM clicks;
+
+// Reduce size.
+//clicks = 
+//    SELECT reformQueries.q AS query, url, impressionCnt, clickCnt, satCnt
+//    FROM reformQueries INNER JOIN clicks
+//    ON reformQueries.q == clicks.query;
+
+// Preprocess to save resource
+AggQueryUrlClicks =
+    REDUCE clicks ON query
+    PRESORT clickCnt DESC
+    USING AggregatedQueryClicksReducer("@@MaxUrlsPerQuery@@");
+
+reformQPairClicks = 
+    SELECT a.query AS Query, a.alterQ AS ParaphrasedQuery, a.patternId AS PatternId,
+            b.AggregatedUrlClicks, b.TotalClickCnt, b.TotalSatCnt
+    FROM reformQPairs AS a
+    INNER JOIN AggQueryUrlClicks AS b
+    ON a.query == b.Query;
+
+// Join back
+JoinedParaQueryUrlClicks =
+    SELECT a.*,
+           b.AggregatedUrlClicks AS TargetAggregatedUrlClicks,
+           b.TotalClickCnt AS TargetTotalClickCnt,
+           b.TotalSatCnt AS TargetTotalSatCnt
+    FROM reformQPairClicks AS a
+    INNER JOIN AggQueryUrlClicks AS b
+    ON a.ParaphrasedQuery == b.Query;
+
+// Calculate click overlap
+ParaQueryClickOverlap =
+    PROCESS JoinedParaQueryUrlClicks
+    USING CalculateClickOverlapProcessor;
+
+
+OUTPUT TO
+#IF(LOCAL)
+    @"d:\Temp\ParaQueryClickOverlap.txt"
+#ELSE
+    @@ParaQueryClickOverlap@@
+#ENDIF
+;
+
+// Per-Pattern statistics
+PatternStats =
+    SELECT PatternId,
+           (float)SUM(TargetTotalClickCnt) / SUM(TotalClickCnt) AS ClickRatio,
+           (float)SUM(TargetTotalSatCnt) / SUM(TotalSatCnt) AS SatClickRatio,
+           (float)SUM(BinaryOverlap)/COUNT() AS AverageBinaryOverlap,
+           (float)SUM(FloatOverlap)/COUNT() AS AverageFloatOverlap,
+           (float)SUM(BinarySatOverlap)/COUNT(IsValidSatOverlap) AS AverageBinarySatOverlap,
+           (float)SUM(FloatSatOverlap)/COUNT(IsValidSatOverlap) AS AverageFloatSatOverlap
+    FROM ParaQueryClickOverlap;
+
+PatternStats = 
+    PROCESS PatternStats
+    USING BreakPatternProcessor;
+
+PatternStats = 
+    SELECT LeftP, RightP, 
+            AverageBinaryOverlap, AverageFloatOverlap, AverageBinarySatOverlap, AverageFloatSatOverlap, 
+            ClickRatio, SatClickRatio
+    FROM PatternStats
+#IF(!LOCAL)
+    @@filterCondition@@
+#ENDIF
+    ORDER BY AverageFloatOverlap DESC;
+
+OUTPUT TO
+#IF(LOCAL)
+    @"d:\Temp\ParaPatternClickOverlap.txt"
+#ELSE
+    @@PatternStats@@
+#ENDIF
+;
+
+//noClick = 
+//    SELECT query, SUM(clickCnt) AS clickCnt
+//    FROM log
+//    HAVING clickCnt == 0;
+//
+//noClickQU = 
+//    SELECT a.query, a.urlHash AS url, a.impressionCnt AS impressionCnt
+//    FROM log AS a
+//    INNER JOIN noClick AS b
+//    ON a.query == b.query;
+//
+//#IF(LOCAL)
+//    OUTPUT TO @"d:\Temp\debug.noClickQU.txt";
+//#ENDIF
+//
+//noClickQU = 
+//    REDUCE noClickQU ON query
+//    PRESORT impressionCnt DESC
+//    USING AggregateNoClickUrlsReducer("@@MaxUrlsPerQuery@@");
+//
+//#IF(LOCAL)
+//    OUTPUT TO @"d:\Temp\debug.noClickQU.Agg.txt";
+//#ENDIF
+//
+//noClickReformQPairs = 
+//    SELECT a.query AS Query, a.alterQ AS ParaphrasedQuery, a.patternId AS PatternId, 
+//        b.urls AS Urls, b.totalImpressionCnt AS TotalImpressionCnt
+//    FROM reformQPairs AS a
+//    INNER JOIN noClickQU AS b
+//    ON a.query == b.query;
+//
+//#IF(LOCAL)
+//    OUTPUT TO @"d:\Temp\debug.noClickReformQPairs.txt";
+//#ENDIF
+//
+//noClickToClick = 
+//    SELECT a.Query, a.ParaphrasedQuery, a.PatternId, a.Urls, a.TotalImpressionCnt, b.AggregatedUrlClicks AS ParaQueryAggUrlClicks
+//    FROM noClickReformQPairs AS a
+//    OUTER JOIN AggQueryUrlClicks AS b
+//    ON a.ParaphrasedQuery == b.Query;
+//
+//QueryLevelStat = 
+//    PROCESS noClickToClick
+//    PRODUCE Query, ParaphrasedQuery, PatternId, TotalImpressionCnt, QueryReformSuccess, ReformImpressionSuccess
+//    USING ParaQueryUsefulnessProcessor;
+//
+//QueryLevelStat = 
+//    REDUCE QueryLevelStat ON Query, PatternId
+//    PRESORT ReformImpressionSuccess DESC, QueryReformSuccess DESC
+//    USING Utility.OutputFirstReducer;
+//
+//OUTPUT TO
+//#IF(LOCAL)
+//    @"d:\Temp\ParaQueryUsefulness.txt"
+//#ELSE
+//    @@QueryUsefulnessStats@@
+//#ENDIF
+//;
+//
+//PatternLevelStat = 
+//    SELECT PatternId, 
+//        (float)SUM(ReformImpressionSuccess) / SUM(TotalImpressionCnt) AS impressionReformUsefulness, 
+//        (float)SUM(QueryReformSuccess) / COUNT() AS queryReformUsefulness
+//    FROM QueryLevelStat;
+//
+//PatternLevelStat = 
+//    PROCESS PatternLevelStat
+//    USING BreakPatternProcessor;
+//
+//PatternLevelStat = 
+//    SELECT LeftP, RightP, impressionReformUsefulness, queryReformUsefulness
+//    FROM PatternLevelStat;
+//
+//OUTPUT TO
+//#IF(LOCAL)
+//    @"d:\Temp\ParaPatternUsefulness.txt"
+//#ELSE
+//    @@PatternUsefulnessStats@@
+//#ENDIF
+//;
+//
+//Joined = SELECT 
+//LeftP, RightP, AverageBinaryOverlap, AverageFloatOverlap, AverageBinarySatOverlap, AverageFloatSatOverlap, 
+//ClickRatio, SatClickRatio,
+//impressionReformUsefulness, queryReformUsefulness
+//FROM PatternStats OUTER JOIN PatternLevelStat
+//ON PatternStats.LeftP == PatternLevelStat.LeftP AND PatternStats.RightP == PatternLevelStat.RightP;
+//
+//OUTPUT TO
+//#IF(LOCAL)
+//    @"d:\Temp\ParaPatternAllFeatures.txt"
+//#ELSE
+//    @@ParaPatternAllFeatures@@
+//#ENDIF
+//;
+
+

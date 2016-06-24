@@ -1,0 +1,72 @@
+﻿//Script GUID:60395aaf-c293-4f6c-b4df-348e319bdf97
+//Used for tracking history
+
+//Script GUID:e939fa19-893a-4b44-926d-abb288f98426
+//Used for tracking history
+
+    REFERENCE @"Microsoft.Live.Json.dll";
+    REFERENCE @"Microsoft.Scope.dll";
+    REFERENCE @"Microsoft.Knowledge.dll";
+
+#IF(LOCAL)
+    #DECLARE satoriStream string = @"SatoriTest.ss";
+    #DECLARE output string = @"ratings.out.txt";
+    #DECLARE ratingCutoff int = 1;
+#ELSE
+    #DECLARE satoriStream string = string.Format(@@SatoriGraphPath@@);
+    #DECLARE output string = @@output@@;
+    #DECLARE ratingCutoff int = int.Parse("@@MinRatings@@");
+#ENDIF
+
+USING Microsoft.Knowledge;
+
+stream = 
+#IF(LOCAL)
+    EXTRACT url, query, score, rawScore, EntityID
+    FROM @"RepUrls.txt"
+#ELSE
+    EXTRACT @@inputSchema@@
+    FROM @@EntityIds@@
+#ENDIF
+    USING DefaultTextExtractor
+;
+
+EntityIds = 
+    SELECT DISTINCT EntityID
+    FROM stream;
+
+satoriGraph = SSTREAM @satoriStream;
+
+satoriGraph = 
+    SELECT _S, _P, _O
+    FROM satoriGraph, EntityIds
+    WHERE satoriGraph._S == EntityIds.EntityID;
+
+entityRatings = 
+    SELECT _S, Microsoft.Knowledge.RdfValue.GetValue(satoriGraph._O) AS NumberOfRatings
+    FROM satoriGraph
+    WHERE satoriGraph._P == "http://knowledge.microsoft.com/mso/ratings.rated_entity.number_of_ratings"
+        AND satoriGraph._O.EndsWith("^^mso:decimal");
+
+entityRatings = 
+    SELECT _S AS EntityID, string.IsNullOrEmpty(NumberOfRatings) ? 0 : int.Parse(NumberOfRatings) AS Ratings
+    FROM entityRatings
+    HAVING Ratings >= @ratingCutoff;
+
+validEntities = 
+    SELECT DISTINCT EntityID
+    FROM entityRatings;
+
+stream = 
+#IF(LOCAL)
+    SELECT stream.url, stream.query, stream.score, stream.rawScore, stream.EntityID
+#ELSE
+    SELECT @@inputSchema@@
+#ENDIF
+    FROM stream, validEntities
+    WHERE stream.EntityID == validEntities.EntityID;
+
+OUTPUT TO @output;
+
+
+

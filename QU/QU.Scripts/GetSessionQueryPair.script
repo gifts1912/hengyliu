@@ -1,0 +1,90 @@
+﻿//Script GUID:c7bfb2df-603a-4174-9a54-bd712f5929ef
+//Used for tracking history
+
+
+//Script GUID:b0c8f448-831f-43b9-be4f-cd4704a829bd
+//Used for tracking history
+
+#IF(LOCAL)
+    #DECLARE Queries string = "testq.txt";
+    #DECLARE StartDate string = @"2013-01-02";
+    #DECLARE EndDate string = @"2013-01-02";
+    #DECLARE MarketCode string = @"en-US";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\btclaD386.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\btjlaD386.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\btklaD433.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\btutilsD230.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\btutilsD430.dll";
+    REFERENCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\FrontEndUtil.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\GetHashUtil.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\WordBreaker.zip";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\ParseQueryUtil.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\autopilot-trick.ini";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\wbDefaultConfig.ini";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\unzip.exe";
+#ELSE
+    #DECLARE Queries string = @@Queries@@;
+    #DECLARE StartDate string = "@@StartDate@@";
+    #DECLARE EndDate string = "@@EndDate@@";
+    #DECLARE MarketCode string = "@@MarketCode@@";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/btclaD386.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/btjlaD386.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/btklaD433.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/btutilsD230.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/btutilsD430.dll";
+    REFERENCE @"/shares/searchDM/distrib/released/FrontEndUtil/FrontEndUtil.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/GetHashUtil.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/WordBreaker.zip";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/ParseQueryUtil.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/autopilot-trick.ini";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/wbDefaultConfig.ini";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/unzip.exe";
+#ENDIF
+
+REFERENCE "Utility.dll";
+
+#DECLARE BingViewPath string = "/projects/popfresh/step1View/BingClickStep1View.view";
+
+BingView = 
+    VIEW @BingViewPath
+    PARAMS 
+    (TimeStart = @StartDate, 
+     TimeEnd = @EndDate
+    );  
+
+Slapi = 
+    SELECT Utility.Normalizer.NormalizeQuery(Query) AS Query, 
+           Utility.Normalizer.NormalizeQuery(NextQuery) AS NextQuery
+    FROM BingView
+    WHERE Market == @MarketCode  
+       AND (IsBot == 0 AND IsHoldout == 0 AND IsInternalTraffic == 0)
+       AND Query != NextQuery
+       AND NextQuery != ""
+    HAVING Query != NextQuery
+       AND NextQuery != "";
+
+Slapi = SELECT DISTINCT Query, NextQuery FROM Slapi;
+
+Queries = 
+    EXTRACT 
+#IF(LOCAL)
+Query 
+#ELSE
+@@QuerySchema@@
+#ENDIF
+    FROM @Queries USING DefaultTextExtractor;
+
+Queries = SELECT DISTINCT Utility.Normalizer.NormalizeQuery(Query) AS Query FROM Queries;
+
+Slapi = SELECT Query, NextQuery FROM Slapi, Queries WHERE Slapi.Query == Queries.Query;
+
+OUTPUT TO 
+#IF(LOCAL)
+@"testq.out.txt"
+#ELSE
+@@output@@
+#ENDIF
+;
+
+
+

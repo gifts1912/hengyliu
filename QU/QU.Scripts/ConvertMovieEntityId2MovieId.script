@@ -1,0 +1,78 @@
+﻿//Script GUID:3229b24c-ca7d-4eec-9c57-b15df062d32c
+//Used for tracking history
+
+REFERENCE "Utility.dll";
+
+#IF(LOCAL)
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\btclaD386.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\btjlaD386.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\btklaD433.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\btutilsD230.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\btutilsD430.dll";
+    REFERENCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\FrontEndUtil.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\GetHashUtil.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\WordBreaker.zip";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\ParseQueryUtil.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\autopilot-trick.ini";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\wbDefaultConfig.ini";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\unzip.exe";
+#ELSE
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/btclaD386.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/btjlaD386.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/btklaD433.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/btutilsD230.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/btutilsD430.dll";
+    REFERENCE @"/shares/searchDM/distrib/released/FrontEndUtil/FrontEndUtil.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/GetHashUtil.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/WordBreaker.zip";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/ParseQueryUtil.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/autopilot-trick.ini";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/wbDefaultConfig.ini";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/unzip.exe";
+#ENDIF
+
+RepresentativeUrls = 
+    EXTRACT EntityID, RepUrl
+#IF(LOCAL)
+    FROM @"RepUrls.txt"
+    USING Utility.SmartDataExtractor("0", "3")
+#ELSE
+    FROM @@RepresentativeUrls@@
+    USING Utility.SmartDataExtractor("@@EntityUrlColInRepUrlStream@@", "@@RepUrlColInRepUrlStream@@")
+#ENDIF
+;
+
+RepresentativeUrls = 
+    SELECT DISTINCT EntityID, RepUrl
+    FROM RepresentativeUrls;
+
+RepresentativeUrls = 
+    SELECT EntityID, Utility.Normalizer.NormalizeUrl(RepUrl) AS RepUrl
+    FROM RepresentativeUrls;
+
+EntityId2ImdbID =
+    SELECT EntityID.Substring("http://knowledge.microsoft.com/".Length) AS EntityID,
+           ImdbUtil.GetImdbId(RepUrl) AS ImdbId,
+           COUNT() AS Occ
+    FROM RepresentativeUrls
+    HAVING ImdbId >= 0;
+
+EntityId2ImdbID =
+    REDUCE EntityId2ImdbID ON EntityID
+    PRESORT Occ DESC
+    USING Utility.OutputFirstReducer
+;
+
+EntityId2ImdbID =
+    SELECT EntityID,
+           ImdbId
+    FROM EntityId2ImdbID;
+
+OUTPUT TO 
+#IF(LOCAL)
+    @"EntityId2ImdbID.txt"
+#ELSE
+    @@EntityId2ImdbID@@
+#ENDIF
+;
+

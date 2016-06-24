@@ -1,0 +1,79 @@
+﻿//Script GUID:8ad01b95-7e7b-4446-82ed-03435500da2b
+//Used for tracking history
+
+REFERENCE "Utility.dll";
+REFERENCE @"Microsoft.Live.Json.dll";
+REFERENCE @"Microsoft.Scope.dll";
+REFERENCE @"Microsoft.Knowledge.dll";
+
+#IF(LOCAL)
+    RESOURCE "propertyAnalysis.txt";
+#ELSE
+    RESOURCE @@propertyAnalysis@@;
+#ENDIF
+
+satoriGraph = 
+#IF(LOCAL)
+    EXTRACT _S, _P, _O, _C, _Conf, _Overall
+    FROM "satoriTest.txt"
+    USING DefaultTextExtractor
+#ELSE
+    SSTREAM @@satoriStream@@
+#ENDIF
+;
+
+satoriGraph =
+    SELECT _S,
+           _P,
+           _O
+    FROM satoriGraph;
+
+repUrls = 
+    SELECT _S, Microsoft.Knowledge.RdfValue.GetValue(_O) AS RepUrl
+    FROM satoriGraph
+    WHERE satoriGraph._P == "http://knowledge.microsoft.com/mso/type.object.representative_source_url"
+        AND satoriGraph._O.EndsWith("^^mso:uri");
+
+entityWithRepUrl =
+    SELECT DISTINCT _S
+    FROM repUrls;
+
+satoriGraph = 
+    PROCESS satoriGraph
+#IF(LOCAL)
+    USING PropertyFilter("propertyAnalysis.txt")
+#ELSE
+    USING PropertyFilter(@@propertyAnalysis@@)
+#ENDIF
+;
+
+satoriGraph =
+    SELECT satoriGraph.*, entityWithRepUrl.RepUrl
+    FROM satoriGraph OUTER JOIN entityWithRepUrl
+    ON satoriGraph._O == entityWithRepUrl._S;
+
+OUTPUT TO
+#IF(LOCAL)
+    @"GW.txt"
+#ELSE
+    @@GraphWalk@@
+#ENDIF
+;
+
+ValidRelations =
+    SELECT DISTINCT EntityType,
+                    Property,
+                    Pattern
+    FROM GW
+    ORDER BY EntityType, Property;;
+
+OUTPUT TO
+#IF(LOCAL)
+    @"ValidRelations.txt"
+#ELSE
+    @@ValidRelations@@
+#ENDIF
+;
+
+
+

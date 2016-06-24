@@ -1,0 +1,43 @@
+﻿//Script GUID:50e1f8fc-f6f0-4cfc-a21e-0ac362999c0a
+//Used for tracking history
+
+clickRatioFeature = 
+    EXTRACT leftP, rightP, BinaryClickCoverage:double, FloatClickCoverage:double, BinarySatClickCoverage:double, FloatSatClickCoverage:double,
+        ClickRatio:double?, SatClickRatio:double?
+    FROM 
+#IF(LOCAL)
+    @"D:\shared\QU\QR\coclick\slot\prune.step2.all.more.withclickratio.txt"
+#ELSE
+    @@clickRatioFeatures@@
+#ENDIF
+    USING DefaultTextExtractor("-silent");
+
+clickYieldFeature = 
+    EXTRACT leftP, rightP, BinaryClickCoverage:double, FloatClickCoverage:double, BinarySatClickCoverage:double, FloatSatClickCoverage:double,
+        ClickYield:double?, SatClickYield:double?
+    FROM 
+#IF(LOCAL)
+    @"D:\shared\QU\QR\coclick\slot\prune.step2.all.more.withclickyieldness.txt"
+#ELSE
+    @@clickYieldFeatures@@
+#ENDIF
+    USING DefaultTextExtractor("-silent");
+
+joined = 
+    SELECT a.leftP, a.rightP, a.BinaryClickCoverage, a.FloatClickCoverage, a.BinarySatClickCoverage, a.FloatSatClickCoverage,
+        a.ClickRatio, a.SatClickRatio, b.ClickYield, b.SatClickYield
+    FROM clickRatioFeature AS a
+    OUTER JOIN clickYieldFeature AS b
+    ON a.leftP == b.leftP AND a.rightP == b.rightP;
+
+allFeatures = 
+    SELECT * FROM joined
+    ORDER BY FloatClickCoverage DESC, ClickYield DESC, ClickRatio DESC;
+
+OUTPUT TO
+#IF(LOCAL)
+    @"D:\shared\QU\QR\coclick\slot\prune.step2.all.more.withallfeatures.txt"
+#ELSE
+    @@allFeatures@@
+#ENDIF
+;

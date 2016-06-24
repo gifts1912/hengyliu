@@ -1,0 +1,97 @@
+﻿//Script GUID:89d3fc0b-0cca-4073-bf0f-912d7bffea5b
+//Used for tracking history
+
+
+#IF(LOCAL)
+    #DECLARE output string = @"d:\Temp\coclickPairs.filtered.txt";
+    RESOURCE @"D:\Temp\healthTopHost.txt";
+#ELSE
+    #DECLARE output string = @@coclickedPairs@@;
+    RESOURCE @@TopHosts@@;
+#ENDIF
+
+#IF(LOCAL)
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\btclaD386.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\btjlaD386.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\btklaD433.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\btutilsD230.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\btutilsD430.dll";
+    REFERENCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\FrontEndUtil.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\GetHashUtil.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\WordBreaker.zip";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\ParseQueryUtil.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\autopilot-trick.ini";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\wbDefaultConfig.ini";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\unzip.exe";
+#ELSE
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/btclaD386.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/btjlaD386.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/btklaD433.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/btutilsD230.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/btutilsD430.dll";
+    REFERENCE @"/shares/searchDM/distrib/released/FrontEndUtil/FrontEndUtil.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/GetHashUtil.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/WordBreaker.zip";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/ParseQueryUtil.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/autopilot-trick.ini";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/wbDefaultConfig.ini";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/unzip.exe";
+#ENDIF
+
+REFERENCE "Utility.dll";
+
+clicks = 
+    EXTRACT query, col1, col2, impressionCnt:long, clickCnt:long, superQBCnt:long, QBCnt:long, satCnt:long
+#IF(LOCAL)
+    FROM @"d:\Temp\clicksLog.txt"
+#ELSE
+    FROM @@clickLog@@
+#ENDIF
+    USING DefaultTextExtractor("-silent")
+    HAVING satCnt > 0;
+
+// Deal with IETB formatted log.
+IEClicks = 
+    SELECT query, col1 AS url, impressionCnt, clickCnt, superQBCnt, QBCnt, satCnt
+    FROM clicks
+    WHERE Misc.IsDateTime(col2);
+
+BingClicks = 
+    SELECT query, col2 AS url, impressionCnt, clickCnt, superQBCnt, QBCnt, satCnt
+    FROM clicks
+    WHERE NOT Misc.IsDateTime(col2);
+
+clicks = 
+    SELECT query, url, impressionCnt, clickCnt, superQBCnt, QBCnt, satCnt FROM IEClicks
+    UNION ALL
+    SELECT query, url, impressionCnt, clickCnt, superQBCnt, QBCnt, satCnt FROM BingClicks;
+
+clicks = 
+    SELECT Utility.Normalizer.NormalizeQuery(query) AS query, 
+        Utility.Normalizer.GetUrlHash(url) AS urlHash,
+        Utility.Normalizer.NormalizeUrl(url) AS url,
+        Utility.Normalizer.GetUrlHost(url) AS host,
+        impressionCnt, clickCnt, superQBCnt, QBCnt, satCnt 
+    FROM clicks;
+
+T0 = 
+    PROCESS clicks
+#IF(LOCAL)
+    USING FilterSimQByTopHostProcessor("healthTopHost.txt")
+#ELSE
+    USING FilterSimQByTopHostProcessor(@@TopHosts@@);
+#ENDIF
+;
+
+clicks = 
+    SELECT 
+        query, urlHash, FIRST(url) AS url, 
+        SUM(impressionCnt) AS impressionCnt, 
+        SUM(clickCnt) AS clickCnt, 
+        SUM(superQBCnt) AS superQBCnt, 
+        SUM(QBCnt) AS QBCnt, 
+        SUM(satCnt) AS satCnt 
+    FROM T0;
+
+OUTPUT clicks TO @output;
+

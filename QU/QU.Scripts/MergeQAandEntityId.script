@@ -1,0 +1,103 @@
+﻿//Script GUID:7baae806-b7d2-4d86-99b6-08abb0c6b15c
+//Used for tracking history
+
+REFERENCE "Utility.dll";
+
+qaMetaword = 
+    EXTRACT url, name1, id1, name2, id2, name3, id3
+#IF(LOCAL)
+    FROM "qametaword.txt"
+#ELSE
+    FROM @@qametaword@@
+#ENDIF
+    USING DefaultTextExtractor;
+
+injHdr = 
+    EXTRACT url, sid, id
+#IF(LOCAL)
+    FROM "url2mid.txt"
+#ELSE
+    FROM @@injHdr@@
+#ENDIF
+    USING DefaultTextExtractor;
+
+movidIDMetaword = 
+    EXTRACT url, name, id
+#IF(LOCAL)
+    FROM "movidIDMetaword.txt"
+#ELSE
+    FROM @@movidIDMetaword@@
+#ENDIF
+    USING DefaultTextExtractor;
+
+movieUrls =
+    SELECT url
+    FROM movidIDMetaword;
+
+injHdrOnlyUrl =
+    SELECT url
+    FROM injHdr
+    EXCEPT
+    SELECT url
+    FROM movieUrls;
+
+injHdrOnlyUrl =
+    SELECT DISTINCT url
+    FROM injHdrOnlyUrl;
+
+injHdr =
+    SELECT url,
+           id
+    FROM injHdr,
+         injHdrOnlyUrl
+    WHERE injHdr.url == injHdrOnlyUrl.url;
+
+injHdr =
+    REDUCE injHdr
+    ON url
+    USING Utility.CollapseReducer("100", "url", "id", "{0}||");
+
+qaMetaword =
+    SELECT *,
+           "" AS info, 
+           1 AS type
+    FROM qaMetaword;
+
+#IF(LOCAL)
+    OUTPUT TO @"qaMetaword_test.txt";
+#ENDIF
+
+injHdr =
+    SELECT url,
+           "" AS name1,
+           "" AS id1,
+           "" AS name2,
+           "" AS id2,
+           "" AS name3,
+           "" AS id3,
+           info,
+           2 AS type
+    FROM injHdr;
+
+merged =
+    SELECT *
+    FROM qaMetaword
+    UNION ALL
+    SELECT *
+    FROM injHdr;
+
+REDUCE merged
+ON url
+PRESORT type DESC
+USING MetawordMerger;
+
+SELECT url, name1, id1, name2, id2, name3, id3;
+       
+OUTPUT TO
+#IF(LOCAL)
+    "mergedMetaword.txt"
+#ELSE
+    @@mergedMetaword@@
+#ENDIF
+;
+

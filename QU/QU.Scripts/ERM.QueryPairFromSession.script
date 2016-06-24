@@ -1,0 +1,44 @@
+﻿//Script GUID:b694d47e-cea4-4f12-ac13-fc7bcb0290ee
+//Used for tracking history
+
+T1 = SELECT 
+SessionID, Query, 
+Market, IsBot, PrevQuery
+#IF(LOCAL)
+FROM @"D:\users\v-bijia\test\SimilarQuery\BingClicksStep1.txt"
+USING BingClicksStep1SessionDataExtractor("0,4,12,15,22")
+HAVING (Market.ToLower().StartsWith("en-us") AND 
+       ((IsBot == "0") OR (String.IsNullOrEmpty(IsBot)))) AND
+        (NOT (String.IsNullOrEmpty(Query))) AND (NOT (String.IsNullOrEmpty(PrevQuery))) ;
+#ELSE
+FROM @@BingClicks_Step1@@
+USING BingClicksStep1SessionDataExtractor("0,4,12,15,22")
+HAVING (Market.ToLower().StartsWith("@@Market@@") AND 
+       ((IsBot == "0") OR (String.IsNullOrEmpty(IsBot))));
+#ENDIF
+
+
+//reduce on SessionID and QueryNo
+Pair = SELECT DISTINCT
+PrevQuery, Query
+FROM T1;
+
+OUTPUT Pair TO 
+#IF(LOCAL)
+@"D:\users\v-bijia\test\SimilarQuery\Pair.txt"
+#ELSE
+@@Pair@@;
+#ENDIF;
+
+AllQ = 
+SELECT DISTINCT PrevQuery AS Query FROM Pair 
+UNION DISTINCT 
+SELECT DISTINCT Query FROM Pair;
+
+OUTPUT AllQ TO 
+#IF(LOCAL)
+@"D:\users\v-bijia\test\SimilarQuery\AllQ.txt";
+#ELSE
+@@AllQ@@;
+#ENDIF
+

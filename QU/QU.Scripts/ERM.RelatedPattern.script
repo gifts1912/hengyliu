@@ -1,0 +1,86 @@
+﻿//Script GUID:47e69f38-e030-4db9-ab6b-8e31d89cdddb
+//Used for tracking history
+
+#IF(LOCAL)
+    #DECLARE minCnt int = 0;
+    #DECLARE outputTopNIds string = "10";
+#ELSE
+    #DECLARE minCnt int = @@minCnt@@;
+    #DECLARE outputTopNIds string = "@@outputTopNIds@@";
+#ENDIF
+REFERENCE "Utility.dll";
+
+pair = 
+    EXTRACT q1, q2, span1, index1, sid1, stype1, span2, index2, sid2, stype2
+    FROM
+#IF(LOCAL)
+    "pairRelatedEntities.txt"
+#ELSE
+    @@pairRelatedEntities@@
+#ENDIF
+    USING DefaultTextExtractor("-silence")
+    HAVING NOT q1.Contains("http") 
+            AND NOT q2.Contains("http")
+            AND NOT q1.Contains("www") 
+            AND NOT q2.Contains("www")
+            AND NOT q1.Contains("com") 
+            AND NOT q2.Contains("com")
+;
+
+pair = 
+    SELECT q1, q2, 
+    MyUtility.SimpleNormalizeQuery(span1) AS span1, sid1, stype1, 
+    MyUtility.SimpleNormalizeQuery(span2) AS span2, sid2, stype2
+    FROM pair;
+
+pair =
+    REDUCE pair
+    ON q1, q2
+    USING PatternReducer;
+
+pair =
+    SELECT p1,
+           p2,
+           ids,
+           COUNT(ids) AS singlePairCnt
+    FROM pair
+    WHERE p1.Contains('.') AND p2.Contains('.') AND p1.Split('.', ' ').Length != 2;
+
+patternPair =
+    SELECT p1,
+           p2,
+           COUNT(ids) AS pairCnt,
+           COUNT(DISTINCT ids) AS uniqPairCnt
+    FROM pair
+    HAVING pairCnt >= @minCnt
+#IF(NOT LOCAL)
+         AND uniqPairCnt > 1
+#ENDIF
+;
+
+patternPair =
+    SELECT patternPair.p1,
+           patternPair.p2,
+           patternPair.pairCnt,
+           patternPair.uniqPairCnt,
+           pair.ids, 
+           pair.singlePairCnt
+    FROM patternPair,
+         pair
+    WHERE patternPair.p1 == pair.p1 AND patternPair.p2 == pair.p2;
+
+patternPair = 
+    REDUCE patternPair ON p1, p2, pairCnt, uniqPairCnt
+    PRESORT singlePairCnt DESC
+    USING Utility.CollapseReducer(@outputTopNIds, "p1,p2,pairCnt,uniqPairCnt", "ids,singlePairCnt", "{0},{1}|||");
+
+patternPair = SELECT p1, p2, long.Parse(pairCnt) AS pairCnt, long.Parse(uniqPairCnt) AS uniqPairCnt, info FROM patternPair ORDER BY pairCnt DESC;
+
+OUTPUT TO 
+#IF(LOCAL)
+    "patternRelatedEntities.more.txt"
+#ELSE
+    @@patternRelatedEntities@@
+#ENDIF
+;
+

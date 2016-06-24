@@ -1,0 +1,72 @@
+﻿//Script GUID:310ac0ed-daf9-49fa-b294-c09f778d4d53
+//Used for tracking history
+
+
+#IF(LOCAL)
+    #DECLARE AlteredQuery string = @"d:\data\q2aq.tsv";
+    
+    #DECLARE StartDate string = @"2013-01-02";
+    #DECLARE EndDate string = @"2013-01-02";
+    
+    REFERENCE @"D:\SLAPI\SearchLogApi.dll";
+    REFERENCE @"D:\SLAPI\Microsoft.Live.Json.dll";
+    REFERENCE @"D:\SLAPI\Serializer.exe";
+
+#ELSE
+    #DECLARE AlteredQuery string = @@AlteredQuery@@;
+    
+    #DECLARE StartDate string = "@@StartDate@@";
+    #DECLARE EndDate string = "@@EndDate@@";
+
+    REFERENCE @"/shares/searchDM/distrib/released/SLAPI/SearchLogApi.dll";
+    REFERENCE @"/shares/searchDM/distrib/released/SLAPI/Microsoft.Live.Json.dll";
+    REFERENCE @"/shares/searchDM/distrib/released/SLAPI/Serializer.exe";
+
+#ENDIF
+
+// Read logs
+SearchLogPageViewInput =
+#IF (LOCAL)
+    VIEW @"D:\SLAPI\SearchLogPageView.view"
+    PARAMS (CustomInputStream=@"D:\SLAPI\MergedLog_2014_10_10.ss");
+#ELSE
+    VIEW "/shares/searchDM/distrib/released/SLAPI/SearchLogPageView.view"
+    PARAMS (Start = @StartDate, End = @EndDate, UseSample = false, Dataset = "Bing.com");
+#ENDIF
+
+T0 =
+    SELECT Query_RawQuery AS Query,
+           Request_RequestTime AS RequestTime,
+           Utility.AlterationToString(Alterations) AS AlterationsCombine
+    FROM SearchLogPageViewInput
+    CROSS APPLY DataSources
+            .FindElementsWithProperty("Service", "CombinedAlterationServiceInstr")
+            .FindElementsWithProperty("Scenario", "CAL")
+            .FindElementsWithProperty("T", "D.AnswerItem")
+            AS Alterations
+    WHERE 
+        Vertical == @"web"
+        AND Market == @"en-US"
+        AND Page_Experiments[@"flt"].Level.ToLower() == @"d-flt"
+        AND NOT Request_IsBotVNext
+        AND Query_IsNormal
+        AND NOT String.IsNullOrWhiteSpace(Query_RawQuery)
+        AND NOT FilterHelper.IsQueryBad(Query_RawQuery, 246)
+;
+
+T0 = 
+    SELECT Query, RequestTime, AlterationsCombine
+    FROM T0
+    WHERE NOT String.IsNullOrWhiteSpace(AlterationsCombine);
+
+
+T1 = 
+    SELECT Query, 
+        FIRST(AlterationsCombine) AS AlterationsCombine,
+        FIRST(RequestTime) AS RequestTime
+    FROM T0
+    GROUP BY Query
+    ORDER BY RequestTime DESC;
+
+OUTPUT TO @AlteredQuery;
+

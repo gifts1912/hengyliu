@@ -1,0 +1,74 @@
+﻿//Script GUID:dbb75407-4caf-4da4-bde5-1c72432a5804
+//Used for tracking history
+
+#IF(LOCAL)
+    #DECLARE IgnoreIntent Boolean = true;
+#ELSE
+    #DECLARE IgnoreIntent Boolean = @@IgnoreIntent@@;
+#ENDIF
+
+REFERENCE "QU.Utility.dll";
+RESOURCE "Newtonsoft.Json.dll";
+RESOURCE "Microsoft.IntentEngineApi.Interop.dll";
+RESOURCE "Utility.dll";
+
+Q2Slots = 
+    EXTRACT query, slots
+#IF(LOCAL)
+    FROM @"D:\Temp\slots.txt"
+#ELSE
+    FROM @@Q2Slots@@
+#ENDIF
+    USING DefaultTextExtractor("-silent");
+
+simQ = 
+    EXTRACT leftQ, rightQ, sim
+#IF(LOCAL)
+    FROM @"d:\Temp\simQ.txt"
+#ELSE
+    FROM @@SimQ@@
+#ENDIF
+    USING DefaultTextExtractor("-silent");
+
+simQSlots = 
+    SELECT leftQ, rightQ, sim, slots AS leftQSlots
+    FROM simQ
+    LEFT OUTER JOIN Q2Slots
+    ON simQ.leftQ == Q2Slots.query;
+
+simQSlots = 
+    SELECT leftQ, rightQ, sim, leftQSlots, slots AS rightQSlots
+    FROM simQSlots
+    LEFT OUTER JOIN Q2Slots
+    ON simQSlots.rightQ == Q2Slots.query;
+
+replaced = 
+    PROCESS simQSlots
+    PRODUCE leftSlotQ, rightSlotQ, sim, leftQ, rightQ, leftQSlots, rightQSlots
+#IF(@IgnoreIntent)
+    USING ReplaceSlotsProcessor("-ignoreintent")
+#ELSE
+    USING ReplaceSlotsProcessor
+#ENDIF
+;
+
+OUTPUT replaced TO 
+#IF(LOCAL)
+    @"d:\Temp\debugReplaced.txt"
+#ELSE
+    @@Debug@@
+#ENDIF
+;
+
+replaced = 
+    SELECT leftSlotQ, rightSlotQ, sim
+    FROM replaced;
+
+OUTPUT replaced TO 
+#IF(LOCAL)
+    @"d:\Temp\replaced.txt"
+#ELSE
+    @@Replaced@@
+#ENDIF
+;
+

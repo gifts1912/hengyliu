@@ -1,0 +1,48 @@
+﻿//Script GUID:4305cba7-70e2-4a76-8bdc-26c6679ca00b
+//Used for tracking history
+
+REFERENCE "Utility.dll";
+
+#IF(LOCAL)
+    #DECLARE entitySS string = @"test.out.ss";
+    #DECLARE scrape string = @"q2Ids.txt";
+    #DECLARE output string = "test.scrape.entity.txt";
+#ELSE
+    #DECLARE entitySS string = @@entitySS@@;
+    #DECLARE scrape string = @@scrape@@;
+    #DECLARE output string = @@output@@;
+#ENDIF
+
+EntityUrls = 
+    SSTREAM @entitySS;
+
+Scrape = 
+    EXTRACT query, Ids
+    FROM @scrape
+#IF(LOCAL)
+    USING Utility.SmartDataExtractor("0", "1")
+#ELSE
+    USING Utility.SmartDataExtractor("@@queryCol@@", "@@idsCol@@")
+#ENDIF
+;
+
+Scrape = 
+    PROCESS Scrape
+    PRODUCE Query, Id
+    USING ScrapeProcessor;
+
+Scrape =
+    SELECT Query, Url, Id, Confidence, Type
+    FROM Scrape, EntityUrls
+    WHERE Scrape.Id == EntityUrls.Id;
+
+Scrape = 
+    REDUCE Scrape
+    ON Query, Id, Url
+    PRESORT Type ASC, Confidence DESC
+    USING Utility.OutputFirstReducer;
+
+Scrape = SELECT * FROM Scrape ORDER BY Query, Id, Type ASC, Confidence DESC;
+
+OUTPUT TO @output;
+

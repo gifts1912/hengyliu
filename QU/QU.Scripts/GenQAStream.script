@@ -1,0 +1,149 @@
+﻿//Script GUID:1211ec86-428b-4468-be72-90464f8a2025
+//Used for tracking history
+
+#IF(LOCAL)
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\btclaD386.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\btjlaD386.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\btklaD433.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\btutilsD230.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\btutilsD430.dll";
+    REFERENCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\FrontEndUtil.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\GetHashUtil.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\WordBreaker.zip";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\ParseQueryUtil.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\autopilot-trick.ini";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\wbDefaultConfig.ini";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\unzip.exe";
+#ELSE
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/btclaD386.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/btjlaD386.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/btklaD433.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/btutilsD230.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/btutilsD430.dll";
+    REFERENCE @"/shares/searchDM/distrib/released/FrontEndUtil/FrontEndUtil.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/GetHashUtil.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/WordBreaker.zip";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/ParseQueryUtil.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/autopilot-trick.ini";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/wbDefaultConfig.ini";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/unzip.exe";
+#ENDIF
+
+RESOURCE "stopword.txt";
+REFERENCE "Utility.dll";
+
+// Wrapstar model
+movieWrapstar = 
+    EXTRACT url, question, detail, answers, ratings
+    FROM 
+#IF(LOCAL)
+    @"D:\Temp\MagicQ\wikianswer.qa.movie.txt"
+#ELSE
+    @@movieWrapstar@@
+#ENDIF
+    USING DefaultTextExtractor
+    HAVING NOT string.IsNullOrEmpty(question) AND NOT string.IsNullOrEmpty(answers);
+
+detailWrapstar = 
+    PROCESS movieWrapstar
+    USING ExtendDetailsProcessor;
+
+movieWrapstar = 
+    SELECT url, Utility.Normalizer.NormalizeQuery(question) AS question, answers, ratings FROM movieWrapstar
+    UNION ALL
+    SELECT url, detail AS question, answers, ratings FROM detailWrapstar;
+
+movieWrapstar =
+    SELECT DISTINCT url, question, answers, ratings
+    FROM movieWrapstar;
+
+// QA Facts
+QAFacts = 
+    EXTRACT url, name, score:long, satoriId, repUrls
+    FROM 
+#IF(LOCAL)
+    @"D:\Temp\MagicQ\wikianswer.qa.movie.candidates.longest.txt"
+#ELSE
+    @@qaFacts@@
+#ENDIF
+    USING DefaultTextExtractor
+;
+
+QAFacts = 
+    PROCESS QAFacts
+    USING FilteStopwordsProcessor;
+
+QAFacts =
+    SELECT QAFacts.url,
+           movieWrapstar.question,
+           QAFacts.name,
+           QAFacts.score,
+           QAFacts.satoriId,
+           QAFacts.repUrls
+    FROM QAFacts,
+         movieWrapstar
+    WHERE QAFacts.url == movieWrapstar.url;
+
+QAFacts =
+    SELECT QAFacts.*,
+           Math.Min(5, name.Length) AS canLen
+    FROM QAFacts;
+
+
+IDFCal = SELECT DISTINCT name, url FROM QAFacts;
+IDFCal = SELECT name, COUNT(url) AS docCnt FROM IDFCal;
+urls = SELECT DISTINCT url FROM QAFacts;
+TotalDocs = SELECT COUNT(url) AS allDocCnt FROM urls;
+IDFCal = SELECT name, docCnt, allDocCnt FROM IDFCal CROSS JOIN TotalDocs;
+
+IDFCal = SELECT name, docCnt, allDocCnt FROM IDFCal ORDER BY docCnt DESC;
+OUTPUT IDFCal TO 
+#IF(LOCAL)
+    @"D:\Temp\MagicQ\wikianswer.qa.movie.candidates.doccnt.txt"
+#ELSE
+    @@movieNameDocCnt@@
+#ENDIF
+;
+
+#IF(NOT LOCAL)
+    // filter too-frequent docs
+    IDFCal = SELECT name, docCnt, allDocCnt FROM IDFCal WHERE docCnt < 0.1 * allDocCnt;
+#ENDIF
+IDFCal = SELECT name, Math.Log(((double)allDocCnt + 1.0) / ((double)docCnt + 1.0)) AS idf FROM IDFCal;
+
+
+QAFacts = 
+    SELECT QAFacts.*, idf 
+    FROM QAFacts, IDFCal
+    WHERE QAFacts.name == IDFCal.name
+;
+
+stream = 
+    PROCESS QAFacts
+    USING StreamGenProcessor;
+
+stream = 
+    SELECT url, query, MAX(score) AS score, MAX(rawScore) AS rawScore, FIRST(satoriId) AS satoriId
+    FROM stream
+    HAVING NOT string.IsNullOrEmpty(url) AND NOT string.IsNullOrEmpty(query);
+
+rawStream = SELECT url, query, score FROM stream;
+
+OUTPUT rawStream TO 
+#IF(LOCAL)
+@"D:\Temp\MagicQ\wikianswer.qa.movie.candidates.longest.stream.txt"
+#ELSE
+@@stream@@
+#ENDIF
+;
+
+OUTPUT stream TO 
+#IF(LOCAL)
+@"D:\Temp\MagicQ\wikianswer.qa.movie.candidates.longest.stream.debug.txt"
+#ELSE
+@@streamDebug@@
+#ENDIF
+;
+
+
+

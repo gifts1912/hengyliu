@@ -1,0 +1,82 @@
+﻿//Script GUID:d5708690-a0f9-4843-bdbc-44e7be808ec8
+//Used for tracking history
+
+
+#IF(LOCAL)
+    #DECLARE WithCF string = @"WithCFSites.txt";
+    #DECLARE WithoutCF string = @"WithoutCFSites.txt";
+    #DECLARE StartDate string = @"2012-07-01";
+    #DECLARE EndDate string = @"2012-07-01";
+    #DECLARE VerticalString string = @"web";
+    #DECLARE MarketCode string = @"en-us";
+    #DECLARE FlightIDString string = @"d-flt";
+    #DECLARE UseSample bool = false;
+    #DECLARE Numberline string = @"flt38";
+    #DECLARE TopN int = 5;
+    #DECLARE CFSites string = @"yahoo.com;ehow.com";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\btclaD386.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\btjlaD386.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\btklaD433.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\btutilsD230.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\btutilsD430.dll";
+    REFERENCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\FrontEndUtil.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\GetHashUtil.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\WordBreaker.zip";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\ParseQueryUtil.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\autopilot-trick.ini";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\wbDefaultConfig.ini";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\unzip.exe";
+    REFERENCE @"D:\SLAPI\SearchLogApi.dll";
+    REFERENCE @"D:\SLAPI\Microsoft.Live.Json.dll";
+    REFERENCE @"D:\SLAPI\Serializer.exe";
+    RESOURCE @"triggerQ.txt";
+#ELSE
+    #DECLARE WithCF string = @@WithCFImpressions@@;
+    #DECLARE WithoutCF string = @@WithoutCFImpressions@@;
+    #DECLARE StartDate string = @@StartDate@@;
+    #DECLARE EndDate string = @@EndDate@@;
+    #DECLARE VerticalString string = @@VerticalString@@;
+    #DECLARE MarketCode string = @@MarketCode@@;
+    #DECLARE FlightIDString string = @@FlightIDString@@;
+    #DECLARE UseSample bool = @@UseSample@@;
+    #DECLARE Numberline string = @@Numberline@@;
+    #DECLARE TopN int = @@TopN@@;
+    #DECLARE CFSites string = "@@CFSites@@";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/btclaD386.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/btjlaD386.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/btklaD433.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/btutilsD230.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/btutilsD430.dll";
+    REFERENCE @"/shares/searchDM/distrib/released/FrontEndUtil/FrontEndUtil.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/GetHashUtil.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/WordBreaker.zip";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/ParseQueryUtil.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/autopilot-trick.ini";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/wbDefaultConfig.ini";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/unzip.exe";
+    REFERENCE @"/shares/searchDM/distrib/released/SLAPI/SearchLogApi.dll";
+    REFERENCE @"/shares/searchDM/distrib/released/SLAPI/Microsoft.Live.Json.dll";
+    REFERENCE @"/shares/searchDM/distrib/released/SLAPI/Serializer.exe";
+    RESOURCE @@TriggerQ@@;
+#ENDIF
+
+REFERENCE "Utility.dll";
+
+//Define the View for Local and Cluster Runs
+SlapiPageView =    
+#IF(LOCAL)
+       VIEW "D:\SLAPI\SearchLogPageView.view"
+       PARAMS (CustomInputStream=@"D:\SLAPI\MergedLog_2014_10_10.ss");
+#ELSE
+       VIEW "/shares/searchDM/distrib/released/SLAPI/SearchLogPageView.view"
+       PARAMS (Start = @StartDate, End = @EndDate, UseSample = @UseSample, Dataset = "Bing.com");
+#ENDIF
+
+SELECT Query_RawQuery, Request_ImpressionGuid, Util.EncodeWebResults(Page_Entities_WebResults) AS Results
+FROM SlapiPageView
+WHERE Vertical.ToLower().Equals(@VerticalString) 
+    AND Market.ToLower().Equals(@MarketCode) 
+    AND Page_Experiments[@Numberline].Level.ToLower().Equals(@FlightIDString)
+;//ORDER BY Request_ImpressionGuid, WebResultPosition;
+
+

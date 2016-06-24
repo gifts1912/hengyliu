@@ -1,0 +1,124 @@
+﻿//Script GUID:a12f247d-9a99-442a-beeb-707b49e278a1
+//Used for tracking history
+
+REFERENCE "Utility.dll";
+
+#IF(LOCAL)
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\btclaD386.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\btjlaD386.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\btklaD433.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\btutilsD230.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\btutilsD430.dll";
+    REFERENCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\FrontEndUtil.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\GetHashUtil.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\WordBreaker.zip";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\ParseQueryUtil.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\autopilot-trick.ini";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\wbDefaultConfig.ini";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\unzip.exe";
+#ELSE
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/btclaD386.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/btjlaD386.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/btklaD433.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/btutilsD230.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/btutilsD430.dll";
+    REFERENCE @"/shares/searchDM/distrib/released/FrontEndUtil/FrontEndUtil.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/GetHashUtil.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/WordBreaker.zip";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/ParseQueryUtil.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/autopilot-trick.ini";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/wbDefaultConfig.ini";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/unzip.exe";
+#ENDIF
+
+RepresentativeUrls = 
+    EXTRACT EntityID, RepUrl
+#IF(LOCAL)
+    FROM @"D:\binxjia\temp\RepUrls.txt"
+    USING Utility.SmartDataExtractor("0", "3")
+#ELSE
+    FROM @@RepresentativeUrls@@
+    USING Utility.SmartDataExtractor("@@EntityUrlColInRepUrlStream@@", "@@RepUrlColInRepUrlStream@@")
+#ENDIF
+;
+
+RepresentativeUrls = 
+    SELECT DISTINCT EntityID, RepUrl
+    FROM RepresentativeUrls;
+
+RepresentativeUrls = 
+    SELECT EntityID, Utility.Normalizer.NormalizeUrl(RepUrl) AS RepUrl
+    FROM RepresentativeUrls;
+
+SourceUrls = 
+    EXTRACT EntityID, SourceUrl
+    FROM
+#IF(LOCAL)
+    @"sourceurl.output.txt"
+#ELSE
+    @@SourceUrls@@
+#ENDIF
+    USING DefaultTextExtractor
+;
+
+SourceUrls =
+    SELECT DISTINCT EntityID,
+                    Utility.Normalizer.NormalizeUrl(SourceUrl) AS SourceUrl
+    FROM SourceUrls;
+
+
+EntityId2ImdbID =
+    SELECT EntityID,
+           RepUrl,
+           Utility.Normalizer.GetUrlDomain(RepUrl) AS Domain
+    FROM RepresentativeUrls
+    HAVING Domain == "imdb.com";
+
+EntityId2ImdbID =
+    SELECT EntityID,
+           ImdbUtil.GetImdbId(RepUrl) AS ImdbId,
+           COUNT() AS Occ
+    FROM EntityId2ImdbID
+    HAVING ImdbId >= 0;
+
+EntityId2ImdbID =
+    REDUCE EntityId2ImdbID ON EntityID
+    PRESORT Occ DESC
+    USING Utility.OutputFirstReducer
+;
+
+RepresentativeUrls =
+    PROCESS RepresentativeUrls
+    USING ExtMovieUrlProcessor;
+
+AllUrls =
+    SELECT EntityID,
+           SourceUrl AS MovieUrl
+    FROM SourceUrls
+    UNION DISTINCT
+    SELECT EntityID,
+           RepUrl AS MovieUrl
+    FROM RepresentativeUrls;
+
+AllUrls =
+    SELECT AllUrls.EntityID,
+           AllUrls.RepUrl,
+           EntityId2ImdbID.ImdbId
+    FROM EntityId2ImdbID,
+         AllUrls
+    WHERE EntityId2ImdbID.EntityID == AllUrls.EntityID;
+
+metaword =
+    SELECT RepUrl,
+           "24_MSMovieId2015Jan" AS Name,
+           ImdbId
+    FROM AllUrls;
+
+OUTPUT TO 
+#IF(LOCAL)
+    @"metadata.output.txt"
+#ELSE
+    @@Metadata@@
+#ENDIF
+;
+

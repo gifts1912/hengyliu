@@ -1,0 +1,40 @@
+﻿//Script GUID:800a53c7-e50f-4a1d-bcea-42fcc2f8004c
+//Used for tracking history
+
+#IF(LOCAL)
+    #DECLARE ModelFile String = @"d:\Temp\model.gz";
+#ELSE
+    #DECLARE ModelFile String = @@GzipModel@@;
+#ENDIF
+
+RESOURCE @ModelFile;
+REFERENCE "Utility.dll";
+RESOURCE "gzip.exe";
+RESOURCE "cygiconv-2.dll";
+RESOURCE "cygintl.dll";
+RESOURCE "cygintl-1.dll";
+RESOURCE "cygintl-2.dll";
+RESOURCE "cygwin1.dll";
+
+simQ = 
+    EXTRACT leftQ, rightQ, sim
+#IF(LOCAL)
+    FROM @"d:\Temp\simQ.txt"
+#ELSE
+    FROM @@simQ@@
+#ENDIF
+    USING DefaultTextExtractor;
+
+queries = 
+    SELECT leftQ AS q FROM simQ
+    UNION ALL
+    SELECT rightQ AS q FROM simQ;
+
+queries = 
+    SELECT DISTINCT q FROM queries;
+
+q2Slots = 
+    PROCESS queries
+    PRODUCE q, slots
+    USING ParseQueryProcessor(@ModelFile);
+

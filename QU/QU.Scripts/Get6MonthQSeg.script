@@ -1,0 +1,47 @@
+﻿//Script GUID:dabbbe51-969b-44da-9112-45d81f237277
+//Used for tracking history
+
+//REFERENCE @"/shares/searchDM/distrib/released/QuerySeg/Microsoft.Live.Json.dll";
+//REFERENCE @"/shares/searchDM/distrib/released/QuerySeg/QuerySeg.dll";
+//REFERENCE @"/shares/searchDM/distrib/released/QuerySeg/ScopeUtil.dll";
+//REFERENCE @"/shares/searchDM/distrib/released/QuerySeg/SearchLogExtractor.dll";
+//RESOURCE @"/shares/searchDM/distrib/released/QuerySeg/QuerySegmentationJsonPathMappings.txt";
+//USING MS.Internal.Bing.DataMining.ScopeUtilities;
+//USING Microsoft.Live.Json;
+//USING MS.Internal.Bing.DataMining.UnifiedAPI;
+//USING MS.Internal.Bing.DataMining.Segmentation;
+
+QueryFrequencyData = 
+VIEW 
+    @"/shares/searchDM/distrib/released/QuerySeg/QSView.6MonthQueryStat_@@market@@_web.script"
+PARAMS 
+(END_DATE="@@endDate@@");
+
+
+FilteredQuery = SELECT Query,
+           qsDistinctQueryCount,
+           qsQueryViewCount
+FROM QueryFrequencyData
+WHERE qsQueryViewCount > @@frequencyThreshold@@ AND @@qsQAS@@ == true;
+
+QueryFrequencyDataWithRank = SELECT
+Query,
+qsDistinctQueryCount,
+qsQueryViewCount
+FROM FilteredQuery
+ORDER BY qsQueryViewCount DESC;
+
+OUTPUT TO
+@@topQueries@@;
+
+
+
+//Code from the cs file
+#CS
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Text;
+using ScopeRuntime;
+
+#ENDCS

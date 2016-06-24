@@ -1,0 +1,23 @@
+﻿//Script GUID:e8bcd192-69af-45a8-a2b9-90c5c5b6e48b
+//Used for tracking history
+
+//REFERENCE "Utility.dll";
+
+TwoWayTM =
+    EXTRACT SourcePhrase, TargetPhrase, p_ttqq:double, p_sstt:double
+#IF(LOCAL)
+    FROM @"D:\Temp\tmModel.txt"
+#ELSE
+    FROM @@TMInput@@
+#ENDIF
+    USING TMExtractor;
+
+OUTPUT TO SSTREAM
+#IF(LOCAL)
+@"d:\Temp\tmModel.ss"
+#ELSE
+@@TMSStream@@
+#ENDIF
+CLUSTERED BY SourcePhrase
+SORTED BY p_sstt DESC
+;

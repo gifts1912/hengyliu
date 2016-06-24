@@ -1,0 +1,237 @@
+﻿//Script GUID:c43636d8-71da-4480-95f7-5600e598b1ed
+//Used for tracking history
+
+#IF(LOCAL)
+    RESOURCE "L3OFEHeader.tsv";
+    #DECLARE maxDRScore int = -10;
+#ELSE
+    RESOURCE @@header@@;
+    #DECLARE maxDRScore int = @@maxDRScore@@;
+#ENDIF
+
+REFERENCE "Utility.dll";
+
+data = 
+    EXTRACT QueryId, Query, DocId, Rating, Url, QDocPosition:int, DRScore:int
+    FROM
+#IF(LOCAL)
+    @"L3OFEData.tsv"
+    USING OFEDataExtractor("L3OFEHeader.tsv")
+#ELSE
+    @@ofeData@@
+    USING OFEDataExtractor(@@header@@)
+#ENDIF
+;
+
+data =
+    SELECT QueryId,
+           Query,
+           DocId,
+           Rating,
+           Url,
+           QDocPosition,
+           ((double)DRScore / 10000.0 - 100.0) AS DRScore,
+           IF(QDocPosition == 0, Rating, "NotFirstPos") AS FirstPosRating
+    FROM data;
+
+stat =
+    SELECT QueryId,
+           Query,
+           MAX(DRScore) AS MaxDRScore,
+           MIN(FirstPosRating) AS FirstPosRating,
+           MAX(Rating) AS MaxRating
+    FROM data;
+
+statDistinct =
+    SELECT Query,
+           MAX(MaxDRScore) AS MaxDRScore,
+           MAX(FirstPosRating) AS FirstPosRating,
+           MAX(MaxRating) AS MaxRating
+    FROM stat;
+
+scoreStat =
+    SELECT 0 AS idx,
+           "All" AS name,
+           COUNT(Query) AS cnt,
+           COUNTIF(FirstPosRating == "Bad") AS firstIsBad,
+           COUNTIF(MaxRating != "Bad") AS hasGood
+    FROM stat
+    UNION ALL
+    SELECT 1 AS idx,
+           "Query20" AS name,
+           COUNTIF(MaxDRScore >= 20) AS cnt,
+           COUNTIF(MaxDRScore >= 20 AND FirstPosRating == "Bad") AS firstIsBad,
+           COUNTIF(MaxDRScore >= 20 AND MaxRating != "Bad") AS hasGood
+    FROM stat
+    UNION ALL
+    SELECT 2 AS idx,
+           "Query15~20" AS name,
+           COUNTIF(MaxDRScore<20 AND MaxDRScore >= 15) AS cnt,
+           COUNTIF(MaxDRScore<20 AND MaxDRScore >= 15 AND FirstPosRating == "Bad") AS firstIsBad,
+           COUNTIF(MaxDRScore<20 AND MaxDRScore >= 15 AND MaxRating != "Bad") AS hasGood
+    FROM stat
+    UNION ALL
+    SELECT 3 AS idx,
+           "Query10~15" AS name,
+           COUNTIF(MaxDRScore<15 AND MaxDRScore >= 10) AS cnt,
+           COUNTIF(MaxDRScore<15 AND MaxDRScore >= 10 AND FirstPosRating == "Bad") AS firstIsBad,
+           COUNTIF(MaxDRScore<15 AND MaxDRScore >= 10 AND MaxRating != "Bad") AS hasGood
+    FROM stat
+    UNION ALL
+    SELECT 4 AS idx,
+           "Query5~10" AS name,
+           COUNTIF(MaxDRScore<10 AND MaxDRScore >= 5) AS cnt,
+           COUNTIF(MaxDRScore<10 AND MaxDRScore >= 5 AND FirstPosRating == "Bad") AS firstIsBad,
+           COUNTIF(MaxDRScore<10 AND MaxDRScore >= 5 AND MaxRating != "Bad") AS hasGood
+    FROM stat
+    UNION ALL
+    SELECT 5 AS idx,
+           "Query0~5" AS name,
+           COUNTIF(MaxDRScore<5 AND MaxDRScore >= 0) AS cnt,
+           COUNTIF(MaxDRScore<5 AND MaxDRScore >= 0 AND FirstPosRating == "Bad") AS firstIsBad,
+           COUNTIF(MaxDRScore<5 AND MaxDRScore >= 0 AND MaxRating != "Bad") AS hasGood
+    FROM stat
+    UNION ALL
+    SELECT 6 AS idx,
+           "Query-5~0" AS name,
+           COUNTIF(MaxDRScore<0 AND MaxDRScore >= -5) AS cnt,
+           COUNTIF(MaxDRScore<0 AND MaxDRScore >= -5 AND FirstPosRating == "Bad") AS firstIsBad,
+           COUNTIF(MaxDRScore<0 AND MaxDRScore >= -5 AND MaxRating != "Bad") AS hasGood
+    FROM stat
+    UNION ALL
+    SELECT 7 AS idx,
+           "Query-10~-5" AS name,
+           COUNTIF(MaxDRScore<-5 AND MaxDRScore >= -10) AS cnt,
+           COUNTIF(MaxDRScore<-5 AND MaxDRScore >= -10 AND FirstPosRating == "Bad") AS firstIsBad,
+           COUNTIF(MaxDRScore<-5 AND MaxDRScore >= -10 AND MaxRating != "Bad") AS hasGood
+    FROM stat
+    UNION ALL
+    SELECT 8 AS idx,
+           "Query-15~-10" AS name,
+           COUNTIF(MaxDRScore<-10 AND MaxDRScore >= -15) AS cnt,
+           COUNTIF(MaxDRScore<-10 AND MaxDRScore >= -15 AND FirstPosRating == "Bad") AS firstIsBad,
+           COUNTIF(MaxDRScore<-10 AND MaxDRScore >= -15 AND MaxRating != "Bad") AS hasGood
+    FROM stat
+    UNION ALL
+    SELECT 9 AS idx,
+           "Query-20~-15" AS name,
+           COUNTIF(MaxDRScore<-15 AND MaxDRScore >= -20) AS cnt,
+           COUNTIF(MaxDRScore<-15 AND MaxDRScore >= -20 AND FirstPosRating == "Bad") AS firstIsBad,
+           COUNTIF(MaxDRScore<-15 AND MaxDRScore >= -20 AND MaxRating != "Bad") AS hasGood
+    FROM stat
+    UNION ALL
+    SELECT 10 AS idx,
+           "Query-20" AS name,
+           COUNTIF(MaxDRScore<-20) AS cnt,
+           COUNTIF(MaxDRScore<-20 AND FirstPosRating == "Bad") AS firstIsBad,
+           COUNTIF(MaxDRScore<-20 AND MaxRating != "Bad") AS hasGood
+    FROM stat
+    UNION ALL
+    SELECT 11 AS idx,
+           "DistinctAll" AS name,
+           COUNT(Query) AS cnt,
+           COUNTIF(FirstPosRating == "Bad") AS firstIsBad,
+           COUNTIF(MaxRating != "Bad") AS hasGood
+    FROM stat
+    UNION ALL
+    SELECT 12 AS idx,
+           "DistinctQuery20" AS name,
+           COUNTIF(MaxDRScore >= 20) AS cnt,
+           COUNTIF(MaxDRScore >= 20 AND FirstPosRating == "Bad") AS firstIsBad,
+           COUNTIF(MaxDRScore >= 20 AND MaxRating != "Bad") AS hasGood
+    FROM statDistinct
+    UNION ALL
+    SELECT 13 AS idx,
+           "DistinctQuery15~20" AS name,
+           COUNTIF(MaxDRScore<20 AND MaxDRScore >= 15) AS cnt,
+           COUNTIF(MaxDRScore<20 AND MaxDRScore >= 15 AND FirstPosRating == "Bad") AS firstIsBad,
+           COUNTIF(MaxDRScore<20 AND MaxDRScore >= 15 AND MaxRating != "Bad") AS hasGood
+    FROM statDistinct
+    UNION ALL
+    SELECT 14 AS idx,
+           "DistinctQuery10~15" AS name,
+           COUNTIF(MaxDRScore<15 AND MaxDRScore >= 10) AS cnt,
+           COUNTIF(MaxDRScore<15 AND MaxDRScore >= 10 AND FirstPosRating == "Bad") AS firstIsBad,
+           COUNTIF(MaxDRScore<15 AND MaxDRScore >= 10 AND MaxRating != "Bad") AS hasGood
+    FROM statDistinct
+    UNION ALL
+    SELECT 15 AS idx,
+           "DistinctQuery5~10" AS name,
+           COUNTIF(MaxDRScore<10 AND MaxDRScore >= 5) AS cnt,
+           COUNTIF(MaxDRScore<10 AND MaxDRScore >= 5 AND FirstPosRating == "Bad") AS firstIsBad,
+           COUNTIF(MaxDRScore<10 AND MaxDRScore >= 5 AND MaxRating != "Bad") AS hasGood
+    FROM statDistinct
+    UNION ALL
+    SELECT 16 AS idx,
+           "DistinctQuery0~5" AS name,
+           COUNTIF(MaxDRScore<5 AND MaxDRScore >= 0) AS cnt,
+           COUNTIF(MaxDRScore<5 AND MaxDRScore >= 0 AND FirstPosRating == "Bad") AS firstIsBad,
+           COUNTIF(MaxDRScore<5 AND MaxDRScore >= 0 AND MaxRating != "Bad") AS hasGood
+    FROM statDistinct
+    UNION ALL
+    SELECT 17 AS idx,
+           "DistinctQuery-5~0" AS name,
+           COUNTIF(MaxDRScore<0 AND MaxDRScore >= -5) AS cnt,
+           COUNTIF(MaxDRScore<0 AND MaxDRScore >= -5 AND FirstPosRating == "Bad") AS firstIsBad,
+           COUNTIF(MaxDRScore<0 AND MaxDRScore >= -5 AND MaxRating != "Bad") AS hasGood
+    FROM statDistinct
+    UNION ALL
+    SELECT 18 AS idx,
+           "DistinctQuery-10~-5" AS name,
+           COUNTIF(MaxDRScore<-5 AND MaxDRScore >= -10) AS cnt,
+           COUNTIF(MaxDRScore<-5 AND MaxDRScore >= -10 AND FirstPosRating == "Bad") AS firstIsBad,
+           COUNTIF(MaxDRScore<-5 AND MaxDRScore >= -10 AND MaxRating != "Bad") AS hasGood
+    FROM statDistinct
+    UNION ALL
+    SELECT 19 AS idx,
+           "DistinctQuery-15~-10" AS name,
+           COUNTIF(MaxDRScore<-10 AND MaxDRScore >= -15) AS cnt,
+           COUNTIF(MaxDRScore<-10 AND MaxDRScore >= -15 AND FirstPosRating == "Bad") AS firstIsBad,
+           COUNTIF(MaxDRScore<-10 AND MaxDRScore >= -15 AND MaxRating != "Bad") AS hasGood
+    FROM statDistinct
+    UNION ALL
+    SELECT 20 AS idx,
+           "DistinctQuery-20~-15" AS name,
+           COUNTIF(MaxDRScore<-15 AND MaxDRScore >= -20) AS cnt,
+           COUNTIF(MaxDRScore<-15 AND MaxDRScore >= -20 AND FirstPosRating == "Bad") AS firstIsBad,
+           COUNTIF(MaxDRScore<-15 AND MaxDRScore >= -20 AND MaxRating != "Bad") AS hasGood
+    FROM statDistinct
+    UNION ALL
+    SELECT 21 AS idx,
+           "DistinctQuery-20" AS name,
+           COUNTIF(MaxDRScore<-20) AS cnt,
+           COUNTIF(MaxDRScore<-20 AND FirstPosRating == "Bad") AS firstIsBad,
+           COUNTIF(MaxDRScore<-20 AND MaxRating != "Bad") AS hasGood
+    FROM statDistinct;
+
+scoreStat =
+    SELECT *
+    FROM scoreStat
+    ORDER BY idx ASC;
+
+OUTPUT TO 
+#IF(LOCAL)
+    "scoreDistr.txt"
+#ELSE
+    @@scoreDistr@@
+#ENDIF
+;
+
+statDistinct =
+    SELECT Query
+    FROM statDistinct
+    WHERE MaxDRScore<@maxDRScore AND FirstPosRating == "Bad" AND MaxRating != "Bad";
+
+data = 
+    SELECT data.*
+    FROM data, statDistinct
+    WHERE data.Query == statDistinct.Query;
+
+OUTPUT TO 
+#IF(LOCAL)
+    "selected.txt"
+#ELSE
+    @@selected@@
+#ENDIF
+;
+

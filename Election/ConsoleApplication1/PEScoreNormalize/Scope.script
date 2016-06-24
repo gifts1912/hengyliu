@@ -1,0 +1,38 @@
+﻿//Script GUID:5d36c96d-a6d3-4aac-9aa3-f995b65d5375
+//Used for tracking history
+#IF(LOCAL)
+    #DECLARE Input1 string = @"D:\demo\PatUrlScore.tsv";
+    #DECLARE Input2 string = @"D:\demo\pat2PEId.tsv";
+    #DECLARE Output string = @"D:\demo\wath.tsv";
+    #DECLARE ScoreThread double = 0.5;
+#ELSE
+    #DECLARE Input1 string = @@PatUrlScore@@;
+    #DECLARE Input2 string = @@Pat2PEId@@;
+    #DECLARE Output string = @@PEIdUrlNormalScore@@;
+    #DECLARE ScoreThread double = @@ScoreThread@@;
+#ENDIF
+
+In1 =
+    EXTRACT pat:string, url:string, score:string
+    FROM @Input1
+    USING DefaultTextExtractor();
+
+In2 = 
+    EXTRACT pat:string, peId:string
+    FROM @Input2
+    USING DefaultTextExtractor();
+
+rs0 =
+    SELECT peId, url, score
+    FROM In1
+    INNER JOIN In2 ON In1.pat == In2.pat;
+
+rs1 = 
+    REDUCE rs0
+    ON peId
+    PRODUCE peId, url, score
+    USING ScoreNormalReducer(@ScoreThread)
+    PRESORT score DESC;
+
+OUTPUT rs1 TO @Output
+USING DefaultTextOutputter;

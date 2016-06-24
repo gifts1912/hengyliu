@@ -1,0 +1,73 @@
+﻿//Script GUID:e4837579-01ab-4601-9ff8-d66dcbca3bd4
+//Used for tracking history
+
+REFERENCE @"Microsoft.Live.Json.dll";
+REFERENCE @"Microsoft.Scope.dll";
+REFERENCE @"Microsoft.Knowledge.dll";
+
+#IF(LOCAL)
+    #DECLARE satoriStream string = @"SatoriTest.ss";
+    #DECLARE output string = @"ratings.out.txt";
+    #DECLARE ratingCutoff int = 1;
+#ELSE
+    #DECLARE satoriStream string = string.Format(@@SatoriGraphPath@@);
+    #DECLARE output string = @@output@@;
+    #DECLARE ratingCutoff int = int.Parse("@@MinRatings@@");
+#ENDIF
+
+USING Microsoft.Knowledge;
+
+fact = 
+    EXTRACT url, name, score:double, satoriId, repUrls
+    FROM
+#IF(LOCAL)
+    @"RepUrls.txt"
+#ELSE
+    @@fact@@
+#ENDIF
+    USING DefaultTextExtractor("-silence");
+
+fact = 
+    SELECT url, FIRST(name) AS name, MAX(score) AS score, satoriId, FIRST(repUrls) AS repUrls 
+    FROM fact;
+
+EntityIds = SELECT DISTINCT satoriId FROM fact;
+
+satoriGraph = SSTREAM @satoriStream;
+
+satoriGraph = 
+    SELECT _S, _P, _O
+    FROM satoriGraph, EntityIds
+    WHERE satoriGraph._S == EntityIds.satoriId;
+
+entityRatings = 
+    SELECT _S, Microsoft.Knowledge.RdfValue.GetValue(satoriGraph._O) AS NumberOfRatings
+    FROM satoriGraph
+    WHERE satoriGraph._P == "http://knowledge.microsoft.com/mso/ratings.rated_entity.number_of_ratings"
+        AND satoriGraph._O.EndsWith("^^mso:decimal");
+
+entityRatings = 
+    SELECT _S AS EntityID, string.IsNullOrEmpty(NumberOfRatings) ? 0 : int.Parse(NumberOfRatings) AS ratings
+    FROM entityRatings
+    HAVING ratings >= @ratingCutoff;
+
+
+fact = 
+    SELECT url, name, score, satoriId, repUrls, ratings
+    FROM fact, entityRatings
+    WHERE fact.satoriId == entityRatings.EntityID;
+
+fact = 
+    REDUCE fact ON url
+    PRESORT score DESC, name, ratings DESC
+    USING Top3MovieReducer;
+
+OUTPUT fact TO 
+#IF(LOCAL)
+@"D:\Temp\MagicQ\wikianswer.qa.movie.candidates.longest.ids.txt"
+#ELSE
+@@output@@
+#ENDIF
+;
+
+

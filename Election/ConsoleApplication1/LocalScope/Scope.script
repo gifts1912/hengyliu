@@ -1,0 +1,40 @@
+﻿
+#IF(LOCAL)
+    #DECLARE Input1 string = @"D:\demo\PatUrlScore.tsv";
+    #DECLARE Input2 string = @"D:\demo\pat2PEId.tsv";
+    #DECLARE Output string = @"D:\demo\wath.tsv";
+    #DECLARE ScoreThread double = 0.5;
+#ELSE
+    #DECLARE Input1 string = @@Input1_O@@;
+    #DECLARE Input2 string = @@Input2_O@@;
+    #DECLARE Output string = @@Output@@;
+    #DECLARE ScoreThread double = @@ScoreThread@@;
+#ENDIF
+
+In1 =
+    EXTRACT pat:string, url:string, score:string
+    //FROM @Input1
+    FROM @"D:\demo\PatUrlScore.tsv"
+    USING DefaultTextExtractor();
+
+In2 = 
+    EXTRACT pat:string, peId:string
+    FROM @Input2
+    USING DefaultTextExtractor();
+
+rs0 =
+    SELECT peId, url, score
+    FROM In1
+    INNER JOIN In2 ON In1.pat == In2.pat;
+
+OUTPUT rs0 TO @"D:\demo\wath_rs0.tsv"
+USING DefaultTextOutputter();
+
+rs1 = 
+    REDUCE rs0
+    ON peId
+    PRESORT score DESC
+    USING ScoreNormalReducer(@ScoreThread);
+
+OUTPUT rs1 TO @Output
+USING DefaultTextOutputter();

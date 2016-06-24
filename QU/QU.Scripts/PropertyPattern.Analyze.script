@@ -1,0 +1,36 @@
+﻿//Script GUID:c495cdb7-3b12-458a-933c-e902d4052175
+//Used for tracking history
+
+
+REFERENCE "Utility.dll";
+
+propertyPattern = 
+#IF(LOCAL)
+    EXTRACT _P, Pattern, label, related
+    FROM @"D:\shared\QU\Structure\PropertyPatternWithLabels.txt"
+    USING DefaultTextExtractor
+#ELSE
+    SSTREAM @@propertyPattern@@
+#ENDIF
+;
+
+propertyPattern =
+    SELECT _P AS Property,
+           Pattern
+    FROM propertyPattern;
+
+propertyPattern = 
+    PROCESS propertyPattern
+    USING PropertyAnalyzer;
+
+REDUCE propertyPattern
+ON Property
+USING PatternAggregator;
+
+OUTPUT TO 
+#IF(LOCAL)
+    @"propertyAnalysis.txt";
+#ELSE
+    @@propertyAnalysis@@
+#ENDIF
+;

@@ -1,0 +1,100 @@
+﻿//Script GUID:97b39ca0-8c1b-404c-ada0-e76bbbd2e352
+//Used for tracking history
+
+REFERENCE @"Microsoft.Live.Json.dll";
+    REFERENCE @"Microsoft.Scope.dll";
+    REFERENCE @"Microsoft.Knowledge.dll";
+
+#IF(LOCAL)
+    #DECLARE satoriStream string = @"SatoriTest.ss";
+#ELSE
+    #DECLARE satoriStream string = string.Format(@@SatoriGraphPath@@);
+#ENDIF
+
+#IF(LOCAL)
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\btclaD386.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\btjlaD386.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\btklaD433.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\btutilsD230.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\btutilsD430.dll";
+    REFERENCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\FrontEndUtil.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\GetHashUtil.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\WordBreaker.zip";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\ParseQueryUtil.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\autopilot-trick.ini";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\wbDefaultConfig.ini";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\unzip.exe";
+#ELSE
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/btclaD386.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/btjlaD386.dll";k
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/btklaD433.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/btutilsD230.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/btutilsD430.dll";
+    REFERENCE @"/shares/searchDM/distrib/released/FrontEndUtil/FrontEndUtil.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/GetHashUtil.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/WordBreaker.zip";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/ParseQueryUtil.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/autopilot-trick.ini";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/wbDefaultConfig.ini";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/unzip.exe";
+#ENDIF
+
+REFERENCE "Utility.dll";
+
+USING Microsoft.Knowledge;
+
+satoriGraph = 
+#IF(LOCAL)
+    EXTRACT _S, _P, _O, _C, _Conf, _Overall
+    FROM "satoriTest.txt"
+    USING DefaultTextExtractor
+#ELSE
+    SSTREAM @satoriStream
+#ENDIF
+;
+
+filmActors = 
+    SELECT _S, _O FROM satoriGraph
+    WHERE _P == "http://knowledge.microsoft.com/mso/film.film.actor";
+
+filmActorName = 
+    SELECT filmActors._S, 
+        Microsoft.Knowledge.RdfValue.GetValue(satoriGraph._O) AS Name
+    FROM filmActors 
+    INNER JOIN satoriGraph
+    ON filmActors._O == satoriGraph._S
+    WHERE satoriGraph._P == "http://knowledge.microsoft.com/mso/type.object.name"
+    ;
+
+sourceUrls = 
+    SELECT filmActorName._S, filmActorName.Name, Microsoft.Knowledge.RdfValue.GetValue(satoriGraph._O) AS SourceUrl
+    FROM filmActorName
+    INNER JOIN satoriGraph
+    ON filmActorName._S == satoriGraph._S
+    WHERE satoriGraph._P == "http://knowledge.microsoft.com/mso/type.object.source_url"
+        AND satoriGraph._O.EndsWith("^^mso:uri");
+
+stream = 
+    SELECT  Utility.Normalizer.NormalizeUrl(SourceUrl) AS url, Utility.Normalizer.NormalizeQuery(Name) AS query, 100 AS score
+    FROM sourceUrls
+    HAVING NOT (Utility.Normalizer.GetUrlDomain(url) == "wikipedia.org" AND Utility.Normalizer.GetUrlHost(url) != "en.wikipedia.org");
+
+extStream = PROCESS stream
+    USING ExtMovieUrlProcessor;
+
+extStream =
+    SELECT url,
+           query,
+           MAX(score) AS score
+    FROM extStream;
+
+OUTPUT TO 
+#IF(LOCAL)
+    @"D:\Temp\MagicQ\film.actor.stream.ext.txt"
+#ELSE
+    @@extStream@@
+#ENDIF
+;
+
+
+

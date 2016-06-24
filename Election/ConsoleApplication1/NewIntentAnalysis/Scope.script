@@ -1,0 +1,201 @@
+﻿//Script GUID:ea6fdfea-cd4a-458e-a036-83cc44994dc6
+//Used for tracking history
+REFERENCE @"System.Core.dll";
+#IF(LOCAL)
+RESOURCE @"tag.gz";
+#DECLARE ModelDirFile string = @"tag.gz";
+#DECLARE ModelFileName string = "lexicon.txt";
+#DECLARE output string = @"test.tokenreplace.output.txt";
+#DECLARE whitelistRegex string = ".*";
+#ELSE
+RESOURCE @@ModelDirZipFile@@;
+#DECLARE ModelDirFile string = @@ModelDirZipFile@@;
+#DECLARE ModelFileName string = "@@ModelFileName@@";
+#DECLARE output string = @@output@@;
+#DECLARE whitelistRegex string = @@whitelistRegex@@;
+#ENDIF
+
+RESOURCE "7z.exe";
+RESOURCE "7z.dll";
+REFERENCE "Utility.dll";
+
+input = EXTRACT
+#IF(LOCAL)
+Query
+FROM "test.tokenreplace.txt"
+#ELSE
+@@schema@@
+FROM @@Input@@
+#ENDIF
+USING DefaultTextExtractor;
+
+output = PROCESS input USING TokenReplaceProcessor(@ModelDirFile, @ModelFileName);
+
+#IF(!string.IsNullOrWhiteSpace(@whitelistRegex))
+output = SELECT * FROM output WHERE Regex.IsMatch(Pattern, @whitelistRegex);
+#ENDIF
+
+OUTPUT TO @output;
+
+#CS
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text;
+using ScopeRuntime;
+
+
+/// <summary>
+/// 
+/// </summary>
+public class TokenReplaceProcessor : Processor
+{
+    private static bool initialized = false;
+    private static object obj = new object();
+    private const string modelDir = "model";
+    private string modelFile = null;
+    private string modelZipFile = null;
+    private Utility.StringUtils.DictMatcher<string, List<Utility.NLP.SemanticParsing.SemanticAtom>> matcher = null;
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="columns"></param>
+    /// <param name="args"></param>
+    /// <param name="input"></param>
+    /// <returns></returns>
+    public override Schema Produces(string[] columns, string[] args, Schema input)
+    {
+        Schema output = new Schema();
+        ColumnInfo col = input[0].Clone();
+        col.Source = input[0];
+        output.Add(col);
+
+        ColumnInfo colP = new ColumnInfo("Pattern", ColumnDataType.String);
+        output.Add(colP);
+
+        ColumnInfo colR = new ColumnInfo("ReplaceInfo", ColumnDataType.String);
+        output.Add(colR);
+        
+        ColumnInfo colFre = new ColumnInfo("Freq", ColumnDataType.String);
+        output.Add(colFre);
+
+        return output;
+    }
+    /// <summary>
+    ///
+    /// </summary>
+    /// <param name="input"></param>
+    /// <param name="output"></param>
+    /// <param name="args"></param>
+    /// <returns></returns>    
+    public override IEnumerable<Row> Process(RowSet input, Row output, string[] args)
+    {
+        this.modelZipFile = args[0];
+        this.modelFile = args[1];
+        Initialize();
+        foreach (Row row in input.Rows)
+        {
+            string query = row[0].String;
+            string freq = row[2].String;
+            row[0].CopyTo(output[0]);
+            row[2].CopyTo(output[3]);
+
+            if (query.Split(' ').Length > 15)
+                continue;
+
+            var matches = Utility.NLP.SemanticParsing.Common.Match(query, matcher, null);
+            if (matches.Length > 6)
+            {
+                matches = matches.Take(6).ToArray();
+            }
+
+            var tuples = Utility.NLP.SemanticParsing.Common.CanGenTuple(query, matches);
+
+            foreach (var t in tuples)
+            {
+                if (t.Item2 != null && t.Item2.Count > 0)
+                {
+                    output[1].Set(t.Item1);
+                    output[2].Set(String.Join(";", t.Item2.Select(i => i.Replaced + ":" + i.QueryPart)));
+                    yield return output;
+                }
+            }
+        }
+    }
+
+    public void Initialize()
+    {
+        if (!initialized)
+        {
+            lock (obj)
+            {
+                if (!initialized)
+                {
+                    // Unzip model files.
+                    if (!Directory.Exists(modelDir))
+                    {
+                        int exitCode = 0;
+                        string error = "";
+                        using (System.Diagnostics.Process unzipProc = new System.Diagnostics.Process())
+                        {
+                            unzipProc.StartInfo.FileName = "7z.exe";
+                            unzipProc.StartInfo.Arguments = string.Format("x -y -o{0} {1}", modelDir, modelZipFile);
+                            // Redirect the error stream of the child process.
+                            unzipProc.StartInfo.UseShellExecute = false;
+                            unzipProc.StartInfo.RedirectStandardError = true;
+                            unzipProc.Start();
+                            error = unzipProc.StandardError.ReadToEnd();
+                            unzipProc.WaitForExit();
+                            exitCode = unzipProc.ExitCode;
+                        }
+                        if (exitCode != 0)
+                        {
+                            throw new ApplicationException("7z return error " + exitCode + " with errors " + error);
+                        }
+                    }
+
+                    //var data = new List<Utility.StringUtils.Data<string, List<Utility.NLP.SemanticParsing.SemanticAtom>>>();
+                    matcher = new Utility.StringUtils.DictMatcher<string, List<Utility.NLP.SemanticParsing.SemanticAtom>>();
+                    using (StreamReader sr = new StreamReader(Path.Combine(Environment.CurrentDirectory, modelDir, modelFile)))
+                    {
+                        while (!sr.EndOfStream)
+                        {
+                            string line = sr.ReadLine();
+                            if (string.IsNullOrEmpty(line))
+                                continue;
+
+                            string[] items = line.Split('\t');
+                            if (items.Length < 2)
+                                continue;
+
+                            var currData = new Utility.StringUtils.Data<string, List<Utility.NLP.SemanticParsing.SemanticAtom>>();
+                            currData.Keys = items[0].Split(' ');
+                            currData.Value = new List<Utility.NLP.SemanticParsing.SemanticAtom>();
+                            foreach (var s in items[1].Split(';'))
+                            {
+                                var atom = new Utility.NLP.SemanticParsing.SemanticAtom();
+                                atom.Category = s;
+                                atom.Type = Utility.NLP.SemanticParsing.AtomType.Entity;
+                                currData.Value.Add(atom);
+                            }
+                            matcher.AddString(currData.Keys, currData.Value);
+                            //data.Add(currData);
+                        }
+                    }
+
+                    //matcher.Build(data);
+                    matcher.MakeFall();
+                }
+
+                initialized = true;
+            }
+        }
+    }
+}
+
+
+#ENDCS
+
+// Generated by ScopeStudio, version 1.8.0000.5!

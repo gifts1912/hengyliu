@@ -1,0 +1,86 @@
+﻿//Script GUID:ec37b4b7-9a1e-4186-9909-0bcb3c16dd46
+//Used for tracking history
+
+//
+//Mine similar queries from Session Data (output from BingClicksV3A Pipeline Step 1)
+//author: Binxing Jiao
+//
+#IF(LOCAL)
+REFERENCE @"D:\users\v-bijia\Utilities\FrontEnd\FrontEndUtil.dll";
+RESOURCE  @"D:\users\v-bijia\Utilities\FrontEnd\ParseQueryUtil.dll",
+            @"D:\users\v-bijia\Utilities\FrontEnd\GetHashUtil.dll",
+            @"D:\users\v-bijia\Utilities\FrontEnd\wbDefaultConfig.ini",
+            @"D:\users\v-bijia\Utilities\FrontEnd\btclaD386.dll",
+            @"D:\users\v-bijia\Utilities\FrontEnd\btjlaD386.dll",
+            @"D:\users\v-bijia\Utilities\FrontEnd\btklaD433.dll",
+            @"D:\users\v-bijia\Utilities\FrontEnd\btutilsD230.dll",
+            @"D:\users\v-bijia\Utilities\FrontEnd\btutilsD430.dll",
+            @"D:\users\v-bijia\Utilities\FrontEnd\autopilot-trick.ini", 
+            @"D:\users\v-bijia\Utilities\FrontEnd\UrlNormlizerUtil.dll",
+            @"D:\users\v-bijia\Utilities\FrontEnd\unzip.exe",
+            @"D:\users\v-bijia\Utilities\FrontEnd\WordBreaker.zip";
+#ELSE
+REFERENCE @"/shares/searchDM/distrib/released/FrontEndUtil/FrontEndUtil.dll";
+RESOURCE  @"/shares/searchDM/distrib/released/FrontEndUtil/ParseQueryUtil.dll",
+            @"/shares/searchDM/distrib/released/FrontEndUtil/GetHashUtil.dll",
+            @"/shares/searchDM/distrib/released/FrontEndUtil/wbDefaultConfig.ini",
+            @"/shares/searchDM/distrib/released/FrontEndUtil/btclaD386.dll",
+            @"/shares/searchDM/distrib/released/FrontEndUtil/btjlaD386.dll",
+            @"/shares/searchDM/distrib/released/FrontEndUtil/btklaD433.dll",
+            @"/shares/searchDM/distrib/released/FrontEndUtil/btutilsD230.dll",
+            @"/shares/searchDM/distrib/released/FrontEndUtil/btutilsD430.dll",
+            @"/shares/searchDM/distrib/released/FrontEndUtil/autopilot-trick.ini",
+            @"/shares/searchDM/distrib/released/FrontEndUtil/unzip.exe",
+            @"/shares/searchDM/distrib/released/FrontEndUtil/WordBreaker.zip";
+#ENDIF
+
+T1 = SELECT 
+SessionID, ImpressionGUID, Convert.ToInt32(QueryNo) AS QueryNo /*int*/, Query, Convert.ToInt32(ClickOrder) AS ClickOrder, 
+Convert.ToInt32(SessionSize) AS SessionSize  /*int*/, Market, Convert.ToDouble(DwellTime) AS DwellTime, IsBot, PrevQuery, 
+Convert.ToInt32(PrevQueryClicks) AS PrevQueryClicks
+#IF(LOCAL)
+FROM @"D:\users\v-bijia\test\SimilarQuery\BingClicksStep1.txt"
+USING BingClicksStep1SessionDataExtractor("0,2,3,4,7,10,12,14,15,22,23")
+HAVING (Market.ToLower().StartsWith("en-us") AND 
+       ((IsBot == "0") OR (String.IsNullOrEmpty(IsBot))));
+#ELSE
+FROM @@BingClicks_Step1@@
+USING BingClicksStep1SessionDataExtractor("0,2,3,4,7,10,12,14,15,22,23")
+HAVING (Market.ToLower().StartsWith("@@Market@@") AND 
+       ((IsBot == "0") OR (String.IsNullOrEmpty(IsBot))));
+#ENDIF
+
+
+//reduce on SessionID and QueryNo
+T2 = SELECT 
+SessionID, QueryNo, COUNT(DISTINCT(ImpressionGUID)) AS queryImpressions, FIRST(Query) AS Query, MAX(ClickOrder) AS currentQueryClicks, 
+FIRST(SessionSize) AS SessionSize, MAX(DwellTime) AS DwellTime, FIRST(PrevQuery) AS PrevQuery, FIRST(PrevQueryClicks) AS PrevQueryClicks
+//SessionID, QueryNo
+FROM T1
+// Non-sat to SAT transformation.
+HAVING PrevQueryClicks == 0 && currentQueryClicks > 0 && (DwellTime >= 30.0 || DwellTime == 0.0);
+
+#IF(LOCAL)
+OUTPUT T2 TO @"D:\users\v-bijia\test\SimilarQuery\T2.txt";
+#ENDIF
+
+//REDUCE on SessionID to obtain similar queries
+T3 = REDUCE T2 ON SessionID
+PRODUCE leftQuery, rightQuery, similarity
+#IF(LOCAL)
+USING SessionSimilarQueryReducer("5", "1")
+#ELSE
+USING SessionSimilarQueryReducer("@@minSharedPrefix@@", "@@minSharedTerms@@")
+#ENDIF
+PRESORT QueryNo ASC;
+
+T4 = SELECT leftQuery, rightQuery, MAX(similarity) AS sim
+FROM T3;
+
+OUTPUT T4 TO 
+#IF(LOCAL)
+@"D:\users\v-bijia\test\SimilarQuery\T3_session.txt";
+#ELSE
+@@similarQueryFromBingSession@@;
+#ENDIF
+

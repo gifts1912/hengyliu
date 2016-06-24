@@ -1,0 +1,52 @@
+﻿//Script GUID:6b84dba7-398b-436c-bdfc-8ba4b56cae70
+//Used for tracking history
+
+REFERENCE "Utility.dll";
+
+pairs = 
+    EXTRACT leftQ, rightQ, sim
+#IF(LOCAL)
+    FROM @"d:\Temp\simQ.txt"
+    USING Utility.SmartDataExtractor("0", "1", "2")
+#ELSE
+    FROM @@SimQ@@
+    USING Utility.SmartDataExtractor("@@leftQCol@@", "@@rightQCol@@", "@@simCol@@")
+#ENDIF
+;
+
+infos = 
+    EXTRACT leftQ, rightQ, 
+        urlCnt:long,
+        leftQFreq:long, 
+        rightQFreq:long, 
+        urls, 
+        leftFreqClick,
+        rightFreqClick
+#IF(LOCAL)
+    FROM @"d:\Temp\coclickPairs.txt"
+#ELSE
+    FROM @@infos@@
+#ENDIF
+    USING DefaultTextExtractor("-silent");
+
+pairInfos = 
+    SELECT leftQ, rightQ, 
+        urlCnt, leftQFreq, rightQFreq, urls, 
+        leftFreqClick,
+        rightFreqClick
+    FROM infos, pairs
+    WHERE infos.leftQ == pairs.leftQ AND infos.rightQ == pairs.rightQ;
+
+OUTPUT pairInfos TO SSTREAM
+#IF(LOCAL)
+@"d:\Temp\coclickPairs-domain.ss"
+#ELSE
+@@simQInfos@@
+#ENDIF
+CLUSTERED BY rightQ
+SORTED BY rightQFreq DESC, leftQFreq DESC;
+
+
+
+
+

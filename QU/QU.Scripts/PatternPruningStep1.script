@@ -1,0 +1,68 @@
+﻿//Script GUID:66888513-c800-435c-973f-72a755995090
+//Used for tracking history
+
+RESOURCE "stopword.txt";
+REFERENCE "Utility.dll";
+
+reformulations = 
+    EXTRACT leftP, rightP, l2r:long
+    FROM 
+#IF(LOCAL)
+    @"D:\shared\QU\QR\coclick\slot\slot.LT10.txt"
+#ELSE
+    @@reformulations@@
+#ENDIF
+    USING DefaultTextExtractor("-silent");
+
+reformulations = SELECT (leftP + rightP) AS key, leftP, rightP, l2r FROM reformulations;
+
+reverse = 
+    SELECT (rightP + leftP) AS rkey, l2r AS r2l
+    FROM reformulations;
+
+info = 
+    SELECT reformulations.leftP, reformulations.rightP, reformulations.l2r, reverse.r2l
+    FROM reformulations OUTER JOIN reverse
+    ON reformulations.key == reverse.rkey;
+
+info = 
+    SELECT leftP, rightP, l2r, IF(r2l.HasValue, r2l.Value, 0) AS r2l
+    FROM info;
+
+reverseInfo = 
+    SELECT rightP AS leftP, leftP AS rightP, r2l AS l2r, l2r AS r2l
+    FROM info
+    WHERE info.r2l > info.l2r;
+
+directInfo = 
+    SELECT leftP, rightP, l2r, r2l
+    FROM info
+    WHERE l2r >= r2l;
+
+info = 
+    SELECT leftP, rightP, l2r, r2l FROM reverseInfo
+    UNION
+    SELECT leftP, rightP, l2r, r2l FROM directInfo;
+
+
+info = 
+    PROCESS info
+#IF(LOCAL)
+    USING PatternPruningProcessor("30", "stopword.txt")
+#ELSE
+    USING PatternPruningProcessor("@@MinOcc@@", "stopword.txt")
+#ENDIF
+;
+
+info = 
+    SELECT info.*
+    ORDER BY l2r DESC;
+
+OUTPUT TO 
+#IF(LOCAL)
+    @"D:\shared\QU\QR\coclick\slot\slot.LT30.scope.txt"
+#ELSE
+    @@pruned@@
+#ENDIF
+;
+

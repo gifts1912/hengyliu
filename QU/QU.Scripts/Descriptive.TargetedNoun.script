@@ -1,0 +1,43 @@
+﻿//Script GUID:c6761107-855e-4006-b38a-a2f9ed400466
+//Used for tracking history
+
+REFERENCE "Utility.dll";
+
+queries = 
+    EXTRACT query
+    FROM
+#IF(LOCAL)
+    @"descriptiveQueries.txt"
+    USING Utility.SmartDataExtractor("0")
+#ELSE
+    @@queries@@
+    USING Utility.SmartDataExtractor("@@queryCol@@")
+#ENDIF
+;
+
+queries = SELECT Utility.Normalizer.SimpleNormalizeQuery(query) AS query FROM queries;
+
+termOfInterest =
+    PROCESS queries
+#IF(LOCAL)
+    USING TermOfInterestExtractor("(^| )(?<term>[^ ]+) (where|in which|that) .+$")
+#ELSE
+    USING TermOfInterestExtractor("@@regex@@")
+#ENDIF
+;
+
+termOfInterest =
+    SELECT term,
+           COUNT() AS cnt
+    FROM termOfInterest
+    HAVING cnt >= 3
+    ORDER BY cnt DESC;
+
+OUTPUT TO 
+#IF(LOCAL)
+    "termOfInterest.txt"
+#ELSE
+    @@termOfInterest@@
+#ENDIF
+;
+

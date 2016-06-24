@@ -1,0 +1,22 @@
+﻿//Script GUID:57ae8faf-8d4e-4686-9ae5-fe6b6514db8c
+//Used for tracking history
+
+data = 
+    EXTRACT 
+#IF(LOCAL)
+    qid, url, question, detail
+    FROM "question.csv"
+#ELSE
+    @@inputSchema@@
+    FROM @@input@@
+#ENDIF
+USING QuoraDataExtractor;
+
+
+OUTPUT TO 
+#IF(LOCAL)
+    "question.tsv"
+#ELSE
+    @@output@@
+#ENDIF
+;

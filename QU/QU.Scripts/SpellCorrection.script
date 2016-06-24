@@ -1,0 +1,56 @@
+﻿//Script GUID:f5ba979c-f885-4c97-9e7e-0f85e20125eb
+//Used for tracking history
+
+REFERENCE "QueryAlterationExtractor.dll";
+REFERENCE "QueryUtility.dll";
+RESOURCE "YQueryParser.dll";
+RESOURCE "YQueryParserDllWrap.dll";
+RESOURCE "btclad386.dll";
+RESOURCE "btjlad386.dll";
+RESOURCE "btklad433.dll";
+RESOURCE "btutilsd230.dll";
+RESOURCE "btutilsd430.dll";
+
+#IF(LOCAL)
+    #DECLARE Output String = @"d:\Temp\simQ-spellcorrect.txt";
+#ELSE
+    #DECLARE Output String = @@Output@@;
+#ENDIF
+
+simQ = 
+    EXTRACT leftQ, rightQ, sim
+#IF(LOCAL)
+    FROM @"d:\Temp\simQ.txt"
+#ELSE
+    FROM @@SimQ@@
+#ENDIF
+    USING DefaultTextExtractor("-silent");
+
+q2aq = 
+    EXTRACT q, aq
+#IF(LOCAL)
+    FROM @"d:\data\q2aq.tsv"
+#ELSE
+    FROM @@q2aq@@
+#ENDIF
+    USING DefaultTextExtractor("-silent");
+
+simQ = 
+    SELECT leftQ, rightQ, sim, aq AS leftAq
+    FROM simQ
+    LEFT OUTER JOIN q2aq
+    ON simQ.leftQ == q2aq.q;
+
+simQ = 
+    SELECT leftQ, rightQ, sim, leftAq, aq AS rightAq
+    FROM simQ
+    LEFT OUTER JOIN q2aq
+    ON simQ.rightQ == q2aq.q;
+
+simQ = 
+    PROCESS simQ
+    PRODUCE leftQ, rightQ, sim
+    USING SpellCorrectionProcessor;
+
+OUTPUT TO @Output;
+

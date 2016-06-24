@@ -1,0 +1,86 @@
+﻿//Script GUID:353bf3b9-c31b-461e-acfc-e08422374ae4
+//Used for tracking history
+
+REFERENCE "Utility.dll";
+
+#IF(LOCAL)
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\btclaD386.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\btjlaD386.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\btklaD433.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\btutilsD230.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\btutilsD430.dll";
+    REFERENCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\FrontEndUtil.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\GetHashUtil.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\WordBreaker.zip";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\ParseQueryUtil.dll";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\autopilot-trick.ini";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\wbDefaultConfig.ini";
+    RESOURCE @"D:\shares\searchDM\distrib\released\FrontEndUtil\unzip.exe";
+    #DECLARE Score int = 1;
+#ELSE
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/btclaD386.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/btjlaD386.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/btklaD433.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/btutilsD230.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/btutilsD430.dll";
+    REFERENCE @"/shares/searchDM/distrib/released/FrontEndUtil/FrontEndUtil.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/GetHashUtil.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/WordBreaker.zip";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/ParseQueryUtil.dll";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/autopilot-trick.ini";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/wbDefaultConfig.ini";
+    RESOURCE @"/shares/searchDM/distrib/released/FrontEndUtil/unzip.exe";
+    #DECLARE Score int = int.Parse("@@UnifiedScore@@");
+#ENDIF
+
+EntityStream = 
+    EXTRACT EntityUrl, EntityText, EntityScore:double
+#IF(LOCAL)
+    FROM @"EntityStreamSample.txt"
+#ELSE
+    FROM @@EntityStream@@
+#ENDIF
+    USING DefaultTextExtractor("-silent");
+
+RepresentativeUrls = 
+    EXTRACT EntityUrl, RepUrl
+#IF(LOCAL)
+    FROM @"RepUrls.txt"
+    USING Utility.SmartDataExtractor("0", "3")
+#ELSE
+    FROM @@RepresentativeUrls@@
+    USING Utility.SmartDataExtractor("@@EntityUrlColInRepUrlStream@@", "@@RepUrlColInRepUrlStream@@")
+#ENDIF
+;
+
+RepresentativeUrls = 
+    SELECT DISTINCT EntityUrl, RepUrl
+    FROM RepresentativeUrls;
+
+WebStream =
+    SELECT RepresentativeUrls.RepUrl AS url,
+           EntityText AS text,
+           EntityScore AS score
+    FROM EntityStream,
+         RepresentativeUrls
+    WHERE EntityStream.EntityUrl == RepresentativeUrls.EntityUrl;
+
+#IF(@Score > 0)
+WebStream = 
+    SELECT url, text, @Score AS score
+    FROM WebStream;
+#ENDIF
+
+WebStream = 
+    SELECT Utility.Normalizer.NormalizeUrl(url) AS url, 
+        Utility.Normalizer.NormalizeQuery(text) AS text,
+        score
+    FROM WebStream;
+
+OUTPUT WebStream TO
+#IF(LOCAL)
+@"WebStream.txt"
+#ELSE
+@@WebStream@@
+#ENDIF
+;

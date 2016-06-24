@@ -1,0 +1,27 @@
+﻿//Script GUID:9a63c4c1-aedb-4642-ab49-f366c984296d
+//Used for tracking history
+
+PatternStats = 
+    EXTRACT LeftP, RightP, 
+            AverageBinaryOverlap, AverageFloatOverlap, 
+            AverageBinarySatOverlap, AverageFloatSatOverlap
+    FROM 
+#IF(LOCAL)
+    @"d:\Temp\ParaPatternClickOverlap.txt"
+#ELSE
+    @@PatternStats@@
+#ENDIF
+USING DefaultTextExtractor("-silent");
+
+ParaQueryClickOverlap = 
+    EXTRACT 
+        Query, ParaphrasedQuery, PatternId, BinaryOverlap:int, FloatOverlap:float, 
+        IsValidSatOverlap:bool, BinarySatOverlap:int, FloatSatOverlap:float
+    FROM
+#IF(LOCAL)
+    @"d:\Temp\ParaQueryClickOverlap.txt"
+#ELSE
+    @@ParaQueryClickOverlap@@
+#ENDIF
+USING DefaultTextExtractor("-silent");
+
