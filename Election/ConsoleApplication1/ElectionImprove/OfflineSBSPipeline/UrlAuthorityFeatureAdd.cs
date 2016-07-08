@@ -43,16 +43,23 @@ namespace ElectionImprove.OfflineSBSPipeline
         {
             url = url.Trim(new char[] { ' ', '/' });
             string url2 = url;
+            string url3 = "";
+            string url4 = "";
             if (url2.StartsWith("http:"))
             {
                 url2 = url2.Replace("http", "https");
+                url3 = url2;
+                url3 = Pro3w(url3);
             }
             else if (url2.StartsWith("https:"))
             {
                 url2 = url2.Replace("https", "http");
+                url4 = url2;
+                url4 = Pro3w(url4);
             }
 
-            if (url == tsi.topsite || url2 == tsi.topsite)
+
+            if (url == tsi.topsite || url2 == tsi.topsite || url3 == tsi.topsite || url4 == tsi.topsite)
             {
                 return true;
             }
@@ -60,6 +67,19 @@ namespace ElectionImprove.OfflineSBSPipeline
             {
                 return false;
             }
+        }
+
+        public static string Pro3w(string url)
+        {
+            if(url.IndexOf("www.") != -1)
+            {
+                url = url.Replace("www.", "");
+            }
+            else
+            {
+                url = url.Replace("://", "://www.");
+            }
+            return url;
         }
 
         private static string CalTopSiteLabel(string key, string url)
@@ -192,7 +212,7 @@ namespace ElectionImprove.OfflineSBSPipeline
                 if (args.Length == 0)
                 {
                     args = new string[6];
-                    args[0] = @"D:\demo\QueryInfoTest";
+                    args[0] = @"D:\demo\QueryInfoTest.tsv";
                     args[1] = @"D:\demo\TopSiteTest.tsv";
                     args[2] = @"D:\demo\QueryInfoTopSiteTest.tsv";
                     args[3] = "false"; //IsMatchingHost
