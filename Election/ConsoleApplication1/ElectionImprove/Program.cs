@@ -34,8 +34,12 @@ namespace ElectionImprove
                 args[0] = "AddRegexMatchFeature";
                 args[0] = "L3RankerExecutor";
                 args[0] = "DiscoverPRFConstraints";
-                args[0] = "AddEntityMatchFeature";
                 args[0] = "RepresentiveCaseSelect";
+                args[0] = "trainDataSelect";
+                args[0] = "AddEntityMatchFeature";
+                args[0] = "AddEntityMatchFeatureV0_2";
+                args[0] = "StructDataGenerate";
+                args[0] = "PCFGGrammaFileGenerate";
             }
             string[] cmdArgs = args.Skip(1).ToArray();
             if (args[0].Equals("tokenvaluegenerate", StringComparison.OrdinalIgnoreCase))
@@ -102,33 +106,49 @@ namespace ElectionImprove
             {
                 OfflineSBSPipeline.ReplaceUrlWithNormalizedUrl.Run(cmdArgs);
             }
-            else if(args[0].Equals("RepresentiveCaseSelect", StringComparison.OrdinalIgnoreCase))
+            else if (args[0].Equals("RepresentiveCaseSelect", StringComparison.OrdinalIgnoreCase))
             {
                 SBSAnalysis.RepresentiveCaseSelect.Run(cmdArgs);
             }
-            else if(args[0].Equals("AddEntityMatchFeature", StringComparison.OrdinalIgnoreCase))
+            else if (args[0].Equals("AddEntityMatchFeature", StringComparison.OrdinalIgnoreCase))
             {
                 BoJiaPipeline.AddEntityMatchFeature.Run(cmdArgs);
             }
-            else if(args[0].Equals("AddRegexMatchFeature", StringComparison.OrdinalIgnoreCase))
+            else if (args[0].Equals("AddRegexMatchFeature", StringComparison.OrdinalIgnoreCase))
             {
                 BoJiaPipeline.AddRegexMatchFeature.Run(cmdArgs);
             }
-            else if(args[0].Equals("L3RankerExecutor", StringComparison.OrdinalIgnoreCase))
+            else if (args[0].Equals("L3RankerExecutor", StringComparison.OrdinalIgnoreCase))
             {
                 BoJiaPipeline.L3RankerExecutor.Run(cmdArgs);
             }
-            else if(args[0].Equals("Add_EntityDomainExactMatchFeature", StringComparison.OrdinalIgnoreCase))
+            else if (args[0].Equals("Add_EntityDomainExactMatchFeature", StringComparison.OrdinalIgnoreCase))
             {
                 BoJiaPipeline.Add_EntityDomainExactMatchFeature.Run(cmdArgs);
             }
-            else if(args[0].Equals("DiscoverPRFConstraints", StringComparison.OrdinalIgnoreCase))
+            else if (args[0].Equals("DiscoverPRFConstraints", StringComparison.OrdinalIgnoreCase))
             {
                 BoJiaPipeline.DiscoverPRFConstraints.Run(cmdArgs);
             }
-            else if(args[0].Equals("AddContraintMatchFeature", StringComparison.OrdinalIgnoreCase))
+            else if (args[0].Equals("AddContraintMatchFeature", StringComparison.OrdinalIgnoreCase))
             {
                 BoJiaPipeline.AddContraintMatchFeature.Run(cmdArgs);
+            }
+            else if (args[0].Equals("trainDataSelect", StringComparison.OrdinalIgnoreCase))
+            {
+                mlRankerTrain.trainDataSelect.Run(cmdArgs);
+            }
+            else if (args[0].Equals("AddEntityMatchFeatureV0_2", StringComparison.OrdinalIgnoreCase))
+            {
+                BoJiaPipeline.AddEntityMatchFeatureV0_2.Run(cmdArgs);
+            }
+            else if (args[0].Equals("StructDataGenerate", StringComparison.OrdinalIgnoreCase))
+            {
+                mlRankerTrain.StructDataGenerate.Run(cmdArgs);
+            }
+            else if(args[0].Equals("PCFGGrammaFileGenerate", StringComparison.OrdinalIgnoreCase))
+            {
+                QAS.PCFGGrammaFileGenerate.Run(cmdArgs);
             }
         }
     }

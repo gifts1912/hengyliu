@@ -21,9 +21,9 @@ namespace ElectionImprove.BoJiaPipeline
             {
                 args = new string[4];
                 args[0] = @"D:\demo\ExtractionInput.tsv.gz";
-                args[1] = @"D:\demo\wath.tsv";
-                args[2] = "Int_Int";
-                args[3] = "IntentMatching";
+                args[1] = @"D:\demo\wath.tsv.gz";
+                args[2] = "Ent_Ent";
+                args[3] = "EntityMatching";
             }
             string input = args[0];
             string output = args[1];
@@ -319,4 +319,3 @@ namespace ElectionImprove.BoJiaPipeline
         }
     }
 }
-
