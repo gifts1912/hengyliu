@@ -11,6 +11,15 @@ namespace TableOnBoardingV2
 {
     public partial class _Default : Page
     {
+        private static string tableHeader;
+        private static string fileNameUpload;
+        private static string schemaPre;
+        public static string SchemaPre
+        {
+            get { return schemaPre; }
+            set { schemaPre = value; }
+        }
+
         public static string TableHeader
         {
             get
@@ -18,7 +27,18 @@ namespace TableOnBoardingV2
                 return tableHeader;
             }
         }
-        private static string tableHeader;
+        public static string FileNameUpload
+        {
+            set
+            {
+                fileNameUpload = value;
+            }
+            get
+            {
+                return fileNameUpload;
+            }
+
+        }
         protected void Page_Load(object sender, EventArgs e)
         {
 
@@ -31,6 +51,8 @@ namespace TableOnBoardingV2
                 string fileExtensio = System.IO.Path.GetExtension(FileUpload1.FileName).ToLower();
                 string FileType = FileUpload1.PostedFile.ContentType;
                 string UploadURL = Server.MapPath("~/App_Data/");
+                SchemaPre = TextBox1.Text + '.' + TextBox2.Text;
+                FileNameUpload = SchemaPre;
                 if (FileType == "application/octet-stream")
                 {
                     try
@@ -39,7 +61,7 @@ namespace TableOnBoardingV2
                         {
                             System.IO.Directory.CreateDirectory(UploadURL);
                         }
-                        FileUpload1.PostedFile.SaveAs(UploadURL + FileUpload1.FileName);
+                        FileUpload1.PostedFile.SaveAs(UploadURL + FileNameUpload + ".tsv");
                     }
                     catch
                     {
@@ -61,7 +83,7 @@ namespace TableOnBoardingV2
             sr.Close();
 
             Response.Redirect("TableSchemaV2.aspx");
-           // Server.Transfer("TableSchemaPerform.aspx", true);
+            // Server.Transfer("TableSchemaPerform.aspx", true);
         }
 
     }

@@ -52,14 +52,11 @@
             <asp:CommandField ButtonType="Button" ShowDeleteButton="True" ShowEditButton="True" />
             <%--
             <asp:TemplateField>
-                <FooterTemplate>
-                    <asp:LinkButton ID="SchemaAdd" runat="server" CommandName="Select">Insert</asp:LinkButton>
-                </FooterTemplate>
             </asp:TemplateField>
             --%>
         </Columns>
         </asp:GridView>
-
+        <br />
         <table cellpadding="0" cellspacing="0">
             <tr>
                 <td style="width: 100px; height: 19px;">
@@ -98,6 +95,15 @@
                                 OnClick="ButtonAdd_Click" />
             </tr>
         </table>
+
+        <FooterTemplate>
+            <br />
+            <%-- <asp:LinkButton ID="SchemaSubmit" runat="server" OnClick="SchemaSubmit_Click">SubmitSchema</asp:LinkButton> --%>
+        </FooterTemplate>
+        <asp:Button ID="SchemaSubmit" runat="server" OnClick="SchemaSubmit_Click" Text="Submit" />
+        <p>
+            <asp:Label ID="SubmitResult" runat="server" />
+        </p> 
     </div>
     </form>
 </body>

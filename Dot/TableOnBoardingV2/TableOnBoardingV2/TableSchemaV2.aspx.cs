@@ -5,6 +5,8 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using System.IO;
+using System.Text;
 
 namespace TableOnBoardingV2
 {
@@ -111,6 +113,25 @@ namespace TableOnBoardingV2
                 _nl = value;
             }
         }
+
+        public override string ToString()
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.Append(_tableHeader);
+            sb.Append('\t');
+            sb.Append(_isSubject);
+            sb.Append('\t');
+            sb.Append(_schema);
+            sb.Append('\t');
+            sb.Append(_type);
+            sb.Append('\t');
+            sb.Append(_needIndex);
+            sb.Append('\t');
+            sb.Append(_regexForValue);
+            sb.Append('\t');
+            sb.Append(_nl);
+            return sb.ToString();
+        }
     }
     public partial class TableSchemaV2 : System.Web.UI.Page
     {
@@ -123,27 +144,28 @@ namespace TableOnBoardingV2
             {
                 foreach (string ele in tableSchema.Split('\t'))
                 {
-                    TableSchema.Add(new SchemaItem(ele, "True", "MS", "String", "True", "", ele));
+                    string schemaCur = string.Format("{0}.{1}", TableOnBoardingV2._Default.SchemaPre, ele);
+                    TableSchema.Add(new SchemaItem(ele, "True", schemaCur, "String", "True", "", ele));
                 }
                 BindGridView();
             }
         }
 
         private void BindGridView()
-        {   
+        {
             GridView1.DataSource = TableSchema;
             GridView1.DataBind();
             DropDownList ddl;
-            for(int i = 0; i < GridView1.Rows.Count; i++)
+            for (int i = 0; i < GridView1.Rows.Count; i++)
             {
                 string curType = TableSchema[i].Type;
-                if(curType == "String"|| curType == "1")
+                if (curType == "String" || curType == "1")
                 {
                     ddl = (DropDownList)GridView1.Rows[i].FindControl("DropDownList_Type");
                     ddl.SelectedIndex = 0;
                     ddl.SelectedItem.Text = "String";
                 }
-                else if(curType == "Bool" || curType == "2")
+                else if (curType == "Bool" || curType == "2")
                 {
                     ddl = (DropDownList)GridView1.Rows[i].FindControl("DropDownList_Type");
                     ddl.SelectedIndex = 1;
@@ -203,10 +225,10 @@ namespace TableOnBoardingV2
             else
             {
                 SchemaItem item = new SchemaItem(tableHeader, isSubject, schema, typeCur, needIndex, regexvalue, nl);
-                TableSchema.Add(item); 
+                TableSchema.Add(item);
             }
         }
-        
+
         protected void GridView1_SelectedIndexChanged(object sender, EventArgs e)
         {
             GridViewRow row = GridView1.SelectedRow;
@@ -257,7 +279,7 @@ namespace TableOnBoardingV2
             bool needIndex = (bool)GridView1.DataKeys[idx]["NeedIndex"];
             string regexForValue = (string)GridView1.DataKeys[idx]["RegexForValue"];
             string nl = (string)GridView1.DataKeys[idx]["NL"];
-            */ 
+            */
 
             UpdateOrAddNewRecord(th, isSubject, schema, type, needIndex, regexForValue, nl, true, idx);
             GridView1.EditIndex = -1;
@@ -267,7 +289,7 @@ namespace TableOnBoardingV2
         private bool StringToBool(string str, bool def)
         {
             bool result = def;
-            if(!def && !string.IsNullOrEmpty(str) && (str.ToLower() == "yes" || str.ToLower() == "true"))
+            if (!def && !string.IsNullOrEmpty(str) && (str.ToLower() == "yes" || str.ToLower() == "true"))
             {
                 result = true;
             }
@@ -288,16 +310,16 @@ namespace TableOnBoardingV2
 
         protected void GridView1_SelectedIndexChanging(object sender, GridViewSelectEventArgs e)
         {
-           /* string th = ((TextBox)GridView1.FooterRow.FindControl("TableHeader")).Text;
-            bool isSubject = StringToBool(((TextBox)GridView1.FooterRow.FindControl("IsSubject")).Text, false);
-            string schema = ((TextBox)GridView1.FooterRow.FindControl("Schema")).Text;
-            string type = ((TextBox)GridView1.FooterRow.FindControl("Type")).Text;
-            bool needIndex = StringToBool(((TextBox)GridView1.FooterRow.FindControl("NeedIndex")).Text, true);
-            string regexForValue = ((TextBox)GridView1.FooterRow.FindControl("RegexForValue")).Text;
-            string nl = ((TextBox)GridView1.FooterRow.FindControl("NL")).Text;
-            UpdateOrAddNewRecord(th, isSubject, schema, type, needIndex, regexForValue, nl, false, TableSchema.Count-1);
-            BindGridView();
-            */
+            /* string th = ((TextBox)GridView1.FooterRow.FindControl("TableHeader")).Text;
+             bool isSubject = StringToBool(((TextBox)GridView1.FooterRow.FindControl("IsSubject")).Text, false);
+             string schema = ((TextBox)GridView1.FooterRow.FindControl("Schema")).Text;
+             string type = ((TextBox)GridView1.FooterRow.FindControl("Type")).Text;
+             bool needIndex = StringToBool(((TextBox)GridView1.FooterRow.FindControl("NeedIndex")).Text, true);
+             string regexForValue = ((TextBox)GridView1.FooterRow.FindControl("RegexForValue")).Text;
+             string nl = ((TextBox)GridView1.FooterRow.FindControl("NL")).Text;
+             UpdateOrAddNewRecord(th, isSubject, schema, type, needIndex, regexForValue, nl, false, TableSchema.Count-1);
+             BindGridView();
+             */
         }
 
         protected void ButtonAdd_Click(object sender, EventArgs e)
@@ -338,6 +360,26 @@ namespace TableOnBoardingV2
         protected void DropDownList_Type_SelectedIndexChanged(object sender, EventArgs e)
         {
 
+        }
+
+        protected void SchemaSubmit_Click(object sender, EventArgs e)
+        {
+            string UploadURL = Server.MapPath("~/App_Data/");
+            string saveAsName = String.Format("{0}.Schema.tsv", TableOnBoardingV2._Default.FileNameUpload);
+            using (Stream writer = new FileStream(UploadURL + saveAsName, FileMode.Create))
+            {
+                using (StreamWriter sw = new StreamWriter(writer))
+                {
+                    foreach (SchemaItem si in TableSchema)
+                    {
+                        sw.WriteLine(si.ToString());
+                    }
+                    sw.Flush();
+                }
+            }
+
+            SubmitResult.Text = "Submit Success!";
+            
         }
     }
 }
