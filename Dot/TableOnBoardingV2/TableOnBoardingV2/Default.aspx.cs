@@ -49,6 +49,7 @@ namespace TableOnBoardingV2
             if (FileUpload1.HasFile)
             {
                 string fileExtensio = System.IO.Path.GetExtension(FileUpload1.FileName).ToLower();
+                TextBox3.Text = fileExtensio;
                 string FileType = FileUpload1.PostedFile.ContentType;
                 string UploadURL = Server.MapPath("~/App_Data/");
                 SchemaPre = TextBox1.Text + '.' + TextBox2.Text;

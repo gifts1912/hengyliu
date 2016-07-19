@@ -10,7 +10,7 @@
     <div>
         <asp:GridView ID="GridView1" runat="server"
                       AutoGenerateColumns="False"
-                      ShowFooter="True" OnRowCancelingEdit="GridView1_RowCancelingEdit" OnRowDeleting="GridView1_RowDeleting" OnRowEditing="GridView1_RowEditing" OnRowUpdating="GridView1_RowUpdating" OnSelectedIndexChanged="GridView1_SelectedIndexChanged" OnSelectedIndexChanging="GridView1_SelectedIndexChanging"
+                      OnRowCancelingEdit="GridView1_RowCancelingEdit" OnRowDeleting="GridView1_RowDeleting" OnRowEditing="GridView1_RowEditing" OnRowUpdating="GridView1_RowUpdating" OnSelectedIndexChanged="GridView1_SelectedIndexChanged" OnSelectedIndexChanging="GridView1_SelectedIndexChanging"
                       DataKeyNames="TableHeader, IsSubject, Schema, Type, NeedIndex, RegexForValue, NL"
             >
         <Columns>
@@ -50,13 +50,10 @@
             <asp:BoundField DataField="RegexForValue" HeaderText="RegexForValue"/>
             <asp:BoundField DataField="NL" HeaderText="NL"/>
             <asp:CommandField ButtonType="Button" ShowDeleteButton="True" ShowEditButton="True" />
-            <%--
-            <asp:TemplateField>
-            </asp:TemplateField>
-            --%>
         </Columns>
         </asp:GridView>
         <br />
+        <%--
         <table cellpadding="0" cellspacing="0">
             <tr>
                 <td style="width: 100px; height: 19px;">
@@ -95,11 +92,7 @@
                                 OnClick="ButtonAdd_Click" />
             </tr>
         </table>
-
-        <FooterTemplate>
-            <br />
-            <%-- <asp:LinkButton ID="SchemaSubmit" runat="server" OnClick="SchemaSubmit_Click">SubmitSchema</asp:LinkButton> --%>
-        </FooterTemplate>
+        --%>
         <asp:Button ID="SchemaSubmit" runat="server" OnClick="SchemaSubmit_Click" Text="Submit" />
         <p>
             <asp:Label ID="SubmitResult" runat="server" />

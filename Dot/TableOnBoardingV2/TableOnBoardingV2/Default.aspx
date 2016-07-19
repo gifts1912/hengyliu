@@ -17,6 +17,9 @@
         </tr>
         <tr>
             <td>Table&nbsp;&nbsp;&nbsp; File: </td>
+            <td>
+                <asp:TextBox ID="TextBox3" runat="server" />
+            </td>
             <td> 
                 <asp:FileUpload ID="FileUpload1" runat="server" />
             </td>

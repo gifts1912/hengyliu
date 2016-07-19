@@ -137,18 +137,29 @@ namespace TableOnBoardingV2
     {
         private string tableSchema = TableOnBoardingV2._Default.TableHeader;
         private static List<SchemaItem> TableSchema = new List<SchemaItem>();
+        private static bool Original_Load = true;
 
         protected void Page_Load(object sender, EventArgs e)
         {
             if (!IsPostBack)
             {
-                foreach (string ele in tableSchema.Split('\t'))
+                Session["CurrentTime"] = Server.UrlEncode(DateTime.Now.ToString());
+                if(Original_Load)
                 {
-                    string schemaCur = string.Format("{0}.{1}", TableOnBoardingV2._Default.SchemaPre, ele);
-                    TableSchema.Add(new SchemaItem(ele, "True", schemaCur, "String", "True", "", ele));
+                    Original_Load = false;
+                    foreach (string ele in tableSchema.Split('\t'))
+                    {
+                        string schemaCur = string.Format("{0}.{1}", TableOnBoardingV2._Default.SchemaPre, ele);
+                        TableSchema.Add(new SchemaItem(ele, "True", schemaCur, "String", "True", "", ele));
+                    }
                 }
                 BindGridView();
             }
+        }
+
+        protected override void OnPreRender(EventArgs e)
+        {
+            ViewState["CurrentTime"] = Session["CurrentTime"];
         }
 
         private void BindGridView()
@@ -224,6 +235,8 @@ namespace TableOnBoardingV2
             }
             else
             {
+                if (ViewState["CurrentTime"].ToString() != Session["CurrentTime"].ToString())
+                    return;
                 SchemaItem item = new SchemaItem(tableHeader, isSubject, schema, typeCur, needIndex, regexvalue, nl);
                 TableSchema.Add(item);
             }
@@ -322,12 +335,13 @@ namespace TableOnBoardingV2
              */
         }
 
-        protected void ButtonAdd_Click(object sender, EventArgs e)
+/*        protected void ButtonAdd_Click(object sender, EventArgs e)
         {
             UpdateOrAddNewRecord(TextBox1.Text, TextBox2.Text, TextBox3.Text, TextBox4.Text, TextBox5.Text, TextBox6.Text, TextBox7.Text, false, TableSchema.Count);
             BindGridView();
         }
 
+    */
         protected void RowDataBound(object sender, GridViewRowEventArgs e)
         {
             if (e.Row.RowType == DataControlRowType.DataRow && GridView1.EditIndex == e.Row.RowIndex)
