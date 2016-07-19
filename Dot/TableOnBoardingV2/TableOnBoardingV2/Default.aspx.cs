@@ -60,7 +60,7 @@ namespace TableOnBoardingV2
             tableHeader = sr.ReadLine();
             sr.Close();
 
-            Response.Redirect("TableSchemaPerform.aspx");
+            Response.Redirect("TableSchemaV2.aspx");
            // Server.Transfer("TableSchemaPerform.aspx", true);
         }
 
