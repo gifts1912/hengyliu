@@ -7,7 +7,6 @@ using System.Web.UI.WebControls;
 using System.Data;
 using System.IO;
 using System.Text;
-
 namespace TableOnBoardingV2
 {
 
@@ -174,7 +173,6 @@ namespace TableOnBoardingV2
             if (FileUpload1.HasFile)
             {
                 string fileExtensio = System.IO.Path.GetExtension(FileUpload1.FileName).ToLower();
-                TextBox3.Text = fileExtensio;
                 string FileType = FileUpload1.PostedFile.ContentType;
                 string UploadURL = Server.MapPath("~/App_Data/");
                 SchemaPre = TextBox1.Text + '.' + TextBox2.Text;
@@ -208,8 +206,10 @@ namespace TableOnBoardingV2
             tableHeader = sr.ReadLine();
             sr.Close();
             Page_Load_TableSchemaV2();
+            Comment_Text.Text = "IsSubject: Demostate the priority is the primary key that can distinct the entity from others in the table.";
             // Response.Redirect("TableSchemaV2.aspx");
             // Server.Transfer("TableSchemaPerform.aspx", true);
+            SchemaSubmit.Visible = true;
         }
 
         private string tableSchema = TableHeader;
@@ -352,18 +352,6 @@ namespace TableOnBoardingV2
             string regexForValue = ((TextBox)GridView1.Rows[e.RowIndex].Cells[5].Controls[0]).Text;
             string nl = ((TextBox)GridView1.Rows[e.RowIndex].Cells[6].Controls[0]).Text;
 
-            /*
-            int idx = e.RowIndex;
-            int innerIdx = GridView1.Rows[idx].RowIndex;
-
-            string th = (string)GridView1.DataKeys[e.RowIndex]["TableHeader"];
-            bool isSubject = (bool)GridView1.DataKeys[idx]["IsSubject"];
-            string schema = (string)GridView1.DataKeys[idx]["Schema"];
-            string type = (string)GridView1.DataKeys[e.RowIndex]["Type"];
-            bool needIndex = (bool)GridView1.DataKeys[idx]["NeedIndex"];
-            string regexForValue = (string)GridView1.DataKeys[idx]["RegexForValue"];
-            string nl = (string)GridView1.DataKeys[idx]["NL"];
-            */
 
             UpdateOrAddNewRecord(th, isSubject, schema, type, needIndex, regexForValue, nl, true, idx);
             GridView1.EditIndex = -1;
@@ -394,25 +382,10 @@ namespace TableOnBoardingV2
 
         protected void GridView1_SelectedIndexChanging(object sender, GridViewSelectEventArgs e)
         {
-            /* string th = ((TextBox)GridView1.FooterRow.FindControl("TableHeader")).Text;
-             bool isSubject = StringToBool(((TextBox)GridView1.FooterRow.FindControl("IsSubject")).Text, false);
-             string schema = ((TextBox)GridView1.FooterRow.FindControl("Schema")).Text;
-             string type = ((TextBox)GridView1.FooterRow.FindControl("Type")).Text;
-             bool needIndex = StringToBool(((TextBox)GridView1.FooterRow.FindControl("NeedIndex")).Text, true);
-             string regexForValue = ((TextBox)GridView1.FooterRow.FindControl("RegexForValue")).Text;
-             string nl = ((TextBox)GridView1.FooterRow.FindControl("NL")).Text;
-             UpdateOrAddNewRecord(th, isSubject, schema, type, needIndex, regexForValue, nl, false, TableSchema.Count-1);
-             BindGridView();
-             */
+            
         }
 
-        /*        protected void ButtonAdd_Click(object sender, EventArgs e)
-                {
-                    UpdateOrAddNewRecord(TextBox1.Text, TextBox2.Text, TextBox3.Text, TextBox4.Text, TextBox5.Text, TextBox6.Text, TextBox7.Text, false, TableSchema.Count);
-                    BindGridView();
-                }
-
-            */
+       
         protected void RowDataBound(object sender, GridViewRowEventArgs e)
         {
             if (e.Row.RowType == DataControlRowType.DataRow && GridView1.EditIndex == e.Row.RowIndex)
@@ -463,8 +436,13 @@ namespace TableOnBoardingV2
                 }
             }
 
-            SubmitResult.Text = "Submit Success!";
+            SubmitResult.Text = "  Submit Success!";
 
+        }
+
+        protected void ButtonHaveNoUse_Click(object sender, EventArgs e)
+        {
+            return;
         }
     }
 }

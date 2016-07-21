@@ -28,7 +28,6 @@ namespace ElectionImprove
                 args[0] = "PatternToPEId";
                 args[0] = "TrimColumn";
                 args[0] = "UrlAuthorityFeatureAdd";
-                args[0] = "ReplaceUrlWithNormalizedUrl";
                 args[0] = "Add_EntityDomainExactMatchFeature";
                 args[0] = "AddContraintMatchFeature";
                 args[0] = "AddRegexMatchFeature";
@@ -40,6 +39,7 @@ namespace ElectionImprove
                 args[0] = "AddEntityMatchFeatureV0_2";
                 args[0] = "StructDataGenerate";
                 args[0] = "PCFGGrammaFileGenerate";
+                args[0] = "ReplaceUrlWithNormalizedUrl";
             }
             string[] cmdArgs = args.Skip(1).ToArray();
             if (args[0].Equals("tokenvaluegenerate", StringComparison.OrdinalIgnoreCase))
