@@ -177,7 +177,7 @@ namespace TableOnBoardingV2
                 string UploadURL = Server.MapPath("~/App_Data/");
                 SchemaPre = TextBox1.Text + '.' + TextBox2.Text;
                 FileNameUpload = SchemaPre;
-                if (FileType == "application/octet-stream")
+                if (FileType == "application/octet-stream" || FileType == "text/plain")
                 {
                     try
                     {
@@ -206,7 +206,7 @@ namespace TableOnBoardingV2
             tableHeader = sr.ReadLine();
             sr.Close();
             Page_Load_TableSchemaV2();
-            Comment_Text.Text = "IsSubject: Demostate the priority is the primary key that can distinct the entity from others in the table.";
+            Comment_Text.Text = "IsSubject: Denote the TableHeader pri is the primary key that can distinct the entity from others in the table.";
             // Response.Redirect("TableSchemaV2.aspx");
             // Server.Transfer("TableSchemaPerform.aspx", true);
             SchemaSubmit.Visible = true;
