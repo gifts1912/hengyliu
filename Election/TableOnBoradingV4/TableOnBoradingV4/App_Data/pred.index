@@ -1,0 +1,252 @@
+verizon	bot:bestbuy.phone.carrier|||20
+wireless	bot:bestbuy.phone.carrier|||20;bot:bestbuy.phone.wireless_compatibility|||30
+verizon wireless	bot:bestbuy.phone.carrier|||20
+black	bot:bestbuy.phone.color_category|||11;mso:type.object.name|||11
+lte	bot:bestbuy.phone.data_transmission_type|||13;bot:bestbuy.phone.wireless_technology|||28;mso:type.object.name|||12
+samsung	bot:bestbuy.phone.device_manufacturer|||17;bot:bestbuy.phone.model_family|||11;mso:type.object.name|||17;bot:bestbuy.phone.processor_brand|||7
+super	bot:bestbuy.phone.display_type|||17
+amoled	bot:bestbuy.phone.display_type|||17
+super amoled	bot:bestbuy.phone.display_type|||16
+galaxy	bot:bestbuy.phone.model_family|||11;mso:type.object.name|||17
+s7	bot:bestbuy.phone.model_family|||9;mso:type.object.name|||9
+samsung galaxy	bot:bestbuy.phone.model_family|||11;mso:type.object.name|||17
+galaxy s7	bot:bestbuy.phone.model_family|||9;mso:type.object.name|||9
+samsung galaxy s7	bot:bestbuy.phone.model_family|||9;mso:type.object.name|||9
+android	bot:bestbuy.phone.operating_system|||29
+6.0	bot:bestbuy.phone.operating_system|||15
+marshmallow	bot:bestbuy.phone.operating_system|||15
+android 6.0	bot:bestbuy.phone.operating_system|||15
+6.0 marshmallow	bot:bestbuy.phone.operating_system|||15
+android 6.0 marshmallow	bot:bestbuy.phone.operating_system|||15
+smartphone	bot:bestbuy.phone.phone_style|||40
+qualcomm	bot:bestbuy.phone.processor_brand|||23
+snapdragon	bot:bestbuy.phone.processor_brand|||21
+qualcomm snapdragon	bot:bestbuy.phone.processor_brand|||21
+bluetooth	bot:bestbuy.phone.wireless_compatibility|||14
+ac	bot:bestbuy.phone.wireless_compatibility|||26
+bluetooth wireless	bot:bestbuy.phone.wireless_compatibility|||12
+wireless ac	bot:bestbuy.phone.wireless_compatibility|||26
+ac wireless	bot:bestbuy.phone.wireless_compatibility|||19
+wireless a wireless	bot:bestbuy.phone.wireless_compatibility|||29
+wireless ac wireless	bot:bestbuy.phone.wireless_compatibility|||19
+wireless b wireless	bot:bestbuy.phone.wireless_compatibility|||29
+wireless g wireless	bot:bestbuy.phone.wireless_compatibility|||28
+cdma	bot:bestbuy.phone.wireless_technology|||13
+32gb	mso:type.object.name|||22
+s7 32gb	mso:type.object.name|||6
+32gb black	mso:type.object.name|||4
+galaxy s7 32gb	mso:type.object.name|||6
+s7 32gb black	mso:type.object.name|||3
+micro	bot:bestbuy.phone.charging_interfaces|||3
+usb	bot:bestbuy.phone.charging_interfaces|||12;bot:bestbuy.phone.additional_hardware|||7
+micro usb	bot:bestbuy.phone.charging_interfaces|||3
+motorola	bot:bestbuy.phone.device_manufacturer|||3;mso:type.object.name|||3
+5.1.1	bot:bestbuy.phone.operating_system|||7
+lollipop	bot:bestbuy.phone.operating_system|||11
+android 5.1.1	bot:bestbuy.phone.operating_system|||7
+5.1.1 lollipop	bot:bestbuy.phone.operating_system|||7
+android 5.1.1 lollipop	bot:bestbuy.phone.operating_system|||7
+4g	bot:bestbuy.phone.wireless_technology|||21;mso:type.object.name|||15
+4g lte	bot:bestbuy.phone.wireless_technology|||19;mso:type.object.name|||12
+droid	mso:type.object.name|||3
+maxx	mso:type.object.name|||2
+16gb	mso:type.object.name|||10
+memory	mso:type.object.name|||18
+cell	mso:type.object.name|||21
+motorola droid	mso:type.object.name|||3
+droid maxx	mso:type.object.name|||2
+maxx 2	mso:type.object.name|||2
+2 4g	mso:type.object.name|||3
+16gb memory	mso:type.object.name|||3
+memory cell	mso:type.object.name|||17
+motorola droid maxx	mso:type.object.name|||2
+droid maxx 2	mso:type.object.name|||2
+maxx 2 4g	mso:type.object.name|||2
+2 4g lte	mso:type.object.name|||3
+lte with 16gb	mso:type.object.name|||2
+16gb memory cell	mso:type.object.name|||2
+cell phone black	mso:type.object.name|||6
+gold	bot:bestbuy.phone.color_category|||13;mso:type.object.name|||13
+edge	bot:bestbuy.phone.model_family|||4;mso:type.object.name|||4
+s7 edge	bot:bestbuy.phone.model_family|||3;mso:type.object.name|||3
+galaxy s7 edge	bot:bestbuy.phone.model_family|||3;mso:type.object.name|||3
+edge 32gb	mso:type.object.name|||3
+32gb gold	mso:type.object.name|||4
+s7 edge 32gb	mso:type.object.name|||3
+gray	bot:bestbuy.phone.color_category|||9;mso:type.object.name|||9
+htc	bot:bestbuy.phone.device_manufacturer|||3;mso:type.object.name|||3
+kitkat	bot:bestbuy.phone.operating_system|||3
+4g cell	mso:type.object.name|||2
+cell phone gray	mso:type.object.name|||5
+stereo	bot:bestbuy.phone.additional_hardware|||2
+headset	bot:bestbuy.phone.additional_hardware|||3
+cable	bot:bestbuy.phone.additional_hardware|||7
+power	bot:bestbuy.phone.additional_hardware|||5
+adapter	bot:bestbuy.phone.additional_hardware|||6
+stereo headset	bot:bestbuy.phone.additional_hardware|||2
+headset usb	bot:bestbuy.phone.additional_hardware|||2
+usb cable	bot:bestbuy.phone.additional_hardware|||5
+cable power	bot:bestbuy.phone.additional_hardware|||2
+power adapter	bot:bestbuy.phone.additional_hardware|||5
+stereo headset usb	bot:bestbuy.phone.additional_hardware|||2
+headset usb cable	bot:bestbuy.phone.additional_hardware|||2
+usb cable power	bot:bestbuy.phone.additional_hardware|||2
+cable power adapter	bot:bestbuy.phone.additional_hardware|||2
+gsm	bot:bestbuy.phone.wireless_technology|||7
+lightning	bot:bestbuy.phone.charging_interfaces|||10;bot:bestbuy.phone.additional_hardware|||2
+rose	bot:bestbuy.phone.color_category|||6;mso:type.object.name|||6
+rose gold	bot:bestbuy.phone.color_category|||6;mso:type.object.name|||6
+apple	bot:bestbuy.phone.device_manufacturer|||10;bot:bestbuy.phone.model_family|||10;bot:bestbuy.phone.operating_system|||10;bot:bestbuy.phone.processor_brand|||10;mso:type.object.name|||10;bot:bestbuy.phone.additional_hardware|||2
+retina	bot:bestbuy.phone.display_type|||10
+display	bot:bestbuy.phone.display_type|||10
+retina display	bot:bestbuy.phone.display_type|||10
+iphone	bot:bestbuy.phone.model_family|||10;mso:type.object.name|||10
+6s	bot:bestbuy.phone.model_family|||8;mso:type.object.name|||8
+apple iphone	bot:bestbuy.phone.model_family|||10;mso:type.object.name|||10
+iphone 6s	bot:bestbuy.phone.model_family|||8;mso:type.object.name|||8
+apple iphone 6s	bot:bestbuy.phone.model_family|||8;mso:type.object.name|||8
+ios	bot:bestbuy.phone.operating_system|||10
+apple ios	bot:bestbuy.phone.operating_system|||10
+ios 9	bot:bestbuy.phone.operating_system|||10
+apple ios 9	bot:bestbuy.phone.operating_system|||10
+wi	bot:bestbuy.phone.wireless_compatibility|||8
+fi	bot:bestbuy.phone.wireless_compatibility|||8
+wi fi	bot:bestbuy.phone.wireless_compatibility|||8
+16gb rose	mso:type.object.name|||5
+6s plus 16gb	mso:type.object.name|||2
+16gb rose gold	mso:type.object.name|||5
+lithium	bot:bestbuy.phone.additional_hardware|||3
+ion	bot:bestbuy.phone.additional_hardware|||3
+battery	bot:bestbuy.phone.additional_hardware|||3
+charger	bot:bestbuy.phone.additional_hardware|||2
+lithium ion	bot:bestbuy.phone.additional_hardware|||3
+ion battery	bot:bestbuy.phone.additional_hardware|||3
+charger usb	bot:bestbuy.phone.additional_hardware|||2
+lithium ion battery	bot:bestbuy.phone.additional_hardware|||3
+s6	bot:bestbuy.phone.model_family|||2;mso:type.object.name|||2
+galaxy s6	bot:bestbuy.phone.model_family|||2;mso:type.object.name|||2
+samsung galaxy s6	bot:bestbuy.phone.model_family|||2;mso:type.object.name|||2
+5.0	bot:bestbuy.phone.operating_system|||2
+android 5.0	bot:bestbuy.phone.operating_system|||2
+5.0 lollipop	bot:bestbuy.phone.operating_system|||2
+android 5.0 lollipop	bot:bestbuy.phone.operating_system|||2
+exynos	bot:bestbuy.phone.processor_brand|||7
+samsung exynos	bot:bestbuy.phone.processor_brand|||7
+wireless n wireless	bot:bestbuy.phone.wireless_compatibility|||8
+sm	mso:type.object.name|||2
+32gb memory	mso:type.object.name|||13
+32gb memory cell	mso:type.object.name|||13
+cell phone gold	mso:type.object.name|||3
+6s 16gb	mso:type.object.name|||3
+iphone 6s 16gb	mso:type.object.name|||3
+6s 16gb rose	mso:type.object.name|||2
+sprint	bot:bestbuy.phone.carrier|||8
+note5	mso:type.object.name|||5
+galaxy note5	mso:type.object.name|||5
+note5 4g	mso:type.object.name|||5
+samsung galaxy note5	mso:type.object.name|||5
+galaxy note5 4g	mso:type.object.name|||5
+note5 4g lte	mso:type.object.name|||5
+lte with 32gb	mso:type.object.name|||8
+16gb gray	mso:type.object.name|||2
+s7 32gb gold	mso:type.object.name|||3
+lcd	bot:bestbuy.phone.display_type|||8
+4.4	bot:bestbuy.phone.operating_system|||2
+android 4.4	bot:bestbuy.phone.operating_system|||2
+4.4 kitkat	bot:bestbuy.phone.operating_system|||2
+android 4.4 kitkat	bot:bestbuy.phone.operating_system|||2
+accelerometer	bot:bestbuy.phone.sensors|||8
+3g	bot:bestbuy.phone.wireless_technology|||3
+3g 4g	bot:bestbuy.phone.wireless_technology|||3
+lg	bot:bestbuy.phone.device_manufacturer|||6;bot:bestbuy.phone.model_family|||6;mso:type.object.name|||6
+5.1	bot:bestbuy.phone.operating_system|||2
+android 5.1	bot:bestbuy.phone.operating_system|||2
+5.1 lollipop	bot:bestbuy.phone.operating_system|||2
+android 5.1 lollipop	bot:bestbuy.phone.operating_system|||2
+white	bot:bestbuy.phone.color_category|||3;mso:type.object.name|||3
+cell phone white	mso:type.object.name|||3
+type	bot:bestbuy.phone.charging_interfaces|||5
+usb type	bot:bestbuy.phone.charging_interfaces|||5
+silver	bot:bestbuy.phone.color_category|||3;mso:type.object.name|||3
+ev	bot:bestbuy.phone.data_transmission_type|||3
+hsdpa	bot:bestbuy.phone.data_transmission_type|||2
+hspa	bot:bestbuy.phone.data_transmission_type|||3
+hsdpa hspa	bot:bestbuy.phone.data_transmission_type|||2
+hspa lte	bot:bestbuy.phone.data_transmission_type|||3
+ev do hsdpa	bot:bestbuy.phone.data_transmission_type|||2
+hsdpa hspa lte	bot:bestbuy.phone.data_transmission_type|||2
+g5	bot:bestbuy.phone.model_family|||4;mso:type.object.name|||4
+lg g5	bot:bestbuy.phone.model_family|||4;mso:type.object.name|||4
+fingerprint	bot:bestbuy.phone.sensors|||7
+sensor	bot:bestbuy.phone.sensors|||9
+gyro	bot:bestbuy.phone.sensors|||8
+proximity	bot:bestbuy.phone.sensors|||8
+accelerometer fingerprint	bot:bestbuy.phone.sensors|||4
+fingerprint sensor	bot:bestbuy.phone.sensors|||7
+sensor gyro	bot:bestbuy.phone.sensors|||8
+gyro sensor	bot:bestbuy.phone.sensors|||8
+sensor proximity	bot:bestbuy.phone.sensors|||6
+proximity sensor	bot:bestbuy.phone.sensors|||8
+accelerometer fingerprint sensor	bot:bestbuy.phone.sensors|||4
+fingerprint sensor gyro	bot:bestbuy.phone.sensors|||6
+sensor gyro sensor	bot:bestbuy.phone.sensors|||8
+gyro sensor proximity	bot:bestbuy.phone.sensors|||6
+sensor proximity sensor	bot:bestbuy.phone.sensors|||6
+wcdma	bot:bestbuy.phone.wireless_technology|||3
+umts	bot:bestbuy.phone.wireless_technology|||3
+lte cdma	bot:bestbuy.phone.wireless_technology|||5
+cdma gsm	bot:bestbuy.phone.wireless_technology|||4
+gsm wcdma	bot:bestbuy.phone.wireless_technology|||2
+wcdma umts	bot:bestbuy.phone.wireless_technology|||3
+4g lte cdma	bot:bestbuy.phone.wireless_technology|||5
+lte cdma gsm	bot:bestbuy.phone.wireless_technology|||3
+cdma gsm wcdma	bot:bestbuy.phone.wireless_technology|||2
+gsm wcdma umts	bot:bestbuy.phone.wireless_technology|||2
+g5 4g	mso:type.object.name|||2
+lg g5 4g	mso:type.object.name|||2
+g5 4g lte	mso:type.object.name|||2
+cell phone silver	mso:type.object.name|||2
+64gb	mso:type.object.name|||4
+64gb gray	mso:type.object.name|||2
+earpods	bot:bestbuy.phone.additional_hardware|||2
+remote	bot:bestbuy.phone.additional_hardware|||2
+mic	bot:bestbuy.phone.additional_hardware|||2
+5w	bot:bestbuy.phone.additional_hardware|||2
+apple earpods	bot:bestbuy.phone.additional_hardware|||2
+mic lightning	bot:bestbuy.phone.additional_hardware|||2
+cable 5w	bot:bestbuy.phone.additional_hardware|||2
+5w usb	bot:bestbuy.phone.additional_hardware|||2
+usb power	bot:bestbuy.phone.additional_hardware|||2
+earpods with remote	bot:bestbuy.phone.additional_hardware|||2
+remote and mic	bot:bestbuy.phone.additional_hardware|||2
+lightning to usb	bot:bestbuy.phone.additional_hardware|||2
+usb cable 5w	bot:bestbuy.phone.additional_hardware|||2
+cable 5w usb	bot:bestbuy.phone.additional_hardware|||2
+5w usb power	bot:bestbuy.phone.additional_hardware|||2
+usb power adapter	bot:bestbuy.phone.additional_hardware|||2
+se	bot:bestbuy.phone.model_family|||2;mso:type.object.name|||2
+iphone se	bot:bestbuy.phone.model_family|||2;mso:type.object.name|||2
+apple iphone se	bot:bestbuy.phone.model_family|||2;mso:type.object.name|||2
+ambient	bot:bestbuy.phone.sensors|||4
+light	bot:bestbuy.phone.sensors|||4
+accelerometer ambient	bot:bestbuy.phone.sensors|||3
+ambient light	bot:bestbuy.phone.sensors|||4
+light sensor	bot:bestbuy.phone.sensors|||4
+sensor fingerprint	bot:bestbuy.phone.sensors|||2
+accelerometer ambient light	bot:bestbuy.phone.sensors|||3
+ambient light sensor	bot:bestbuy.phone.sensors|||4
+light sensor fingerprint	bot:bestbuy.phone.sensors|||2
+sensor fingerprint sensor	bot:bestbuy.phone.sensors|||2
+se 16gb	mso:type.object.name|||2
+iphone se 16gb	mso:type.object.name|||2
+gesture	bot:bestbuy.phone.sensors|||2
+gesture sensor	bot:bestbuy.phone.sensors|||2
+6s 64gb	mso:type.object.name|||2
+iphone 6s 64gb	mso:type.object.name|||2
+magnetometer	bot:bestbuy.phone.sensors|||2
+sensor magnetometer	bot:bestbuy.phone.sensors|||2
+magnetometer proximity	bot:bestbuy.phone.sensors|||2
+gyro sensor magnetometer	bot:bestbuy.phone.sensors|||2
+sensor magnetometer proximity	bot:bestbuy.phone.sensors|||2
+magnetometer proximity sensor	bot:bestbuy.phone.sensors|||2
+g5 with 32gb	mso:type.object.name|||2

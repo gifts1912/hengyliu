@@ -1,0 +1,496 @@
+lithium	bot:JingDong.XiaoMi.battery_type|||13;bot:JingDong.XiaoMi.additional_hardware_included|||3
+ion	bot:JingDong.XiaoMi.battery_type|||13;bot:JingDong.XiaoMi.additional_hardware_included|||3
+lithium ion	bot:JingDong.XiaoMi.battery_type|||13;bot:JingDong.XiaoMi.additional_hardware_included|||3
+verizon	bot:JingDong.XiaoMi.carrier|||20;bot:JingDong.XiaoMi.url|||20
+wireless	bot:JingDong.XiaoMi.carrier|||20;bot:JingDong.XiaoMi.wireless_compatibility|||30;bot:JingDong.XiaoMi.url|||20
+verizon wireless	bot:JingDong.XiaoMi.carrier|||20;bot:JingDong.XiaoMi.url|||20
+black	bot:JingDong.XiaoMi.color_category|||11;bot:JingDong.XiaoMi.url|||11
+lte	bot:JingDong.XiaoMi.data_transmission_type|||13;bot:JingDong.XiaoMi.wireless_technology|||28;bot:JingDong.XiaoMi.url|||12;bot:JingDong.XiaoMi.data_transmission_operating_band|||3
+samsung	bot:JingDong.XiaoMi.device_manufacturer|||17;bot:JingDong.XiaoMi.model_family|||11;bot:JingDong.XiaoMi.url|||17;bot:JingDong.XiaoMi.processor_brand|||7
+super	bot:JingDong.XiaoMi.display_type|||17
+amoled	bot:JingDong.XiaoMi.display_type|||17
+super amoled	bot:JingDong.XiaoMi.display_type|||16
+gigabytes	bot:JingDong.XiaoMi.expandable_memory_up_to|||9;bot:JingDong.XiaoMi.internal_memory|||40;bot:JingDong.XiaoMi.phone_memory_(ram)|||28
+200 gigabytes	bot:JingDong.XiaoMi.expandable_memory_up_to|||9
+megapixels	bot:JingDong.XiaoMi.front-facing_camera|||35;bot:JingDong.XiaoMi.rear-facing_camera|||40
+5 megapixels	bot:JingDong.XiaoMi.front-facing_camera|||10
+5.6	bot:JingDong.XiaoMi.height|||7
+inches	bot:JingDong.XiaoMi.height|||40;bot:JingDong.XiaoMi.screen_size|||40;bot:JingDong.XiaoMi.width|||40;bot:JingDong.XiaoMi.depth|||33
+5.6 inches	bot:JingDong.XiaoMi.height|||7
+front	bot:JingDong.XiaoMi.integrated_camera|||37
+back	bot:JingDong.XiaoMi.integrated_camera|||40
+front and back	bot:JingDong.XiaoMi.integrated_camera|||37
+32 gigabytes	bot:JingDong.XiaoMi.internal_memory|||23
+touch	bot:JingDong.XiaoMi.keyboard_type|||30
+screen	bot:JingDong.XiaoMi.keyboard_type|||30
+touch screen	bot:JingDong.XiaoMi.keyboard_type|||30
+year	bot:JingDong.XiaoMi.labor|||30;bot:JingDong.XiaoMi.parts|||31
+1 year	bot:JingDong.XiaoMi.labor|||30;bot:JingDong.XiaoMi.parts|||31
+feet	bot:JingDong.XiaoMi.maximum_depth_of_water_resistance|||11
+5 feet	bot:JingDong.XiaoMi.maximum_depth_of_water_resistance|||9
+galaxy	bot:JingDong.XiaoMi.model_family|||11;bot:JingDong.XiaoMi.url|||17
+s7	bot:JingDong.XiaoMi.model_family|||9;bot:JingDong.XiaoMi.url|||9
+samsung galaxy	bot:JingDong.XiaoMi.model_family|||11;bot:JingDong.XiaoMi.url|||17
+galaxy s7	bot:JingDong.XiaoMi.model_family|||9;bot:JingDong.XiaoMi.url|||9
+samsung galaxy s7	bot:JingDong.XiaoMi.model_family|||9;bot:JingDong.XiaoMi.url|||9
+android	bot:JingDong.XiaoMi.operating_system|||29
+6.0	bot:JingDong.XiaoMi.operating_system|||15
+marshmallow	bot:JingDong.XiaoMi.operating_system|||15
+android 6.0	bot:JingDong.XiaoMi.operating_system|||15
+6.0 marshmallow	bot:JingDong.XiaoMi.operating_system|||15
+android 6.0 marshmallow	bot:JingDong.XiaoMi.operating_system|||15
+4 gigabytes	bot:JingDong.XiaoMi.phone_memory_(ram)|||19
+smartphone	bot:JingDong.XiaoMi.phone_style|||40
+qualcomm	bot:JingDong.XiaoMi.processor_brand|||23
+snapdragon	bot:JingDong.XiaoMi.processor_brand|||21
+qualcomm snapdragon	bot:JingDong.XiaoMi.processor_brand|||21
+2.2	bot:JingDong.XiaoMi.processor_speed|||11
+gigahertz	bot:JingDong.XiaoMi.processor_speed|||29
+2.2 gigahertz	bot:JingDong.XiaoMi.processor_speed|||11
+12 megapixels	bot:JingDong.XiaoMi.rear-facing_camera|||20
+nano	bot:JingDong.XiaoMi.sim_card_size|||16
+sim	bot:JingDong.XiaoMi.sim_card_size|||16;bot:JingDong.XiaoMi.sim_card_slots|||7
+nano sim	bot:JingDong.XiaoMi.sim_card_size|||16
+5.1	bot:JingDong.XiaoMi.screen_size|||8;bot:JingDong.XiaoMi.operating_system|||2
+5.1 inches	bot:JingDong.XiaoMi.screen_size|||8
+5.4	bot:JingDong.XiaoMi.weight|||6;bot:JingDong.XiaoMi.height|||5
+ounces	bot:JingDong.XiaoMi.weight|||40
+5.4 ounces	bot:JingDong.XiaoMi.weight|||6
+2.7	bot:JingDong.XiaoMi.width|||8
+2.7 inches	bot:JingDong.XiaoMi.width|||8
+bluetooth	bot:JingDong.XiaoMi.wireless_compatibility|||14
+ac	bot:JingDong.XiaoMi.wireless_compatibility|||26
+bluetooth wireless	bot:JingDong.XiaoMi.wireless_compatibility|||12
+wireless ac	bot:JingDong.XiaoMi.wireless_compatibility|||26
+ac wireless	bot:JingDong.XiaoMi.wireless_compatibility|||19
+wireless a wireless	bot:JingDong.XiaoMi.wireless_compatibility|||29
+wireless ac wireless	bot:JingDong.XiaoMi.wireless_compatibility|||19
+wireless b wireless	bot:JingDong.XiaoMi.wireless_compatibility|||29
+wireless g wireless	bot:JingDong.XiaoMi.wireless_compatibility|||28
+cdma	bot:JingDong.XiaoMi.wireless_technology|||13;bot:JingDong.XiaoMi.voice_band|||4
+4.7	bot:JingDong.XiaoMi.rating|||13;bot:JingDong.XiaoMi.screen_size|||6
+http	bot:JingDong.XiaoMi.url|||40
+www.bestbuy.com	bot:JingDong.XiaoMi.url|||40
+site	bot:JingDong.XiaoMi.url|||40
+32gb	bot:JingDong.XiaoMi.url|||22
+onyx	bot:JingDong.XiaoMi.url|||4
+id	bot:JingDong.XiaoMi.url|||40
+skuid	bot:JingDong.XiaoMi.url|||40
+http www.bestbuy.com	bot:JingDong.XiaoMi.url|||40
+www.bestbuy.com site	bot:JingDong.XiaoMi.url|||40
+site samsung	bot:JingDong.XiaoMi.url|||17
+s7 32gb	bot:JingDong.XiaoMi.url|||6
+32gb black	bot:JingDong.XiaoMi.url|||4
+black onyx	bot:JingDong.XiaoMi.url|||4
+onyx verizon	bot:JingDong.XiaoMi.url|||2
+http www.bestbuy.com site	bot:JingDong.XiaoMi.url|||40
+www.bestbuy.com site samsung	bot:JingDong.XiaoMi.url|||17
+site samsung galaxy	bot:JingDong.XiaoMi.url|||17
+galaxy s7 32gb	bot:JingDong.XiaoMi.url|||6
+s7 32gb black	bot:JingDong.XiaoMi.url|||3
+32gb black onyx	bot:JingDong.XiaoMi.url|||4
+black onyx verizon	bot:JingDong.XiaoMi.url|||2
+onyx verizon wireless	bot:JingDong.XiaoMi.url|||2
+micro	bot:JingDong.XiaoMi.charging_interface(s)|||3
+usb	bot:JingDong.XiaoMi.charging_interface(s)|||12;bot:JingDong.XiaoMi.additional_hardware_included|||7
+micro usb	bot:JingDong.XiaoMi.charging_interface(s)|||3
+0.43	bot:JingDong.XiaoMi.depth|||2
+0.43 inches	bot:JingDong.XiaoMi.depth|||2
+motorola	bot:JingDong.XiaoMi.device_manufacturer|||3;bot:JingDong.XiaoMi.url|||3
+5.0	bot:JingDong.XiaoMi.front-facing_camera|||10;bot:JingDong.XiaoMi.operating_system|||2
+5.0 megapixels	bot:JingDong.XiaoMi.front-facing_camera|||10
+5.8	bot:JingDong.XiaoMi.height|||2
+5.8 inches	bot:JingDong.XiaoMi.height|||2
+16 gigabytes	bot:JingDong.XiaoMi.internal_memory|||10
+limited	bot:JingDong.XiaoMi.labor|||5
+year limited	bot:JingDong.XiaoMi.labor|||5
+1 year limited	bot:JingDong.XiaoMi.labor|||5
+microsd	bot:JingDong.XiaoMi.media_card_slot|||3
+5.1.1	bot:JingDong.XiaoMi.operating_system|||7
+lollipop	bot:JingDong.XiaoMi.operating_system|||11
+android 5.1.1	bot:JingDong.XiaoMi.operating_system|||7
+5.1.1 lollipop	bot:JingDong.XiaoMi.operating_system|||7
+android 5.1.1 lollipop	bot:JingDong.XiaoMi.operating_system|||7
+2 gigabytes	bot:JingDong.XiaoMi.phone_memory_(ram)|||3
+1.7	bot:JingDong.XiaoMi.processor_speed|||2
+1.7 gigahertz	bot:JingDong.XiaoMi.processor_speed|||2
+21.0	bot:JingDong.XiaoMi.rear-facing_camera|||3
+21.0 megapixels	bot:JingDong.XiaoMi.rear-facing_camera|||3
+5.5	bot:JingDong.XiaoMi.screen_size|||9;bot:JingDong.XiaoMi.weight|||3
+5.5 inches	bot:JingDong.XiaoMi.screen_size|||9
+5.96	bot:JingDong.XiaoMi.weight|||2
+5.96 ounces	bot:JingDong.XiaoMi.weight|||2
+2.9	bot:JingDong.XiaoMi.width|||5
+2.9 inches	bot:JingDong.XiaoMi.width|||5
+4g	bot:JingDong.XiaoMi.wireless_technology|||21;bot:JingDong.XiaoMi.url|||15
+4g lte	bot:JingDong.XiaoMi.wireless_technology|||19;bot:JingDong.XiaoMi.url|||12
+4.2	bot:JingDong.XiaoMi.rating|||3
+droid	bot:JingDong.XiaoMi.url|||3
+maxx	bot:JingDong.XiaoMi.url|||2
+16gb	bot:JingDong.XiaoMi.url|||10
+memory	bot:JingDong.XiaoMi.url|||18
+cell	bot:JingDong.XiaoMi.url|||21
+deep	bot:JingDong.XiaoMi.url|||2
+blue	bot:JingDong.XiaoMi.url|||2
+site motorola	bot:JingDong.XiaoMi.url|||3
+motorola droid	bot:JingDong.XiaoMi.url|||3
+droid maxx	bot:JingDong.XiaoMi.url|||2
+maxx 2	bot:JingDong.XiaoMi.url|||2
+2 4g	bot:JingDong.XiaoMi.url|||3
+16gb memory	bot:JingDong.XiaoMi.url|||3
+memory cell	bot:JingDong.XiaoMi.url|||17
+www.bestbuy.com site motorola	bot:JingDong.XiaoMi.url|||3
+site motorola droid	bot:JingDong.XiaoMi.url|||3
+motorola droid maxx	bot:JingDong.XiaoMi.url|||2
+droid maxx 2	bot:JingDong.XiaoMi.url|||2
+maxx 2 4g	bot:JingDong.XiaoMi.url|||2
+2 4g lte	bot:JingDong.XiaoMi.url|||3
+lte with 16gb	bot:JingDong.XiaoMi.url|||2
+16gb memory cell	bot:JingDong.XiaoMi.url|||2
+cell phone black	bot:JingDong.XiaoMi.url|||6
+gold	bot:JingDong.XiaoMi.color_category|||13;bot:JingDong.XiaoMi.url|||13
+5.9	bot:JingDong.XiaoMi.height|||4
+5.9 inches	bot:JingDong.XiaoMi.height|||4
+edge	bot:JingDong.XiaoMi.model_family|||4;bot:JingDong.XiaoMi.url|||4
+s7 edge	bot:JingDong.XiaoMi.model_family|||3;bot:JingDong.XiaoMi.url|||3
+galaxy s7 edge	bot:JingDong.XiaoMi.model_family|||3;bot:JingDong.XiaoMi.url|||3
+5.5 ounces	bot:JingDong.XiaoMi.weight|||3
+platinum	bot:JingDong.XiaoMi.url|||5
+edge 32gb	bot:JingDong.XiaoMi.url|||3
+32gb gold	bot:JingDong.XiaoMi.url|||4
+gold platinum	bot:JingDong.XiaoMi.url|||5
+platinum verizon	bot:JingDong.XiaoMi.url|||2
+s7 edge 32gb	bot:JingDong.XiaoMi.url|||3
+32gb gold platinum	bot:JingDong.XiaoMi.url|||4
+gold platinum verizon	bot:JingDong.XiaoMi.url|||2
+platinum verizon wireless	bot:JingDong.XiaoMi.url|||2
+gray	bot:JingDong.XiaoMi.color_category|||9;bot:JingDong.XiaoMi.url|||7
+0.38	bot:JingDong.XiaoMi.depth|||2
+0.38 inches	bot:JingDong.XiaoMi.depth|||2
+htc	bot:JingDong.XiaoMi.device_manufacturer|||3;bot:JingDong.XiaoMi.url|||3
+1.3	bot:JingDong.XiaoMi.front-facing_camera|||2
+1.3 megapixels	bot:JingDong.XiaoMi.front-facing_camera|||2
+8 gigabytes	bot:JingDong.XiaoMi.internal_memory|||3
+hours	bot:JingDong.XiaoMi.maximum_usage_time|||7
+kitkat	bot:JingDong.XiaoMi.operating_system|||3
+1.2	bot:JingDong.XiaoMi.processor_speed|||3;bot:JingDong.XiaoMi.front-facing_camera|||7
+1.2 gigahertz	bot:JingDong.XiaoMi.processor_speed|||3
+8 megapixels	bot:JingDong.XiaoMi.rear-facing_camera|||2;bot:JingDong.XiaoMi.front-facing_camera|||4
+4.7 inches	bot:JingDong.XiaoMi.screen_size|||6
+days	bot:JingDong.XiaoMi.stand-by_time|||19
+27 days	bot:JingDong.XiaoMi.stand-by_time|||2
+5 ounces	bot:JingDong.XiaoMi.weight|||7
+4.5	bot:JingDong.XiaoMi.rating|||5
+site htc	bot:JingDong.XiaoMi.url|||3
+4g cell	bot:JingDong.XiaoMi.url|||2
+www.bestbuy.com site htc	bot:JingDong.XiaoMi.url|||3
+cell phone gray	bot:JingDong.XiaoMi.url|||2
+stereo	bot:JingDong.XiaoMi.additional_hardware_included|||2
+headset	bot:JingDong.XiaoMi.additional_hardware_included|||3
+cable	bot:JingDong.XiaoMi.additional_hardware_included|||7
+power	bot:JingDong.XiaoMi.additional_hardware_included|||5
+adapter	bot:JingDong.XiaoMi.additional_hardware_included|||6
+stereo headset	bot:JingDong.XiaoMi.additional_hardware_included|||2
+headset usb	bot:JingDong.XiaoMi.additional_hardware_included|||2
+usb cable	bot:JingDong.XiaoMi.additional_hardware_included|||5
+cable power	bot:JingDong.XiaoMi.additional_hardware_included|||2
+power adapter	bot:JingDong.XiaoMi.additional_hardware_included|||5
+stereo headset usb	bot:JingDong.XiaoMi.additional_hardware_included|||2
+headset usb cable	bot:JingDong.XiaoMi.additional_hardware_included|||2
+usb cable power	bot:JingDong.XiaoMi.additional_hardware_included|||2
+cable power adapter	bot:JingDong.XiaoMi.additional_hardware_included|||2
+0.3	bot:JingDong.XiaoMi.depth|||7
+0.3 inches	bot:JingDong.XiaoMi.depth|||7
+28 hours	bot:JingDong.XiaoMi.maximum_usage_time|||2
+12 days	bot:JingDong.XiaoMi.stand-by_time|||2
+pma	bot:JingDong.XiaoMi.wireless_charging_standard|||2
+gsm	bot:JingDong.XiaoMi.wireless_technology|||7;bot:JingDong.XiaoMi.voice_band|||4
+4.8	bot:JingDong.XiaoMi.rating|||9
+lightning	bot:JingDong.XiaoMi.charging_interface(s)|||10;bot:JingDong.XiaoMi.additional_hardware_included|||2
+rose	bot:JingDong.XiaoMi.color_category|||6;bot:JingDong.XiaoMi.url|||6
+rose gold	bot:JingDong.XiaoMi.color_category|||6;bot:JingDong.XiaoMi.url|||6
+0.29	bot:JingDong.XiaoMi.depth|||9
+0.29 inches	bot:JingDong.XiaoMi.depth|||9
+apple	bot:JingDong.XiaoMi.device_manufacturer|||10;bot:JingDong.XiaoMi.model_family|||10;bot:JingDong.XiaoMi.operating_system|||10;bot:JingDong.XiaoMi.processor_brand|||10;bot:JingDong.XiaoMi.url|||10;bot:JingDong.XiaoMi.additional_hardware_included|||2
+retina	bot:JingDong.XiaoMi.display_type|||10
+display	bot:JingDong.XiaoMi.display_type|||10
+retina display	bot:JingDong.XiaoMi.display_type|||10
+1.2 megapixels	bot:JingDong.XiaoMi.front-facing_camera|||7
+6.2	bot:JingDong.XiaoMi.height|||3
+6.2 inches	bot:JingDong.XiaoMi.height|||3
+iphone	bot:JingDong.XiaoMi.model_family|||10;bot:JingDong.XiaoMi.url|||10
+6s	bot:JingDong.XiaoMi.model_family|||8;bot:JingDong.XiaoMi.url|||8
+apple iphone	bot:JingDong.XiaoMi.model_family|||10;bot:JingDong.XiaoMi.url|||10
+iphone 6s	bot:JingDong.XiaoMi.model_family|||8;bot:JingDong.XiaoMi.url|||8
+apple iphone 6s	bot:JingDong.XiaoMi.model_family|||8;bot:JingDong.XiaoMi.url|||8
+ios	bot:JingDong.XiaoMi.operating_system|||10
+apple ios	bot:JingDong.XiaoMi.operating_system|||10
+ios 9	bot:JingDong.XiaoMi.operating_system|||10
+apple ios 9	bot:JingDong.XiaoMi.operating_system|||10
+6.8	bot:JingDong.XiaoMi.weight|||3
+6.8 ounces	bot:JingDong.XiaoMi.weight|||3
+3.1	bot:JingDong.XiaoMi.width|||3
+3.1 inches	bot:JingDong.XiaoMi.width|||3
+wi	bot:JingDong.XiaoMi.wireless_compatibility|||8
+fi	bot:JingDong.XiaoMi.wireless_compatibility|||8
+wi fi	bot:JingDong.XiaoMi.wireless_compatibility|||8
+site apple	bot:JingDong.XiaoMi.url|||10
+16gb rose	bot:JingDong.XiaoMi.url|||5
+www.bestbuy.com site apple	bot:JingDong.XiaoMi.url|||10
+site apple iphone	bot:JingDong.XiaoMi.url|||10
+6s plus 16gb	bot:JingDong.XiaoMi.url|||2
+16gb rose gold	bot:JingDong.XiaoMi.url|||5
+battery	bot:JingDong.XiaoMi.additional_hardware_included|||3
+charger	bot:JingDong.XiaoMi.additional_hardware_included|||2
+ion battery	bot:JingDong.XiaoMi.additional_hardware_included|||3
+charger usb	bot:JingDong.XiaoMi.additional_hardware_included|||2
+lithium ion battery	bot:JingDong.XiaoMi.additional_hardware_included|||3
+s6	bot:JingDong.XiaoMi.model_family|||2;bot:JingDong.XiaoMi.url|||2
+galaxy s6	bot:JingDong.XiaoMi.model_family|||2;bot:JingDong.XiaoMi.url|||2
+samsung galaxy s6	bot:JingDong.XiaoMi.model_family|||2;bot:JingDong.XiaoMi.url|||2
+android 5.0	bot:JingDong.XiaoMi.operating_system|||2
+5.0 lollipop	bot:JingDong.XiaoMi.operating_system|||2
+android 5.0 lollipop	bot:JingDong.XiaoMi.operating_system|||2
+3 gigabytes	bot:JingDong.XiaoMi.phone_memory_(ram)|||5
+exynos	bot:JingDong.XiaoMi.processor_brand|||7
+samsung exynos	bot:JingDong.XiaoMi.processor_brand|||7
+16.0	bot:JingDong.XiaoMi.rear-facing_camera|||8
+16.0 megapixels	bot:JingDong.XiaoMi.rear-facing_camera|||8
+wireless n wireless	bot:JingDong.XiaoMi.wireless_compatibility|||8
+4.6	bot:JingDong.XiaoMi.rating|||5;bot:JingDong.XiaoMi.weight|||2
+32gb memory	bot:JingDong.XiaoMi.url|||13
+32gb memory cell	bot:JingDong.XiaoMi.url|||13
+cell phone gold	bot:JingDong.XiaoMi.url|||3
+0.28	bot:JingDong.XiaoMi.depth|||6
+0.28 inches	bot:JingDong.XiaoMi.depth|||6
+5.4 inches	bot:JingDong.XiaoMi.height|||5
+2.6	bot:JingDong.XiaoMi.width|||5
+2.6 inches	bot:JingDong.XiaoMi.width|||5
+6s 16gb	bot:JingDong.XiaoMi.url|||3
+gold verizon	bot:JingDong.XiaoMi.url|||3
+iphone 6s 16gb	bot:JingDong.XiaoMi.url|||3
+6s 16gb rose	bot:JingDong.XiaoMi.url|||2
+rose gold verizon	bot:JingDong.XiaoMi.url|||3
+gold verizon wireless	bot:JingDong.XiaoMi.url|||3
+sprint	bot:JingDong.XiaoMi.carrier|||8;bot:JingDong.XiaoMi.url|||9
+6.03	bot:JingDong.XiaoMi.height|||5;bot:JingDong.XiaoMi.weight|||5
+6.03 inches	bot:JingDong.XiaoMi.height|||5
+2.1	bot:JingDong.XiaoMi.processor_speed|||6
+2.1 gigahertz	bot:JingDong.XiaoMi.processor_speed|||6
+5.7	bot:JingDong.XiaoMi.screen_size|||6
+5.7 inches	bot:JingDong.XiaoMi.screen_size|||6
+14 days	bot:JingDong.XiaoMi.stand-by_time|||6
+6.03 ounces	bot:JingDong.XiaoMi.weight|||5
+2.99	bot:JingDong.XiaoMi.width|||5
+2.99 inches	bot:JingDong.XiaoMi.width|||5
+note5	bot:JingDong.XiaoMi.url|||5
+sapphire	bot:JingDong.XiaoMi.url|||3
+galaxy note5	bot:JingDong.XiaoMi.url|||5
+note5 4g	bot:JingDong.XiaoMi.url|||5
+black sapphire	bot:JingDong.XiaoMi.url|||3
+samsung galaxy note5	bot:JingDong.XiaoMi.url|||5
+galaxy note5 4g	bot:JingDong.XiaoMi.url|||5
+note5 4g lte	bot:JingDong.XiaoMi.url|||5
+lte with 32gb	bot:JingDong.XiaoMi.url|||8
+gold sprint	bot:JingDong.XiaoMi.url|||3
+rose gold sprint	bot:JingDong.XiaoMi.url|||2
+space	bot:JingDong.XiaoMi.url|||4
+16gb space	bot:JingDong.XiaoMi.url|||2
+space gray	bot:JingDong.XiaoMi.url|||4
+gray verizon	bot:JingDong.XiaoMi.url|||4
+16gb space gray	bot:JingDong.XiaoMi.url|||2
+space gray verizon	bot:JingDong.XiaoMi.url|||3
+gray verizon wireless	bot:JingDong.XiaoMi.url|||4
+s7 32gb gold	bot:JingDong.XiaoMi.url|||3
+lcd	bot:JingDong.XiaoMi.display_type|||8
+5.2	bot:JingDong.XiaoMi.screen_size|||2
+5.2 inches	bot:JingDong.XiaoMi.screen_size|||2
+4.4	bot:JingDong.XiaoMi.operating_system|||2
+android 4.4	bot:JingDong.XiaoMi.operating_system|||2
+4.4 kitkat	bot:JingDong.XiaoMi.operating_system|||2
+android 4.4 kitkat	bot:JingDong.XiaoMi.operating_system|||2
+1.5	bot:JingDong.XiaoMi.processor_speed|||2
+accelerometer	bot:JingDong.XiaoMi.sensors|||8
+4.6 ounces	bot:JingDong.XiaoMi.weight|||2
+3g	bot:JingDong.XiaoMi.wireless_technology|||3
+3g 4g	bot:JingDong.XiaoMi.wireless_technology|||3
+0.35	bot:JingDong.XiaoMi.depth|||2
+0.35 inches	bot:JingDong.XiaoMi.depth|||2
+lg	bot:JingDong.XiaoMi.device_manufacturer|||6;bot:JingDong.XiaoMi.model_family|||6;bot:JingDong.XiaoMi.url|||6
+android 5.1	bot:JingDong.XiaoMi.operating_system|||2
+5.1 lollipop	bot:JingDong.XiaoMi.operating_system|||2
+android 5.1 lollipop	bot:JingDong.XiaoMi.operating_system|||2
+site lg	bot:JingDong.XiaoMi.url|||6
+www.bestbuy.com site lg	bot:JingDong.XiaoMi.url|||6
+white	bot:JingDong.XiaoMi.color_category|||3;bot:JingDong.XiaoMi.url|||3
+pearl	bot:JingDong.XiaoMi.url|||2
+white pearl	bot:JingDong.XiaoMi.url|||2
+cell phone white	bot:JingDong.XiaoMi.url|||3
+type	bot:JingDong.XiaoMi.charging_interface(s)|||5
+usb type	bot:JingDong.XiaoMi.charging_interface(s)|||5
+silver	bot:JingDong.XiaoMi.color_category|||3;bot:JingDong.XiaoMi.url|||3
+ev	bot:JingDong.XiaoMi.data_transmission_type|||3
+hsdpa	bot:JingDong.XiaoMi.data_transmission_type|||2
+hspa	bot:JingDong.XiaoMi.data_transmission_type|||3
+hsdpa hspa	bot:JingDong.XiaoMi.data_transmission_type|||2
+hspa lte	bot:JingDong.XiaoMi.data_transmission_type|||3
+ev do hsdpa	bot:JingDong.XiaoMi.data_transmission_type|||2
+hsdpa hspa lte	bot:JingDong.XiaoMi.data_transmission_type|||2
+5.88	bot:JingDong.XiaoMi.height|||4
+5.88 inches	bot:JingDong.XiaoMi.height|||4
+g5	bot:JingDong.XiaoMi.model_family|||4;bot:JingDong.XiaoMi.url|||4
+lg g5	bot:JingDong.XiaoMi.model_family|||4;bot:JingDong.XiaoMi.url|||4
+2.15	bot:JingDong.XiaoMi.processor_speed|||3
+2.15 gigahertz	bot:JingDong.XiaoMi.processor_speed|||3
+16 megapixels	bot:JingDong.XiaoMi.rear-facing_camera|||4
+4k	bot:JingDong.XiaoMi.recording_resolution|||7
+2160 4k	bot:JingDong.XiaoMi.recording_resolution|||7
+single	bot:JingDong.XiaoMi.sim_card_slots|||7
+single sim	bot:JingDong.XiaoMi.sim_card_slots|||7
+5.3	bot:JingDong.XiaoMi.screen_size|||4
+5.3 inches	bot:JingDong.XiaoMi.screen_size|||4
+fingerprint	bot:JingDong.XiaoMi.sensors|||7
+sensor	bot:JingDong.XiaoMi.sensors|||9
+gyro	bot:JingDong.XiaoMi.sensors|||8
+proximity	bot:JingDong.XiaoMi.sensors|||8
+accelerometer fingerprint	bot:JingDong.XiaoMi.sensors|||4
+fingerprint sensor	bot:JingDong.XiaoMi.sensors|||7
+sensor gyro	bot:JingDong.XiaoMi.sensors|||8
+gyro sensor	bot:JingDong.XiaoMi.sensors|||8
+sensor proximity	bot:JingDong.XiaoMi.sensors|||6
+proximity sensor	bot:JingDong.XiaoMi.sensors|||8
+accelerometer fingerprint sensor	bot:JingDong.XiaoMi.sensors|||4
+fingerprint sensor gyro	bot:JingDong.XiaoMi.sensors|||6
+sensor gyro sensor	bot:JingDong.XiaoMi.sensors|||8
+gyro sensor proximity	bot:JingDong.XiaoMi.sensors|||6
+sensor proximity sensor	bot:JingDong.XiaoMi.sensors|||6
+cdma 1900	bot:JingDong.XiaoMi.voice_band|||3
+1900 cdma	bot:JingDong.XiaoMi.voice_band|||3
+cdma 800	bot:JingDong.XiaoMi.voice_band|||4
+800 gsm	bot:JingDong.XiaoMi.voice_band|||3
+gsm 1800	bot:JingDong.XiaoMi.voice_band|||4
+1800 gsm	bot:JingDong.XiaoMi.voice_band|||4
+gsm 1900	bot:JingDong.XiaoMi.voice_band|||4
+1900 gsm	bot:JingDong.XiaoMi.voice_band|||4
+gsm 850	bot:JingDong.XiaoMi.voice_band|||4
+850 gsm	bot:JingDong.XiaoMi.voice_band|||4
+gsm 900	bot:JingDong.XiaoMi.voice_band|||4
+cdma 1900 cdma	bot:JingDong.XiaoMi.voice_band|||3
+1900 cdma 800	bot:JingDong.XiaoMi.voice_band|||3
+cdma 800 gsm	bot:JingDong.XiaoMi.voice_band|||3
+800 gsm 1800	bot:JingDong.XiaoMi.voice_band|||3
+gsm 1800 gsm	bot:JingDong.XiaoMi.voice_band|||4
+1800 gsm 1900	bot:JingDong.XiaoMi.voice_band|||4
+gsm 1900 gsm	bot:JingDong.XiaoMi.voice_band|||4
+1900 gsm 850	bot:JingDong.XiaoMi.voice_band|||4
+gsm 850 gsm	bot:JingDong.XiaoMi.voice_band|||4
+850 gsm 900	bot:JingDong.XiaoMi.voice_band|||4
+5.61	bot:JingDong.XiaoMi.weight|||3
+5.61 ounces	bot:JingDong.XiaoMi.weight|||3
+2.91	bot:JingDong.XiaoMi.width|||4
+2.91 inches	bot:JingDong.XiaoMi.width|||4
+wcdma	bot:JingDong.XiaoMi.wireless_technology|||3
+umts	bot:JingDong.XiaoMi.wireless_technology|||3
+lte cdma	bot:JingDong.XiaoMi.wireless_technology|||5
+cdma gsm	bot:JingDong.XiaoMi.wireless_technology|||4
+gsm wcdma	bot:JingDong.XiaoMi.wireless_technology|||2
+wcdma umts	bot:JingDong.XiaoMi.wireless_technology|||3
+4g lte cdma	bot:JingDong.XiaoMi.wireless_technology|||5
+lte cdma gsm	bot:JingDong.XiaoMi.wireless_technology|||3
+cdma gsm wcdma	bot:JingDong.XiaoMi.wireless_technology|||2
+gsm wcdma umts	bot:JingDong.XiaoMi.wireless_technology|||2
+g5 4g	bot:JingDong.XiaoMi.url|||2
+site lg g5	bot:JingDong.XiaoMi.url|||4
+lg g5 4g	bot:JingDong.XiaoMi.url|||2
+g5 4g lte	bot:JingDong.XiaoMi.url|||2
+sapphire verizon	bot:JingDong.XiaoMi.url|||2
+black sapphire verizon	bot:JingDong.XiaoMi.url|||2
+sapphire verizon wireless	bot:JingDong.XiaoMi.url|||2
+64 gigabytes	bot:JingDong.XiaoMi.internal_memory|||4
+64gb	bot:JingDong.XiaoMi.url|||4
+64gb space	bot:JingDong.XiaoMi.url|||2
+64gb space gray	bot:JingDong.XiaoMi.url|||2
+earpods	bot:JingDong.XiaoMi.additional_hardware_included|||2
+remote	bot:JingDong.XiaoMi.additional_hardware_included|||2
+mic	bot:JingDong.XiaoMi.additional_hardware_included|||2
+5w	bot:JingDong.XiaoMi.additional_hardware_included|||2
+apple earpods	bot:JingDong.XiaoMi.additional_hardware_included|||2
+mic lightning	bot:JingDong.XiaoMi.additional_hardware_included|||2
+cable 5w	bot:JingDong.XiaoMi.additional_hardware_included|||2
+5w usb	bot:JingDong.XiaoMi.additional_hardware_included|||2
+usb power	bot:JingDong.XiaoMi.additional_hardware_included|||2
+earpods with remote	bot:JingDong.XiaoMi.additional_hardware_included|||2
+remote and mic	bot:JingDong.XiaoMi.additional_hardware_included|||2
+lightning to usb	bot:JingDong.XiaoMi.additional_hardware_included|||2
+usb cable 5w	bot:JingDong.XiaoMi.additional_hardware_included|||2
+cable 5w usb	bot:JingDong.XiaoMi.additional_hardware_included|||2
+5w usb power	bot:JingDong.XiaoMi.additional_hardware_included|||2
+usb power adapter	bot:JingDong.XiaoMi.additional_hardware_included|||2
+4.87	bot:JingDong.XiaoMi.height|||2
+4.87 inches	bot:JingDong.XiaoMi.height|||2
+10 feet	bot:JingDong.XiaoMi.maximum_depth_of_water_resistance|||2
+50 hours	bot:JingDong.XiaoMi.maximum_usage_time|||2
+se	bot:JingDong.XiaoMi.model_family|||2;bot:JingDong.XiaoMi.url|||2
+iphone se	bot:JingDong.XiaoMi.model_family|||2;bot:JingDong.XiaoMi.url|||2
+apple iphone se	bot:JingDong.XiaoMi.model_family|||2;bot:JingDong.XiaoMi.url|||2
+4 inches	bot:JingDong.XiaoMi.screen_size|||2
+ambient	bot:JingDong.XiaoMi.sensors|||4
+light	bot:JingDong.XiaoMi.sensors|||4
+accelerometer ambient	bot:JingDong.XiaoMi.sensors|||3
+ambient light	bot:JingDong.XiaoMi.sensors|||4
+light sensor	bot:JingDong.XiaoMi.sensors|||4
+sensor fingerprint	bot:JingDong.XiaoMi.sensors|||2
+accelerometer ambient light	bot:JingDong.XiaoMi.sensors|||3
+ambient light sensor	bot:JingDong.XiaoMi.sensors|||4
+light sensor fingerprint	bot:JingDong.XiaoMi.sensors|||2
+sensor fingerprint sensor	bot:JingDong.XiaoMi.sensors|||2
+10 days	bot:JingDong.XiaoMi.stand-by_time|||2
+3.99	bot:JingDong.XiaoMi.weight|||2
+3.99 ounces	bot:JingDong.XiaoMi.weight|||2
+2.31	bot:JingDong.XiaoMi.width|||2
+2.31 inches	bot:JingDong.XiaoMi.width|||2
+se 16gb	bot:JingDong.XiaoMi.url|||2
+iphone se 16gb	bot:JingDong.XiaoMi.url|||2
+gesture	bot:JingDong.XiaoMi.sensors|||2
+gesture sensor	bot:JingDong.XiaoMi.sensors|||2
+6s 64gb	bot:JingDong.XiaoMi.url|||2
+iphone 6s 64gb	bot:JingDong.XiaoMi.url|||2
+1.5 gigahertz	bot:JingDong.XiaoMi.processor_speed|||2
+magnetometer	bot:JingDong.XiaoMi.sensors|||2
+sensor magnetometer	bot:JingDong.XiaoMi.sensors|||2
+magnetometer proximity	bot:JingDong.XiaoMi.sensors|||2
+gyro sensor magnetometer	bot:JingDong.XiaoMi.sensors|||2
+sensor magnetometer proximity	bot:JingDong.XiaoMi.sensors|||2
+magnetometer proximity sensor	bot:JingDong.XiaoMi.sensors|||2
+band	bot:JingDong.XiaoMi.data_transmission_operating_band|||3
+lte band	bot:JingDong.XiaoMi.data_transmission_operating_band|||3
+band 13	bot:JingDong.XiaoMi.data_transmission_operating_band|||2
+13 lte	bot:JingDong.XiaoMi.data_transmission_operating_band|||2
+band 2	bot:JingDong.XiaoMi.data_transmission_operating_band|||3
+2 lte	bot:JingDong.XiaoMi.data_transmission_operating_band|||3
+band 3	bot:JingDong.XiaoMi.data_transmission_operating_band|||2
+3 lte	bot:JingDong.XiaoMi.data_transmission_operating_band|||2
+band 4	bot:JingDong.XiaoMi.data_transmission_operating_band|||3
+4 lte	bot:JingDong.XiaoMi.data_transmission_operating_band|||3
+band 5	bot:JingDong.XiaoMi.data_transmission_operating_band|||3
+5 lte	bot:JingDong.XiaoMi.data_transmission_operating_band|||2
+band 7	bot:JingDong.XiaoMi.data_transmission_operating_band|||2
+lte band 13	bot:JingDong.XiaoMi.data_transmission_operating_band|||2
+band 13 lte	bot:JingDong.XiaoMi.data_transmission_operating_band|||2
+13 lte band	bot:JingDong.XiaoMi.data_transmission_operating_band|||2
+lte band 2	bot:JingDong.XiaoMi.data_transmission_operating_band|||3
+band 2 lte	bot:JingDong.XiaoMi.data_transmission_operating_band|||3
+2 lte band	bot:JingDong.XiaoMi.data_transmission_operating_band|||3
+lte band 3	bot:JingDong.XiaoMi.data_transmission_operating_band|||2
+band 3 lte	bot:JingDong.XiaoMi.data_transmission_operating_band|||2
+3 lte band	bot:JingDong.XiaoMi.data_transmission_operating_band|||2
+lte band 4	bot:JingDong.XiaoMi.data_transmission_operating_band|||3
+band 4 lte	bot:JingDong.XiaoMi.data_transmission_operating_band|||3
+4 lte band	bot:JingDong.XiaoMi.data_transmission_operating_band|||3
+lte band 5	bot:JingDong.XiaoMi.data_transmission_operating_band|||3
+band 5 lte	bot:JingDong.XiaoMi.data_transmission_operating_band|||2
+5 lte band	bot:JingDong.XiaoMi.data_transmission_operating_band|||2
+lte band 7	bot:JingDong.XiaoMi.data_transmission_operating_band|||2
+titan	bot:JingDong.XiaoMi.url|||2
+g5 with 32gb	bot:JingDong.XiaoMi.url|||2
+cell phone titan	bot:JingDong.XiaoMi.url|||2
