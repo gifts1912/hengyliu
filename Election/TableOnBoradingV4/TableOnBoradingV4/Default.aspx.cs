@@ -116,7 +116,33 @@ namespace TableOnBoardingV4
                 _nl = value;
             }
         }
+        
+        public static List<DataColumn> GenDataColumn()
+        {
+            //SchemaItem(string tableHeader, string isSubject, string schema, string type, string needIndex, string regexForValue, string nl)
+            List<DataColumn> dc = new List<DataColumn>();
+            dc.Add(new DataColumn("TableHeader", typeof(string)));
+            dc.Add(new DataColumn("IsSubject", typeof(string)));
+            dc.Add(new DataColumn("Schema", typeof(string)));
+            dc.Add(new DataColumn("Type", typeof(string)));
+            dc.Add(new DataColumn("NeedIndex", typeof(string)));
+            dc.Add(new DataColumn("RegexForValue", typeof(string)));
+            dc.Add(new DataColumn("NL", typeof(string)));
+            return dc;
+        }
 
+        public object[] GenDataRow()
+        {
+            object[] arr = new object[7];
+            arr[0] = TableHeader;
+            arr[1] = IsSubject;
+            arr[2] = Schema;
+            arr[3] = Type;
+            arr[4] = NeedIndex;
+            arr[5] = RegexForValue;
+            arr[6] = NL;
+            return arr;
+        }
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder();
@@ -178,7 +204,6 @@ namespace TableOnBoardingV4
         }
         protected void Page_Load(object sender, EventArgs e)
         {
-
         }
 
         protected void ButtonGenerateSchema_Click(object sender, EventArgs e)
@@ -221,10 +246,10 @@ namespace TableOnBoardingV4
             System.IO.StreamReader sr = new System.IO.StreamReader(uploadStream);
             tableHeader = sr.ReadLine();
             sr.Close();
+
             Page_Load_TableSchemaV2();
+
             Comment_Text.Text = "IsSubject: Denote the TableHeader pri is the primary key that can distinct the entity from others in the table.";
-            // Response.Redirect("TableSchemaV2.aspx");
-            // Server.Transfer("TableSchemaPerform.aspx", true);
             SchemaSubmit.Visible = true;
         }
 
@@ -242,7 +267,9 @@ namespace TableOnBoardingV4
                 string schemaCur = string.Format("bot:{0}.{1}.{2}", BotName, FileName, schemaNormalize);
                 TableSchema.Add(new SchemaItem(ele, "False", schemaCur, "String", "True", "", ele));
             }
-            BindGridView();
+            //BindGridView();
+            /**** import method upper ****/
+            ShowGrid();
         }
 
         public string SchemaGenerate(string feaName)
@@ -257,62 +284,35 @@ namespace TableOnBoardingV4
             ViewState["CurrentTime"] = Session["CurrentTime"];
         }
 
+        private DataTable TableSchemaToDataTable(List<SchemaItem> tableSchema)
+        {
+            DataTable dt = new DataTable("HeaderSchema");
+            List<DataColumn> dcs = SchemaItem.GenDataColumn();
+            foreach(DataColumn dc in dcs)
+            {
+                dt.Columns.Add(dc);
+            }            
+            /*
+            dt.Columns.Add("TableHeader", typeof(string));
+            dt.Columns.Add("IsSubject", typeof(string));
+            dt.Columns.Add("Schema", typeof(string));
+            dt.Columns.Add("Type", typeof(string));
+            dt.Columns.Add("NeedIndex", typeof(string));
+            dt.Columns.Add("RegexForValue", typeof(string));
+            dt.Columns.Add("NL", typeof(string));
+            */
+            for (int i = 0; i < tableSchema.Count(); i++)
+            {
+                object [] array = tableSchema[i].GenDataRow();
+                dt.Rows.Add(array);
+            }
+            return dt;
+        }
         private void BindGridView()
         {
-            GridView1.DataSource = TableSchema;
+            DataTable dt = TableSchemaToDataTable(TableSchema) ;
+            GridView1.DataSource = dt;
             GridView1.DataBind();
-            DropDownList ddl;
-            for (int i = 0; i < GridView1.Rows.Count; i++)
-            {
-                string curType = TableSchema[i].Type;
-                if (curType == "String" || curType == "1")
-                {
-                    ddl = (DropDownList)GridView1.Rows[i].FindControl("DropDownList_Type");
-                    ddl.SelectedIndex = 0;
-                    ddl.SelectedItem.Text = "String";
-                }
-                else if (curType == "Bool" || curType == "2")
-                {
-                    ddl = (DropDownList)GridView1.Rows[i].FindControl("DropDownList_Type");
-                    ddl.SelectedIndex = 1;
-                    ddl.SelectedItem.Text = "Bool";
-                }
-                else
-                {
-                    ddl = (DropDownList)GridView1.Rows[i].FindControl("DropDownList_Type");
-                    ddl.SelectedIndex = 2;
-                    ddl.SelectedItem.Text = "Number";
-                }
-
-                String isSubject = TableSchema[i].IsSubject;
-                if (isSubject.ToLower() == "true" || isSubject == "1")
-                {
-                    ddl = (DropDownList)GridView1.Rows[i].FindControl("DropDownList_IsSubject");
-                    ddl.SelectedIndex = 0;
-                    ddl.SelectedItem.Text = "True";
-                }
-                else
-                {
-                    ddl = (DropDownList)GridView1.Rows[i].FindControl("DropDownList_IsSubject");
-                    ddl.SelectedIndex = 1;
-                    ddl.SelectedItem.Text = "False";
-                }
-
-                string needIndex = TableSchema[i].NeedIndex;
-                if (needIndex.ToLower() == "true" || isSubject == "1")
-                {
-                    ddl = (DropDownList)GridView1.Rows[i].FindControl("DropDownList_NeedIndex");
-                    ddl.SelectedIndex = 0;
-                    ddl.SelectedItem.Text = "True";
-                }
-                else
-                {
-                    ddl = (DropDownList)GridView1.Rows[i].FindControl("DropDownList_NeedIndex");
-                    ddl.SelectedIndex = 1;
-                    ddl.SelectedItem.Text = "False";
-                }
-            }
-
         }
 
         private void UpdateOrAddNewRecord(string tableHeader, string isSubject, string schema, string typeCur, string needIndex, string regexvalue, string nl, bool isUpdate, int posIdx)
@@ -362,24 +362,30 @@ namespace TableOnBoardingV4
             int idx = e.RowIndex;
             string th = ((TextBox)GridView1.Rows[e.RowIndex].Cells[0].Controls[0]).Text;
 
-            DropDownList ddl_isSubject = (DropDownList)GridView1.Rows[e.RowIndex].Cells[1].FindControl("DropDownList_IsSubject");
-            string isSubject = ddl_isSubject.SelectedItem.Text;
+            //DropDownList ddl_isSubject = (DropDownList)GridView1.Rows[e.RowIndex].Cells[1].FindControl("DropDownList_IsSubject");
+            //RadioButtonList ddl_isSubject = (RadioButtonList)GridView1.Rows[e.RowIndex].Cells[1].FindControl("RadioButtonList_IsSubject");
+            CheckBox cb_IsSubject = (CheckBox)GridView1.Rows[e.RowIndex].Cells[1].FindControl("CheckBox_IsSubject");
+            string isSubject = "False";
+            if(cb_IsSubject.Checked)
+            {
+                isSubject = "True";
+            }
 
             string schema = ((TextBox)GridView1.Rows[e.RowIndex].Cells[2].Controls[0]).Text;
-
             DropDownList ddl = (DropDownList)GridView1.Rows[e.RowIndex].Cells[3].FindControl("DropDownList_Type");
             string type = ddl.SelectedItem.Text;
 
-            DropDownList ddl_needIndex = (DropDownList)GridView1.Rows[e.RowIndex].Cells[4].FindControl("DropDownList_NeedIndex");
-            string needIndex = ddl_isSubject.SelectedItem.Text;
+            CheckBox cb = (CheckBox)GridView1.Rows[e.RowIndex].Cells[4].FindControl("CheckBox_NeedIndex");
+            string needIndex = "True";
+            if (!cb.Checked)
+                needIndex = "False";
 
             string regexForValue = ((TextBox)GridView1.Rows[e.RowIndex].Cells[5].Controls[0]).Text;
             string nl = ((TextBox)GridView1.Rows[e.RowIndex].Cells[6].Controls[0]).Text;
 
-
             UpdateOrAddNewRecord(th, isSubject, schema, type, needIndex, regexForValue, nl, true, idx);
             GridView1.EditIndex = -1;
-            BindGridView();
+            ShowGrid();
         }
 
         private bool StringToBool(string str, bool def)
@@ -475,6 +481,28 @@ namespace TableOnBoardingV4
         protected void ButtonHaveNoUse_Click(object sender, EventArgs e)
         {
             return;
+        }
+
+        protected void DropDownList_IsSubject_DataBinding(object sender, EventArgs e)
+        {
+        }
+
+        private void ShowGrid()
+        {
+            DataTable dt = TableSchemaToDataTable(TableSchema) ;
+            GridView1.DataSource = dt;
+            GridView1.DataBind();
+        }
+
+        static DataTable GenerateDataTable(string colName, string[] rows)
+        {
+            DataTable dt = new DataTable();
+            dt.Columns.Add(colName, typeof(string));
+            for (int i = 0; i < rows.Count(); i++)
+            {
+                dt.Rows.Add(rows[i]);
+            }
+            return dt;
         }
     }
 
